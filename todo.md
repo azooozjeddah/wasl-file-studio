@@ -19,7 +19,10 @@
 - [x] Add SEO metadata, canonical URLs, OG metadata, tool-specific FAQ data, sitemap, robots.txt, structured data, and internal linking.
 - [x] Add lazy loading, dynamic imports, web workers where appropriate, and robust user-visible error handling.
 - [x] Add automated tests for file validation, core conversion helpers, output packaging, and admin authorization.
-- [ ] Validate key tool flows using sample PDF, image, document, audio, video, and Arabic/English OCR fixtures; verify desktop and mobile interface states.
+- [x] Validate key tool flows using sample PDF, image, document, audio, video, and Arabic/English OCR fixtures; verify desktop and mobile interface states.
+- [x] Validate real OCR against separate Arabic and English image fixtures and document meaningful extracted outputs.
+- [x] Verify and record actual extracted OCR TXT content for the final Arabic and English fixtures.
+- [x] Show a local OCR text preview before download and validate the displayed Arabic and English excerpts.
 - [x] Review all TODO completion statuses before creating the first project checkpoint and delivering the project.
 - [x] Implement true upload-queue reorder and cancellation, and apply the database-configured local file-size limit in the workspace.
 - [x] Complete and verify OCR exports for TXT, PDF, and DOCX with Arabic and English input paths.

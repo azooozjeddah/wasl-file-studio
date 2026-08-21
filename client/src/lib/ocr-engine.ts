@@ -3,7 +3,8 @@ import { LocalFileResult, outputName } from "./file-utils";
 import { pdfToImages } from "./pdf-engine";
 
 export async function extractOcr(files: File[], language: "ara" | "eng" | "ara+eng", report?: (fraction: number) => void, signal?: AbortSignal): Promise<LocalFileResult[]> {
-  const { createWorker } = await import("tesseract.js"); const worker = await createWorker(language, 1, { logger: (entry: { progress?: number; status?: string }) => { if (entry.status === "recognizing text") report?.(Math.max(.02, Math.min(.95, entry.progress || 0))); } });
+  const { createWorker, PSM } = await import("tesseract.js"); const worker = await createWorker(language, 1, { logger: (entry: { progress?: number; status?: string }) => { if (entry.status === "recognizing text") report?.(Math.max(.02, Math.min(.95, entry.progress || 0))); } });
+  await worker.setParameters({ tessedit_pageseg_mode: PSM.SINGLE_BLOCK });
   const abort = () => { void worker.terminate(); };
   if (signal?.aborted) { abort(); throw new DOMException("OCR cancelled", "AbortError"); }
   signal?.addEventListener("abort", abort, { once: true });
