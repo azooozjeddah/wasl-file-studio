@@ -1,5 +1,5 @@
 import { LocalFileResult, outputName } from "./file-utils";
-import ffmpegWorkerURL from "@ffmpeg/ffmpeg/worker?url";
+import ffmpegWorkerURL from "@ffmpeg/ffmpeg/worker?worker&url";
 
 type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };

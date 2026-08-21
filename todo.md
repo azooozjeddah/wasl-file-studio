@@ -110,3 +110,5 @@
 - [ ] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
 - [ ] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
 - [ ] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.
+- [ ] Remove or replace the externally hosted logo resource blocked by COEP so the production console is clean while retaining cross-origin isolation for FFmpeg.
+- [ ] Bundle FFmpeg worker dependencies for production so relative imports never resolve to the HTML fallback and stall local media processing.
