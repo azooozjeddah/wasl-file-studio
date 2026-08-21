@@ -22,6 +22,34 @@
       "when": 1787298374246,
       "tag": "0002_reflective_blue_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1787303408978,
+      "tag": "0003_curvy_moonstone",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1787303870430,
+      "tag": "0004_rapid_greymalkin",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1787304161765,
+      "tag": "0005_numerous_phalanx",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1787304798981,
+      "tag": "0006_purple_william_stryker",
+      "breakpoints": true
     }
   ]
 }

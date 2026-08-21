@@ -8,6 +8,7 @@ import { cancelMediaProcessing, mediaInfo, processMedia } from "@/lib/media-engi
 import { alterPdf, compressPdf, imagesToPdf, mergePdfs, pdfToImages, securePdf } from "@/lib/pdf-engine";
 import { trpc } from "@/lib/trpc";
 import type { ToolDefinition } from "@/lib/tools";
+import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
 import { workspaceResultState } from "@/lib/workspace-results";
 import { AlertCircle, AudioLines, Ban, CheckCircle2, ChevronDown, ChevronUp, Download, FileArchive, FilePlus2, GripVertical, Image as ImageIcon, Loader2, LockKeyhole, RefreshCw, ShieldCheck, Trash2, UploadCloud, Video, X, Zap } from "lucide-react";
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -28,7 +29,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
   const [files, setFiles] = useState<File[]>([]); const [results, setResults] = useState<LocalFileResult[]>([]);
   const [processing, setProcessing] = useState(false); const [progress, setProgress] = useState(0); const [dragging, setDragging] = useState(false); const [queueDragIndex, setQueueDragIndex] = useState<number | null>(null); const [error, setError] = useState<string>(); const [ocrPreview, setOcrPreview] = useState<string>(); const [options, setOptions] = useState<WorkspaceOptions>(initialOptions);
   const publicSettings = trpc.catalog.settings.useQuery(); const telemetry = trpc.telemetry.event.useMutation(); const telemetryError = trpc.telemetry.error.useMutation();
-  const isPdf = tool.category === "pdf"; const isImage = tool.category === "image"; const accepts = tool.accepts.join(","); const maxFileMb = publicSettings.data?.localMaxFileMb ?? 100;
+  const isPdf = tool.category === "pdf"; const isImage = tool.category === "image"; const accepts = tool.accepts.join(","); const maxFileMb = publicSettings.data?.localMaxFileMb ?? 100; const hybridReady = tool.processingMode === "hybrid"; const serverAvailable = serverRouteAvailable(tool.processingMode, Boolean(publicSettings.data?.serverProcessingEnabled)); const executionRoute = chooseProcessingRoute(tool.processingMode, Boolean(publicSettings.data?.serverProcessingEnabled));
   const selectedSize = useMemo(() => files.reduce((total, file) => total + file.size, 0), [files]); const resultState = useMemo(() => workspaceResultState(results), [results]); const primary = files[0];
   const previewUrl = useMemo(() => primary && (primary.type.startsWith("image/") || primary.type.startsWith("video/") || primary.type.startsWith("audio/") || primary.type === "application/pdf") ? URL.createObjectURL(primary) : undefined, [primary]);
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
@@ -93,8 +94,8 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     {tool.settings.includes("fps") && <label className="setting-field"><span>FPS</span><select value={options.fps} onChange={event => setOption("fps", event.target.value)}><option value="24">24</option><option value="30">30</option><option value="60">60</option></select></label>}
   </div>;
   return <section className="tool-workspace">
-    <div className="tool-workspace-head"><div><span className="local-pill"><LockKeyhole size={12}/>{t("معالجة محلية", "Local processing")}</span><h2>{isArabic ? tool.labelAr : tool.labelEn}</h2><p>{isArabic ? tool.descriptionAr : tool.descriptionEn}</p></div><div className="format-chips">{tool.formats.map(format => <span key={format}>{format}</span>)}</div></div>
-    <div className="privacy-inline"><ShieldCheck size={17}/><span>{t("تتم معالجة ملفك داخل جهازك ولا يتم رفعه إلى خوادمنا.", "Your file is processed on your device and is not uploaded to our servers.")}</span></div>
+    <div className="tool-workspace-head"><div><span className="local-pill"><LockKeyhole size={12}/>{hybridReady ? serverAvailable ? t("مسار هجين متاح", "Hybrid route available") : t("محلي الآن · جاهز للخادم", "Local now · server-ready") : t("معالجة محلية", "Local processing")}</span><h2>{isArabic ? tool.labelAr : tool.labelEn}</h2><p>{isArabic ? tool.descriptionAr : tool.descriptionEn}</p></div><div className="format-chips">{tool.formats.map(format => <span key={format}>{format}</span>)}</div></div>
+    <div className="privacy-inline"><ShieldCheck size={17}/><span>{executionRoute === "server" ? t("المعالجة الخادمية مفعلة لهذه الأداة مع ملف مؤقت محمي وحذف تلقائي بعد انتهاء المدة.", "Server processing is enabled with protected temporary files and automatic expiry.") : hybridReady ? t("تعمل هذه الأداة محليًا الآن. عند تفعيل محرك الخادم مستقبلًا ستختار المنصة المسار الملائم للملفات الكبيرة، مع وظائف مؤقتة ومحميّة فقط.", "This tool runs locally today. Once a server engine is enabled, the platform can select a protected temporary job path for large files.") : t("تتم معالجة ملفك داخل جهازك ولا يتم رفعه إلى خوادمنا.", "Your file is processed on your device and is not uploaded to our servers.")}</span></div>
     <div className="workspace-grid"><div className="workspace-main">
       <div onDrop={onDrop} onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} className={`drop-zone ${dragging ? "is-dragging" : ""} ${files.length ? "has-files" : ""}`}>
         <input ref={inputRef} onChange={onInput} type="file" multiple={tool.multi} accept={accepts}/>

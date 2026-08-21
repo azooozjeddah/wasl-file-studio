@@ -64,3 +64,18 @@
 - [x] Verify a development admin can be created despite an existing OAuth admin, while production remains blocked by policy.
 - [x] Add route-level tests for creation/login of the development admin, production rejection, existing-account rejection, and session-cookie issuance.
 - [x] Revisit the first-admin screen after bootstrap and verify it now provides only the development-login state.
+- [ ] Review the newly attached requirements file and implement its applicable Wasl File Studio changes, including the post-deployment daily backup task.
+- [x] Make production admin access explicit through the existing secure OAuth login and add admin-user management views guarded by roles.
+- [x] Extend tool modes and contracts to support local, server, and hybrid processing without changing tool-page routes.
+- [x] Add schema-first server job, temporary upload, result, retention, audit, and quota records without permanently storing user file bytes.
+- [x] Add server-ready queue, validation, status, progress, error, rate-limit, and monitoring interfaces with worker adapters disabled by default.
+- [x] Add protected APIs for job creation, status, temporary result retrieval, and server-side processing feature flags.
+- [x] Add a safe temporary-storage abstraction using private references, expiration metadata, and a deploy-ready cleanup handler.
+- [x] Extend the admin dashboard with user management, server-processing readiness, job monitoring, retention, rate-limit, and quota controls.
+- [x] Bind processing-mode selection into the tool workspace while retaining all available free local processing paths.
+- [x] Add automated tests for job lifecycle authorization, validation, quota evaluation, rate limiting, and temporary-result exposure.
+- [x] Add an inactive user-plan assignment model and protected admin controls so SaaS quotas and ad visibility can be applied to actual users later.
+- [x] Remove expired temporary storage references from database records, not only mark them released, according to the supported private-storage lifecycle.
+- [x] Add persisted per-minute server job rate-limit controls to site settings and the protected Admin Processing interface.
+- [x] Add route-level processing API tests for authorization, tool/mode validation, file-size limits, quota exhaustion, rate limits, cancellation, and temporary result visibility.
+- [ ] Configure a daily 06:00 Saudi Arabia backup workflow for project code and configuration without exposing user files or secrets.

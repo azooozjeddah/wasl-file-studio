@@ -1,0 +1,1 @@
+ALTER TABLE `site_settings` ADD `serverRateLimitPerMinute` int DEFAULT 10 NOT NULL;

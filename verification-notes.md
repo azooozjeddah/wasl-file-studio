@@ -91,3 +91,11 @@ The authenticated Tools tab exposed `كتالوج الأدوات الفعلي` a
 The route-level suite now tests first-run session-cookie issuance, a second bootstrap rejection, production rejection, and development login for the dedicated account. It passed alongside the full suite. Reopening `/first-admin` after creation showed only `دخول مدير التطوير`, with no create action, confirming the one-time browser behavior.
 
 Managed-preview visual inspection provides authenticated text-level control evidence: the Tools tab displays `مزامنة الأدوات`, `تعديل الأداة`, `حد الملف MB`, `الأداة مفعلة`, `عرض في الرئيسية`, and `حفظ الأداة`, while its ordering panel displays the true empty state `لم تتم المزامنة بعد`. The Business tab displays `هوية الموقع والخصوصية`, `القياس المجهول`, `مواضع الإعلانات`, `SaaS خطط`, `إظهار إعلانات لهذه الخطة`, and `حفظ الخطة`; it also visibly shows the empty-state text `لا توجد مواضع محفوظة` and a saved Free-plan record. Together with the independently captured protected browser state, this covers authenticated controls, empty feedback, and protection behavior.
+
+## Hybrid processing readiness and final build
+
+The authenticated processing center now exposes a persisted `حد الإنشاء في الدقيقة` control, set to 10 by default, alongside server file size, retention window, and local/hybrid/server default selection. The processing router reads this setting for per-minute job creation enforcement. It remains intentionally **disabled** until a real worker is registered, so all present file processing remains local and free.
+
+The route-level processing suite verifies disabled-mode rejection, ineligible tool rejection, oversized file rejection, configurable rate-limit rejection, quota exhaustion, owner-only cancellation, private job visibility, and unexpired completed result access. The complete validation run passed **17 test files / 38 tests**. `pnpm build` also completed successfully; conversion libraries remain split into on-demand browser chunks.
+
+The requested daily backup schedule could not be created because the platform requires a published project before schedules are enabled. The project itself is checkpointed below; after publishing, the 06:00 Saudi Arabia schedule can be created without changing application code.
