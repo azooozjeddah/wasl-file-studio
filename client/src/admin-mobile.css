@@ -1,0 +1,49 @@
+@media (max-width: 560px) {
+  .admin-page {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 12px 36px;
+  }
+
+  .user-admin-list {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .user-admin-row {
+    display: grid !important;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+  }
+
+  .user-admin-row > div {
+    min-width: 0;
+  }
+
+  .user-admin-row b,
+  .user-admin-row small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-admin-row label {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 128px;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-admin-row label select {
+    width: 100%;
+    min-width: 0;
+  }
+}

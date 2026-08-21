@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import { ArrowRight, ShieldCheck, UsersRound } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
+import "@/admin-mobile.css";
 
 export default function AdminUsersPage() {
   const { user, loading } = useAuth(); const enabled = user?.role === "admin"; const users = trpc.admin.users.useQuery(undefined, { enabled, retry: false }); const userPlans = trpc.admin.userPlans.useQuery(undefined, { enabled, retry: false }); const setRole = trpc.admin.setPlatformRole.useMutation({ onSuccess: () => void users.refetch() }); const setPlan = trpc.admin.setUserPlan.useMutation({ onSuccess: () => { void userPlans.refetch(); toast.success("تم تعيين الخطة المستقبلية للمستخدم."); } });

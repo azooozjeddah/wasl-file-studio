@@ -3,8 +3,14 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { TrpcContext } from "./context";
 
+export function shouldExposeTrpcStack(nodeEnv?: string) { return nodeEnv === "development" || nodeEnv === "test"; }
+
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
+  errorFormatter({ shape }) {
+    if (shouldExposeTrpcStack(process.env.NODE_ENV)) return shape;
+    return { ...shape, data: { ...shape.data, stack: undefined } };
+  },
 });
 
 export const router = t.router;

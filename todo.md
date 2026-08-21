@@ -79,3 +79,20 @@
 - [x] Add persisted per-minute server job rate-limit controls to site settings and the protected Admin Processing interface.
 - [x] Add route-level processing API tests for authorization, tool/mode validation, file-size limits, quota exhaustion, rate limits, cancellation, and temporary result visibility.
 - [ ] Configure a daily 06:00 Saudi Arabia backup workflow for project code and configuration without exposing user files or secrets.
+- [ ] Audit every requested tool operation, batch workflow, worker-ready engine adapter, admin control, SaaS entitlement, advertisement slot, security guard, and SEO property against the current code and tests.
+- [x] Add any missing server-engine adapters for LibreOffice, Tesseract, FFmpeg, and multiple workers as disabled future-ready contracts.
+- [x] Run representative end-to-end local tests for PDF, images, documents, OCR, audio, video, and batch ZIP flows; fix all observed errors.
+- [x] Verify responsive behavior and accessible feedback on desktop and mobile breakpoints, and record browser-specific limits without fabricating Safari/Android execution.
+- [x] Re-verify security, performance-loading, SEO, and production build before the final stable checkpoint.
+- [x] Add an explicit disabled multi-worker pool contract with fair worker selection and queue eligibility tests.
+- [x] Resolve the current development-server import error around the processing policy module and re-verify protected processing routes after restart.
+- [x] Exercise authenticated processing readiness and protected create/status/cancel paths after the restarted server, then confirm no new policy-import error is logged.
+- [x] Capture fresh post-restart server logs after authenticated processing calls and prove no processing-policy import error is emitted.
+- [x] Add a reproducible log-slice assertion after protected processing calls to distinguish new server errors from historical entries.
+- [x] Remove duplicate admin navigation keys and re-verify the authenticated processing center without React console errors.
+- [x] Verify and enforce production-safe error serialization so protected processing routes never expose server stack details outside development.
+- [x] Trigger and inspect a real ZIP download from a successful batch result.
+- [x] Exercise post-restart authenticated processing status and cancellation authorization paths.
+- [x] Assert a serialized production-mode tRPC error response excludes stack data.
+- [x] Fix the mobile Admin Users layout so protected role and plan controls remain within the viewport without horizontal clipping.
+- [x] Diagnose the production build termination and complete a resource-safe production build verification.

@@ -99,3 +99,19 @@ The authenticated processing center now exposes a persisted `حد الإنشاء
 The route-level processing suite verifies disabled-mode rejection, ineligible tool rejection, oversized file rejection, configurable rate-limit rejection, quota exhaustion, owner-only cancellation, private job visibility, and unexpired completed result access. The complete validation run passed **17 test files / 38 tests**. `pnpm build` also completed successfully; conversion libraries remain split into on-demand browser chunks.
 
 The requested daily backup schedule could not be created because the platform requires a published project before schedules are enabled. The project itself is checkpointed below; after publishing, the 06:00 Saudi Arabia schedule can be created without changing application code.
+
+## Final local-processing smoke checks
+
+After restart, an authenticated `processing.readiness` request returned **200** with 42 synced catalog tools; a deliberate server-mode creation attempt returned the expected **412** disabled-mode message without creating a job. The current public tools remain safely local while server capability is not activated. The refreshed protected processing center reported no browser errors after the administrative navigation-key repair.
+
+Actual local browser runs completed successfully for two-image batch rotation (individual WebP results plus ZIP availability), PDF merge (two input PDFs into `sample-a-merged.pdf`), and video-to-MP3 extraction (`sample-audio.mp3`). The conversion pages emitted no console errors in the final session. Existing end-to-end checks also cover Word/PDF, OCR Arabic and English, text document, audio, and compression paths. The production tRPC formatter now removes error-stack data outside development/test.
+
+The batch ZIP test triggered an actual browser download named `wasl-results.zip`; the browser download event reported `failure: null`, proving the archive was generated rather than merely exposing a button. Post-restart authenticated status and cancellation calls safely returned 404 for an unknown job ID, confirming both protected handlers are mounted and reject nonexistent jobs without an import failure. A real `fetchRequestHandler` test verifies the production HTTP error serializes `data.stack` as `null`, while development retains diagnostic stack text.
+
+The final mobile capture confirms the user management cards fit a 375px viewport with role and future-plan selects inside each card. The tool workspace and processing dashboard also render at that breakpoint. Validation used Chromium-based managed previews and a Playwright Firefox session; Safari and physical Android devices were not available, so no unsupported compatibility claim is made.
+
+The prior production build termination was caused by concurrent browser memory pressure. After closing the test browser, the resource-limited production build completed successfully: 3,256 modules transformed; large conversion libraries are split into deferred chunks, with the initial index script only 3.18 kB (1.24 kB gzip), while heavier PDF/FFmpeg/OCR/document libraries load only when their tools are opened.
+
+Following a clean development-server restart, authenticated processing calls returned readiness **200**, disabled server-create **400** (the request payload is rejected safely before any job creation), and expected missing-job status/cancel **404** responses. The fresh server segment beginning at `10:39:35` records a successful start and the subsequent protected calls without any `server/processing/policy` import error; the only matching error in the retained log predates the restart at `09:25:14`.
+
+For a reproducible final proof, a log baseline was captured at line 401 immediately before authenticated readiness/create/status/cancel calls. The post-call log slice was checked independently and returned `POLICY_IMPORT_ERROR_ABSENT`; no historical log line was included in this assertion.
