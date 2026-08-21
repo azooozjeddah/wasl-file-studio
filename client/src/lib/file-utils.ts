@@ -1,6 +1,8 @@
 import JSZip from "jszip";
 
 export type LocalFileResult = { name: string; blob: Blob; mime: string; label?: string; details?: Record<string, string | number | boolean | undefined> };
+export type ResultPreviewKind = "image" | "audio" | "video" | "file";
+export function resultPreviewKind(mime: string): ResultPreviewKind { if (mime.startsWith("image/")) return "image"; if (mime.startsWith("audio/")) return "audio"; if (mime.startsWith("video/")) return "video"; return "file"; }
 
 export function formatBytes(bytes: number) {
   if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";

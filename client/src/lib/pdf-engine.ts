@@ -13,7 +13,7 @@ export function parsePageList(value: string | undefined, count: number) {
   if (!pages.length) throw new Error("اختر صفحة واحدة على الأقل."); return pages;
 }
 
-async function openPdf(file: File) { return PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: false, updateMetadata: false }); }
+async function openPdf(file: File) { try { return await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: false, updateMetadata: false }); } catch (error: any) { if (/encrypt|password|security/i.test(String(error?.message || ""))) throw new Error("الملف محمي بكلمة مرور. استخدم أداة فك حماية PDF فقط إذا كنت تملك كلمة المرور الصحيحة."); throw error; } }
 async function result(document: PDFDocument, source: File, suffix: string, extension = "pdf") { const saved = new Uint8Array(await document.save({ useObjectStreams: true })).slice(); return { name: outputName(source.name, suffix, extension), blob: new Blob([saved], { type: "application/pdf" }), mime: "application/pdf" } satisfies LocalFileResult; }
 
 export async function mergePdfs(files: File[], report?: (fraction: number) => void) {
@@ -82,7 +82,7 @@ export async function compressPdf(file: File, quality = .72, report?: (fraction:
 export async function securePdf(file: File, action: "protect" | "unlock", password: string, report?: (fraction: number) => void): Promise<LocalFileResult> {
   if (!password.trim()) throw new Error(action === "protect" ? "أدخل كلمة مرور لحماية النسخة الجديدة." : "أدخل كلمة المرور الصحيحة للملف الذي تملكه.");
   const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs"); pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
-  const loaded = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()), password: action === "unlock" ? password : undefined }).promise;
+  let loaded: any; try { loaded = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()), password: action === "unlock" ? password : undefined }).promise; } catch (error: any) { if (action === "unlock" && /password|PasswordException/i.test(String(error?.message || error?.name || ""))) throw new Error("تعذر فك الحماية: تحقّق من كلمة المرور. لا تحاول هذه الأداة تجاوز كلمات المرور."); throw error; }
   const { jsPDF } = await import("jspdf"); let output: any;
   for (let index = 1; index <= loaded.numPages; index += 1) {
     const page = await loaded.getPage(index); const viewport = page.getViewport({ scale: 1.32 }); const canvas = document.createElement("canvas"); canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height); await page.render({ canvasContext: canvas.getContext("2d")!, viewport }).promise;

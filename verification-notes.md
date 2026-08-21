@@ -53,3 +53,31 @@ Using a simpler high-contrast Arabic text fixture without a decorative border re
 The new on-page local preview confirmed the actual English extraction text exactly: `WASL OCR ENGLISH 2026`.
 
 The same local preview confirmed the Arabic extraction text exactly: `مرحبا بالعالم`. The verified Arabic and English excerpts demonstrate that both language workers return meaningful text, not just output files.
+
+The upgraded Word-to-PDF browser test rendered a formatted DOCX locally and created a downloadable `sample-word-rendered.pdf` (72.4 KB) without uploading the file. The renderer uses document page structure before rasterized PDF export, while PDF-to-Word preserves extracted text by page and directs scanned files to OCR.
+
+The first PDF-to-Word automation attempt clicked before asynchronous client-side validation enabled the process button. The test is being repeated with an explicit enabled-state wait rather than treating the timing failure as a conversion failure.
+
+The second attempt confirmed the button stayed disabled for this specific `sample.pdf`; the next step is to inspect the visible validation message and use a known text-bearing PDF fixture rather than assume the merge fixture is suitable for text extraction.
+
+A newly generated standards-compliant text PDF was also held at validation, indicating a browser MIME/signature handling issue before the PDF-to-Word engine executes. The validator is being inspected and corrected before the conversion result is accepted.
+
+The validation route was corrected so PDF-to-Word is checked as a PDF rather than a generic document. A text PDF now produced `text-based-editable.docx` (8.3 KB) and `text-based-extracted.txt` (58 B) through the browser.
+
+The scanned-image PDF check produced no misleading Word file. Instead, the workspace displayed: `هذا PDF لا يحتوي نصًا قابلًا للاستخراج. استخدم أداة OCR للملفات الممسوحة ضوئيًا أولًا.` This confirms the OCR-directed fallback path.
+
+## SEO and responsive-admin extension
+
+The public-home SEO check returned the managed title `وصل للملفات`, the fallback Arabic description `وَصل للملفات: أدوات عربية لتحويل وتنظيم وضغط الملفات محليًا داخل متصفحك.`, and the canonical project URL. The desktop and mobile captures confirm that the document workspace keeps its local-processing notice, upload target, settings, progress trigger, and explanatory cards visible at both widths. The mobile homepage now uses a single-column tool-card layout rather than compressed multi-column cards.
+
+The direct tool-page SEO check returned `PDF إلى Word | وَصل للملفات`, the tool-specific description `استخرج النص إلى DOCX قابل للتحرير مع فصل الصفحات؛ استخدم OCR للملفات المصورة.`, and the route-specific canonical URL. This confirms global site metadata no longer overrides tool metadata.
+
+The static Terms route returned `شروط الاستخدام | وَصل للملفات`, a description derived from the terms content, and the route-specific `/terms` canonical URL. Home, tool, and static content metadata therefore all have explicit verified precedence.
+
+The admin-dashboard captures verify both layouts: the desktop view retains its persistent management navigation and operations tabs, while the mobile view collapses to a readable top bar and horizontally scrollable tabs, with metrics, activity chart, empty-tool state, and readiness cards remaining reachable and legible.
+
+The isolated browser-test context has no administrator session. Visiting `/admin` returns the protected-state heading `هذه المنطقة مخصصة لمدير المنصة` and the instruction to sign in with an authorized administrator account. Router-level admin mutation tests cover the authenticated execution paths independently; the interactive protected-state guard is therefore confirmed without bypassing authentication.
+
+The managed preview context verified two authenticated administrative tabs through their direct URLs. `/admin?tab=business` shows editable site identity, local-size/anonymous-analytics controls, inactive ad-slot preparation, and Free-plan SaaS limits. `/admin?tab=tools` shows the full real tool catalog, metadata editor, activation/home-display toggles, SEO inputs, file limit, and catalog ordering controls.
+
+The final automated pass now has 9 test files and 20 passing tests. It covers admin authorization/mutations, SaaS entitlements, PDF page rules, OCR exports, document DOCX/PDF contracts, file validation and ZIP packaging, plus workspace batch ZIP eligibility and preview-kind decisions.

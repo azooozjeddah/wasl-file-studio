@@ -18,6 +18,9 @@ async function renderImage(file: File, options: ImageOptions, slug: string) {
 }
 
 export async function transformImages(files: File[], slug: string, options: ImageOptions, report?: (fraction: number) => void): Promise<LocalFileResult[]> {
-  const results: LocalFileResult[] = []; for (let index = 0; index < files.length; index += 1) { const file = files[index]; const transformed = await renderImage(file, options, slug); results.push({ name: outputName(file.name, slug.replace(/-/g, "-"), typeToExtension(transformed.type)), blob: transformed.blob, mime: transformed.type, details: { originalSize: file.size, width: transformed.width, height: transformed.height, metadata: "stripped-by-reencode" } }); report?.((index + 1) / files.length); }
+  const results: LocalFileResult[] = []; for (let index = 0; index < files.length; index += 1) { const file = files[index]; const transformed = await renderImage(file, options, slug);
+    if (slug === "compress-image" && transformed.blob.size >= file.size) results.push({ name: outputName(file.name, "original-retained", file.name.split(".").pop() || "image"), blob: file, mime: file.type, label: "original-retained", details: { originalSize: file.size, width: transformed.width, height: transformed.height, compression: "original-retained" } });
+    else results.push({ name: outputName(file.name, slug.replace(/-/g, "-"), typeToExtension(transformed.type)), blob: transformed.blob, mime: transformed.type, details: { originalSize: file.size, width: transformed.width, height: transformed.height, metadata: "stripped-by-reencode", compression: slug === "compress-image" ? "re-encoded" : undefined } });
+    report?.((index + 1) / files.length); }
   return results;
 }

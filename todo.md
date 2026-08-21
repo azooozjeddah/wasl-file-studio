@@ -31,3 +31,28 @@
 - [x] Add tests for file validation, ZIP packaging, and protected admin authorization.
 - [x] Implement real cancellation hooks for long-running OCR and media processing, with safe result suppression for other local engines.
 - [x] Prevent PDF compression from delivering a larger output when local rasterization does not reduce size.
+- [x] Audit the current tool catalog against the full requested PDF, image, document, audio, video, batch, preview, and progress requirements.
+- [x] Add missing PDF operations and explicit safe handling for unsupported encrypted or layout-sensitive conversions.
+- [x] Add missing image batch controls and complete output-format and compression safeguards.
+- [x] Improve free Word ↔ PDF and PDF ↔ Word handling with truthful quality indicators and accessible output paths.
+- [x] Verify PDF → Word outputs on a text PDF and verify OCR-directed rejection for a scanned/no-text PDF.
+- [x] Correct file-family validation for document tools that accept PDF input, including PDF to Word.
+- [x] Expand real admin control surfaces for tool metadata, display order, file limits, page content, FAQ, SEO, identity, privacy, analytics, plans, and ad slots.
+- [x] Add a schema-first SaaS plan model with entitlements, usage limits, and ad-visibility configuration without activating payment or advertising services.
+- [x] Improve mobile and desktop control density, empty states, statuses, and accessible feedback in conversion workspaces and admin views.
+- [x] Extend SEO content and structured data for tools and editable public content managed from the admin area.
+- [x] Wire admin-managed content entries into public privacy, terms, about, and contact pages with safe static fallbacks.
+- [x] Enforce page-level SEO precedence over global site metadata and verify home, tool, and static-page metadata behavior.
+- [x] Verify and record title, description, and canonical metadata for a public static content route after the precedence change.
+- [x] Add and run tests covering new plan entitlement logic, admin mutations, and remaining file-processing flows.
+- [x] Verify responsive and accessibility feedback states for ToolWorkspace and AdminPage on desktop and mobile.
+- [x] Verify authenticated admin controls and protected/empty/feedback states in the dashboard with explicit browser evidence.
+- [x] Add router-level tests for protected admin mutations including tools, settings, plans, FAQ, roles, and error resolution.
+- [x] Add targeted tests for document conversion helpers and new workspace batch-result behavior.
+- [x] Expand document conversion tests to include additional output contracts beyond TXT إلى DOCX.
+- [x] Add automated coverage for batch result packaging and preview-result classification in the workspace flow.
+- [x] Add deep-linkable admin tabs for direct visual verification of dashboard controls in the managed preview context.
+- [x] Capture explicit authenticated admin control and empty/feedback evidence from individual dashboard tabs.
+- [x] Add document-engine output-contract tests for PDF-producing or PDF-extraction conversion paths.
+- [x] Extract and test actual workspace batch-result eligibility and inline-preview decision logic.
+- [ ] Obtain text-level authenticated evidence for admin tools and business controls plus an empty or feedback state in the managed preview.
