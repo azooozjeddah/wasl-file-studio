@@ -4,6 +4,7 @@ import ffmpegWorkerURL from "@ffmpeg/ffmpeg/worker?url";
 type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };
 let ffmpegInstance: any;
+export const FFMPEG_CORE_BASE = "https://unpkg.com/@ffmpeg/core@0.12.9/dist/umd";
 
 export function cancelMediaProcessing() {
   if (!ffmpegInstance?.ffmpeg) return;
@@ -13,10 +14,16 @@ export function cancelMediaProcessing() {
 
 async function getFfmpeg(report?: Progress) {
   if (ffmpegInstance) return ffmpegInstance;
-  const [{ FFmpeg }, { fetchFile, toBlobURL }] = await Promise.all([import("@ffmpeg/ffmpeg"), import("@ffmpeg/util")]);
-  const ffmpeg = new FFmpeg(); const base = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm";
+  const [{ FFmpeg }, { fetchFile }] = await Promise.all([import("@ffmpeg/ffmpeg"), import("@ffmpeg/util")]);
+  const ffmpeg = new FFmpeg(); const base = FFMPEG_CORE_BASE;
   ffmpeg.on("progress", ({ progress }: { progress: number }) => report?.(Math.max(.02, Math.min(.98, progress))));
-  await ffmpeg.load({ coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, "text/javascript"), wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, "application/wasm"), classWorkerURL: ffmpegWorkerURL });
+  try {
+    await ffmpeg.load({ coreURL: `${base}/ffmpeg-core.js`, wasmURL: `${base}/ffmpeg-core.wasm`, classWorkerURL: ffmpegWorkerURL });
+  } catch (error) {
+    ffmpeg.terminate();
+    console.error("[Wasl] FFmpeg local engine failed to load", error);
+    throw error;
+  }
   ffmpegInstance = { ffmpeg, fetchFile }; return ffmpegInstance;
 }
 

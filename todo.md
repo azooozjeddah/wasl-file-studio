@@ -106,3 +106,7 @@
 - [ ] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport.
 - [ ] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
 - [ ] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
+- [ ] Fix the Vite production-build failure caused by the canonical link resolving to a directory, then verify a resource-safe production build and successful deployment.
+- [ ] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
+- [ ] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
+- [ ] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.
