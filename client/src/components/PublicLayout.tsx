@@ -1,0 +1,14 @@
+import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/LocaleContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { ArrowLeft, Languages, Moon, ShieldCheck, Sun } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Brand } from "./Brand";
+
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
+  const { locale, setLocale, isArabic, t } = useLocale();
+  const { theme, toggleTheme } = useTheme();
+  const [location] = useLocation();
+  const isTool = location !== "/";
+  return <div className="min-h-screen wasl-app"><header className="site-header"><div className="container header-inner"><Brand /> <nav className="hidden md:flex items-center gap-5 text-sm text-muted-foreground"><a href="/#tools">{t("الأدوات", "Tools")}</a><a href="/#privacy">{t("الخصوصية", "Privacy")}</a><a href="/#faq">FAQ</a>{isTool && <Link href="/" className="inline-flex items-center gap-1 text-foreground font-medium"><ArrowLeft size={15} className={isArabic ? "rotate-180" : ""}/>{t("كل الأدوات", "All tools")}</Link>}</nav><div className="flex items-center gap-1.5"><Button variant="ghost" size="icon" aria-label="switch language" onClick={() => setLocale(locale === "ar" ? "en" : "ar")}><Languages size={18}/></Button><Button variant="ghost" size="icon" aria-label="toggle theme" onClick={toggleTheme}>{theme === "dark" ? <Sun size={18}/> : <Moon size={18}/>}</Button><Link href="/admin"><Button className="hidden sm:inline-flex gap-2 wasl-admin-btn"><ShieldCheck size={15}/>{t("الإدارة", "Admin")}</Button></Link></div></div></header>{children}<footer className="site-footer"><div className="container grid gap-8 md:grid-cols-[1.2fr_1fr_1fr]"><div><Brand/><p className="mt-4 max-w-sm text-sm leading-7 text-muted-foreground">{t("أدوات ملفات عملية تعمل داخل متصفحك كلما كان ذلك ممكنًا. لا نرفع ملفاتك في الأدوات المحلية.", "Practical file tools that run in your browser whenever possible. Local tools do not upload your files.")}</p></div><div><p className="footer-title">{t("المساعدة", "Help")}</p><div className="footer-links"><Link href="/privacy">{t("مركز الخصوصية", "Privacy center")}</Link><Link href="/terms">{t("شروط الاستخدام", "Terms")}</Link><Link href="/about">{t("عن المنصة", "About")}</Link><Link href="/contact">{t("تواصل معنا", "Contact")}</Link></div></div><div><p className="footer-title">{t("الوعد", "Our promise")}</p><p className="text-sm leading-7 text-muted-foreground">{t("نوضح دائمًا أين تتم المعالجة، ولا نظهر أداة غير مرتبطة بوظيفة فعلية.", "We always explain where processing happens and only show tools connected to real functionality.")}</p></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} Wasl File Studio</span><span>{t("صُمم للوضوح والخصوصية", "Built for clarity and privacy")}</span></div></footer></div>;
+}

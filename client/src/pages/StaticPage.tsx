@@ -1,0 +1,12 @@
+import PublicLayout from "@/components/PublicLayout";
+import { useLocale } from "@/contexts/LocaleContext";
+import { ShieldCheck } from "lucide-react";
+
+const content: Record<string, { ar: [string, string]; en: [string, string] }> = {
+  privacy: { ar: ["مركز الخصوصية", "تتم الأدوات التي تحمل شارة «محلي» داخل متصفحك ولا يُرفع ملفك لخادم من أجل التحويل. لا نخزّن محتوى هذه الملفات. قد نضيف مستقبلًا أدوات تحتاج معالجة خادمية، وستحمل وسمًا واضحًا وسيُشرح وقت الاحتفاظ بالملف قبل الاستخدام."], en: ["Privacy center", "Tools bearing the Local label run in your browser and do not upload your file for conversion. We do not store the content of those files. Future server-processing tools will be clearly labeled and explain retention before use."] },
+  about: { ar: ["عن وَصل", "وَصل للملفات منصة عربية أولًا تجعل مهام الملفات الشائعة أوضح وأقرب للخصوصية. نستخدم معالجة محلية ومكتبات مفتوحة المصدر حيثما تسمح التقنية."], en: ["About Wasl", "Wasl File Studio is an Arabic-first platform that makes everyday file tasks clearer and more private. We use local processing and open-source libraries wherever technology allows."] },
+  contact: { ar: ["تواصل معنا", "للملاحظات والاقتراحات المتعلقة بالأدوات، استخدم قناة التواصل التابعة للمنصة عند إطلاقها. لا ترسل ملفات حساسة أو كلمات مرور عبر أي قناة دعم."], en: ["Contact", "For tool feedback and suggestions, use the platform contact channel when it launches. Never send sensitive files or passwords through support." ] },
+  terms: { ar: ["شروط الاستخدام", "استخدم وَصل للملفات فقط للملفات التي تملك حق التعامل معها. الأدوات المحلية تعمل داخل جهازك حيثما تحمل شارة «محلي»، لكنك تبقى مسؤولًا عن مراجعة النتيجة وحفظ نسخة من ملفاتك قبل العمليات المهمة. لا تستخدم المنصة لتجاوز كلمات المرور أو الحقوق أو القيود القانونية."], en: ["Terms of use", "Use Wasl File Studio only for files you are authorized to handle. Tools marked Local run on your device where supported, but you remain responsible for reviewing results and keeping backups before important operations. Do not use the platform to bypass passwords, rights, or legal restrictions."] },
+};
+
+export default function StaticPage({ page }: { page: keyof typeof content }) { const { isArabic } = useLocale(); const [title, body] = isArabic ? content[page].ar : content[page].en; return <PublicLayout><main className="static-page container"><span className="static-icon"><ShieldCheck/></span><span className="section-eyebrow">WASL FILE STUDIO</span><h1>{title}</h1><p>{body}</p></main></PublicLayout>; }

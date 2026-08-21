@@ -1,33 +1,22 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import PublicLayout from "@/components/PublicLayout";
+import ToolCard from "@/components/ToolCard";
+import { categories, toolDefinitions } from "@/lib/tools";
+import { useLocale } from "@/contexts/LocaleContext";
+import { ArrowLeft, Check, ChevronDown, FileUp, LockKeyhole, Sparkles, WandSparkles } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
+const popular = ["merge-pdf", "compress-pdf", "image-to-pdf", "convert-image", "ocr", "video-to-mp3"];
+
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const { isArabic, t } = useLocale(); const [, navigate] = useLocation();
+  return <PublicLayout><main><section className="hero-section"><div className="hero-grid"/><div className="container relative z-10 py-16 md:py-24"><div className="hero-kicker"><Sparkles size={15}/>{t("معالجة ذكية. على جهازك.", "Smart processing. On your device.")}</div><h1>{t("ملفاتك،", "Your files,")}<span>{t(" بلا تعقيد.", " without friction.")}</span></h1><p className="hero-copy">{t("حوّل، اضغط، نظّم، واستخرج ما تحتاجه من ملفاتك. معظم الأدوات تعمل داخل متصفحك، من دون رفع الملف إلى خادم.", "Convert, compress, organize and extract what you need. Most tools work right in your browser, without uploading your file.")}</p><div className="hero-actions"><Link href="/merge-pdf"><Button size="lg" className="hero-cta">{t("ابدأ بملف PDF", "Start with PDF")}<ArrowLeft size={17} className={isArabic ? "rotate-180" : ""}/></Button></Link><a href="#tools" className="hero-link">{t("تصفح كل الأدوات", "Explore all tools")}<ChevronDown size={17}/></a></div><div className="hero-trust"><span><Check size={15}/>{t("لا تسجيل مطلوب", "No sign-up")}</span><span><Check size={15}/>{t("معالجة محلية", "Local processing")}</span><span><Check size={15}/>{t("واجهة عربية", "Arabic-first")}</span></div><button onClick={() => navigate("/image-to-pdf")} className="quick-drop" aria-label={t("افتح أداة الصور إلى PDF", "Open image to PDF")}><span className="quick-drop-icon"><FileUp size={28}/></span><div><strong>{t("اسحب ملفك هنا أو اختر أداة", "Drop a file here or choose a tool")}</strong><p>{t("سنوجّهك إلى الأداة المناسبة حسب نوع الملف.", "We’ll direct you to the right tool for your file type.")}</p></div><span className="quick-drop-button">{t("ابدأ", "Start")}</span></button></div><div className="hero-stat-card"><span>{t("مصمم للخصوصية", "Privacy by design")}</span><b>{t("المعالجة داخل جهازك", "Processing on your device")}</b><div className="stat-wave"/></div></section>
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+<section id="tools" className="tools-section container"><div className="section-heading"><div><span className="section-eyebrow">{t("المكتبة", "THE LIBRARY")}</span><h2>{t("اختر ما تحتاجه الآن", "Pick what you need now")}</h2></div><p>{t("أدوات عملية مرتبة حسب نوع الملف. تظهر الأدوات التي تعمل فعليًا فقط.", "Practical tools, organized by file type. Only tools wired to real functionality are shown.")}</p></div><div className="category-rail">{categories.map(cat => <a href={`#${cat.id}`} key={cat.id}><cat.icon size={17}/>{isArabic ? cat.labelAr : cat.labelEn}</a>)}</div>{categories.map(category => { const items = toolDefinitions.filter(tool => tool.category === category.id); return <div id={category.id} className="tool-category" key={category.id}><div className="tool-category-heading"><span className={`tool-icon tool-${category.id}`}><category.icon size={20}/></span><div><h3>{isArabic ? category.labelAr : category.labelEn}</h3><p>{t("معالجة محلية حيثما تسمح التقنية", "Local processing wherever technology allows")}</p></div><span>{items.length} {t("أدوات", "tools")}</span></div><div className="tools-grid">{items.map((tool, index) => <ToolCard key={tool.slug} tool={tool} index={index}/>)}</div></div>})}</section>
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
-  );
+<section className="featured-section"><div className="container"><div className="featured-head"><div><span className="section-eyebrow"><WandSparkles size={14}/>{t("الأكثر استخدامًا", "MOST USED")}</span><h2>{t("ابدأ من هنا", "Start here")}</h2></div><Link href="/merge-pdf">{t("كل الأدوات", "All tools")}<ArrowLeft size={16} className={isArabic ? "rotate-180" : ""}/></Link></div><div className="featured-grid">{popular.map((slug, index) => { const tool = toolDefinitions.find(item => item.slug === slug)!; return <ToolCard key={slug} tool={tool} index={index}/> })}</div></div></section>
+
+<section id="privacy" className="container privacy-section"><div className="privacy-emblem"><LockKeyhole size={28}/></div><div><span className="section-eyebrow">{t("الخصوصية أولًا", "PRIVACY FIRST")}</span><h2>{t("ملفاتك لا تغادر جهازك في الأدوات المحلية.", "Your files stay on your device with local tools.")}</h2></div><p>{t("نوضح في كل صفحة أداة أين تتم المعالجة وحدودها قبل أن تبدأ. لا نخزّن محتوى ملفاتك في أدوات المعالجة المحلية.", "Every tool explains its processing location and limits before you start. Local tools do not store your file content.")}</p><Link href="/privacy"><Button variant="outline">{t("مركز الخصوصية", "Privacy center")}</Button></Link></section>
+
+<section id="faq" className="container faq-section"><div><span className="section-eyebrow">FAQ</span><h2>{t("أسئلة واضحة، إجابات واضحة.", "Clear questions. Clear answers.")}</h2></div><div className="faq-list"><details open><summary>{t("هل ترفعون ملفي إلى خادم؟", "Do you upload my file?")}</summary><p>{t("لا في الأدوات المعلّمة بمعالجة محلية؛ تعمل داخل متصفحك. نوضح أي معالجة مختلفة بوضوح قبل الاستخدام.", "Not for tools labeled Local: they run in your browser. We clearly label any different processing before use.")}</p></details><details><summary>{t("هل كل التحويلات متطابقة 100%؟", "Are all conversions 100% identical?")}</summary><p>{t("عمليات PDF والصور قوية محليًا. أما تحويل DOCX وPDF المعقد فيعمل بأفضل جهد محلي ولا نعد بتطابق التخطيط.", "PDF and image operations are strong locally. Complex DOCX/PDF conversion is best-effort locally, without a false layout-match promise.")}</p></details><details><summary>{t("هل أحتاج إلى حساب؟", "Do I need an account?")}</summary><p>{t("لا. الأدوات الأساسية متاحة من دون تسجيل دخول. الدخول مطلوب فقط لإدارة المنصة.", "No. Core tools do not require an account. Sign-in is reserved for platform administration.")}</p></details></div></section></main></PublicLayout>;
 }

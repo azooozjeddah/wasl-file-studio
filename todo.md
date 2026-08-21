@@ -1,0 +1,30 @@
+# Project TODO
+
+- [x] Establish centralized product identity, bilingual strings, light/dark theme, and responsive RTL/LTR shell.
+- [x] Create public homepage with original Wasl File Studio branding, quick uploader, categorized tools, privacy content, FAQ, and footer.
+- [x] Build reusable local file intake with drag-and-drop, magic-byte/type validation, configurable size limits, queue status, retry, reorder, cancellation, and ZIP downloads.
+- [x] Implement actual PDF merge, split, extract, delete, reorder, rotate, JPG/PNG to PDF, watermark, page numbers, metadata inspect/remove, preview, and result download.
+- [x] Implement actual PDF-to-image conversion, crop/resize approximation, compression options, flattening safeguards, local password protection, and unlock flow only for permitted unencrypted handling.
+- [x] Validate image-to-PDF and lossy PDF compression with real sample files before marking PDF functionality complete.
+- [x] Implement actual image conversion, resize, crop, rotate, flip, quality control, compression, metadata stripping, previews, batch processing, and image-to-PDF output.
+- [x] Implement document tools for TXT/HTML/RTF to PDF, TXT to DOCX, DOCX to best-effort PDF, and PDF to editable-document text extraction with transparent quality notices.
+- [x] Implement Arabic and English local OCR for images and rendered PDF pages with progress, TXT download, and generated PDF/DOCX outputs.
+- [x] Implement lazy-loaded local audio conversion, trim, merge, compression, bitrate configuration, and metadata inspection.
+- [x] Implement lazy-loaded local video conversion, audio extraction, video trim, compression, resolution/quality/FPS controls, frame capture, and metadata inspection.
+- [x] Create individual, reachable routes and functional pages only for each implemented tool.
+- [x] Add explicit client-side privacy status, dedicated Privacy Center, Terms, About, Contact, and supported-format/limits information.
+- [x] Add schema and protected admin capability for tool catalog, content, site configuration, advertising placeholders, analytics events, and non-sensitive error logs.
+- [x] Build a protected admin dashboard using the template DashboardLayout with analytics, tool management, content controls, SEO settings, privacy settings, ad slots, and future plan scaffolding.
+- [x] Add anonymous, content-free operation analytics and failure reporting flows.
+- [x] Add SEO metadata, canonical URLs, OG metadata, tool-specific FAQ data, sitemap, robots.txt, structured data, and internal linking.
+- [x] Add lazy loading, dynamic imports, web workers where appropriate, and robust user-visible error handling.
+- [x] Add automated tests for file validation, core conversion helpers, output packaging, and admin authorization.
+- [ ] Validate key tool flows using sample PDF, image, document, audio, video, and Arabic/English OCR fixtures; verify desktop and mobile interface states.
+- [x] Review all TODO completion statuses before creating the first project checkpoint and delivering the project.
+- [x] Implement true upload-queue reorder and cancellation, and apply the database-configured local file-size limit in the workspace.
+- [x] Complete and verify OCR exports for TXT, PDF, and DOCX with Arabic and English input paths.
+- [x] Add a dedicated Terms page/route and link it from the public footer.
+- [x] Add tool-level FAQ structured data and page-specific SEO metadata for individual tool routes.
+- [x] Add tests for file validation, ZIP packaging, and protected admin authorization.
+- [x] Implement real cancellation hooks for long-running OCR and media processing, with safe result suppression for other local engines.
+- [x] Prevent PDF compression from delivering a larger output when local rasterization does not reduce size.
