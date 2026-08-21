@@ -55,4 +55,12 @@
 - [x] Capture explicit authenticated admin control and empty/feedback evidence from individual dashboard tabs.
 - [x] Add document-engine output-contract tests for PDF-producing or PDF-extraction conversion paths.
 - [x] Extract and test actual workspace batch-result eligibility and inline-preview decision logic.
-- [ ] Obtain text-level authenticated evidence for admin tools and business controls plus an empty or feedback state in the managed preview.
+- [x] Obtain text-level authenticated evidence for admin tools and business controls plus an empty or feedback state in the managed preview.
+- [x] Design a development-only first-admin setup that cannot grant privileges in production or overwrite an existing administrator.
+- [x] Implement a controlled first-admin setup and development login route with explicit local-only safeguards.
+- [x] Add tests for the first-admin guard, one-time setup behavior, and development authentication restriction.
+- [x] Sign in through the development route and validate real dashboard operations, tools, business, and protected feedback states.
+- [x] Correct development bootstrap detection so an existing OAuth owner does not block a separate development-only admin session.
+- [x] Verify a development admin can be created despite an existing OAuth admin, while production remains blocked by policy.
+- [x] Add route-level tests for creation/login of the development admin, production rejection, existing-account rejection, and session-cookie issuance.
+- [x] Revisit the first-admin screen after bootstrap and verify it now provides only the development-login state.
