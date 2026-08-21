@@ -95,4 +95,14 @@
 - [x] Exercise post-restart authenticated processing status and cancellation authorization paths.
 - [x] Assert a serialized production-mode tRPC error response excludes stack data.
 - [x] Fix the mobile Admin Users layout so protected role and plan controls remain within the viewport without horizontal clipping.
-- [x] Diagnose the production build termination and complete a resource-safe production build verification.
+- [ ] Diagnose the production build termination and complete a resource-safe production build verification.
+- [ ] Run a production end-to-end acceptance matrix covering public navigation, tools, outputs, validation, privacy, security, admin, hybrid APIs, SEO, responsive layouts, and performance.
+- [ ] Record artifacts and exact outcomes for every tool family, including output readability, ZIP contents, rejection messages, and browser console/network behavior.
+- [ ] Fix all reproducible production defects found during end-to-end acceptance and retest each affected flow.
+- [ ] Publish a complete production acceptance report with tested, passed, failed, fixed, local, server-ready, and remaining technical-limit counts.
+- [ ] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
+- [ ] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
+- [ ] Fix mobile tool-category navigation so OCR, audio, and video tabs remain reachable within the viewport without horizontal clipping.
+- [ ] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport.
+- [ ] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
+- [ ] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
