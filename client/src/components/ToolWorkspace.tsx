@@ -5,7 +5,7 @@ import { downloadBlob, downloadZip, formatBytes, LocalFileResult, resultPreviewK
 import { transformImages } from "@/lib/image-engine";
 import { extractOcr } from "@/lib/ocr-engine";
 import { cancelMediaProcessing, mediaInfo, processMedia } from "@/lib/media-engine";
-import { alterPdf, compressPdf, countPdfFormFields, imagesToPdf, mergePdfs, pdfToImages, repairPdf, securePdf } from "@/lib/pdf-engine";
+import { alterPdf, compressPdf, countPdfFormFields, imagesToPdf, mergePdfs, pdfToImages, redactPdf, repairPdf, securePdf } from "@/lib/pdf-engine";
 import { trpc } from "@/lib/trpc";
 import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
@@ -51,6 +51,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     const report = (amount: number) => setProgress(Math.max(4, Math.round(amount * 100)));
     if (tool.slug === "merge-pdf") return [await mergePdfs(files, report)];
     if (tool.slug === "repair-pdf") return [await repairPdf(files[0], report)];
+    if (tool.slug === "redact-pdf") return [await redactPdf(files[0], { x: options.cropX, y: options.cropY, width: options.cropWidth, height: options.cropHeight }, report)];
     if (tool.slug === "image-to-pdf") return [await imagesToPdf(files, report)];
     if (tool.slug === "compress-pdf") return [await compressPdf(files[0], options.quality, report)];
     if (tool.slug === "protect-pdf") return [await securePdf(files[0], "protect", options.password, report)];
@@ -88,6 +89,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     {tool.settings.includes("pageNumbers") && <label className="setting-field"><span>{t("موضع الترقيم", "Number position")}</span><select value={options.position} onChange={event => setOption("position", event.target.value as "top" | "bottom")}><option value="bottom">{t("أسفل الصفحة", "Bottom")}</option><option value="top">{t("أعلى الصفحة", "Top")}</option></select></label>}
     {tool.settings.includes("quality") && <label className="setting-field"><span>{t("الجودة", "Quality")} <b>{Math.round(options.quality * 100)}%</b></span><input type="range" min="45" max="100" value={Math.round(options.quality * 100)} onChange={event => setOption("quality", Number(event.target.value) / 100)}/><small>{isImage ? t("الجودة الأقل عادة تقلل الحجم أكثر.", "Lower quality usually reduces size more.") : t("قد لا يتغير حجم بعض الملفات لأن النتيجة تعتمد على محتوى الأصل.", "Some files may not shrink because results depend on their original content.")}</small></label>}
     {tool.settings.includes("crop") && <div className="setting-grid">{numberField("X", "cropX")}{numberField("Y", "cropY")}{numberField(t("العرض", "Width"), "cropWidth", 1)}{numberField(t("الارتفاع", "Height"), "cropHeight", 1)}</div>}
+    {tool.settings.includes("redaction") && <><div className="setting-grid">{numberField("X", "cropX")}{numberField("Y", "cropY")}{numberField(t("العرض", "Width"), "cropWidth", 1)}{numberField(t("الارتفاع", "Height"), "cropHeight", 1)}</div><small className="block text-xs text-muted-foreground">{t("الإحداثيات بالنقطة من أسفل يسار الصفحة. تُعاد الصفحة كرستر بعد الحجب، لذلك لا يبقى النص أو الرابط الأصلي تحت المنطقة المنقّحة؛ وقد تقل قابلية البحث والجودة قليلًا.", "Coordinates are points from the page’s bottom-left. The page is rasterized after masking, so original text or links do not remain beneath the redaction; searchability and quality may be reduced.")}</small></>}
     {tool.settings.includes("blur") && <><div className="setting-grid">{numberField("X", "blurX")}{numberField("Y", "blurY")}{numberField(t("العرض", "Width"), "blurWidth", 1)}{numberField(t("الارتفاع", "Height"), "blurHeight", 1)}{numberField(t("شدة التمويه", "Blur strength"), "blurRadius", 1)}</div><small className="block text-xs text-muted-foreground">{t("حدّد المنطقة الحساسة بإحداثيات البكسل. هذه أداة يدوية؛ لا تدّعي اكتشاف الوجوه أو لوحات المركبات تلقائيًا.", "Set the sensitive area in pixels. This is a manual tool; it does not claim automatic face or license-plate detection.")}</small></>}
     {tool.settings.includes("dimensions") && <div className="setting-grid">{numberField(t(isImage ? "العرض بالبكسل" : "العرض بالنقطة", isImage ? "Width (px)" : "Width (pt)"), "width", 1)}{numberField(t(isImage ? "الارتفاع بالبكسل" : "الارتفاع بالنقطة", isImage ? "Height (px)" : "Height (pt)"), "height", 1)}</div>}
     {tool.settings.includes("metadata") && <label className="setting-field"><span>{t("بيانات وصف الملف", "Document metadata")}</span><select value={options.metadataMode} onChange={event => setOption("metadataMode", event.target.value as "view" | "clear")}><option value="view">{t("عرض البيانات", "View metadata")}</option><option value="clear">{t("إزالة البيانات", "Remove metadata")}</option></select></label>}

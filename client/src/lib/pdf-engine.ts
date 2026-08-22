@@ -33,6 +33,34 @@ export async function repairPdf(file: File, report?: (fraction: number) => void)
   return result(source, file, "re-saved");
 }
 
+/**
+ * Permanently redacts one rectangular region from every page by rasterizing the
+ * visible page, applying the mask, and rebuilding a new image-backed PDF.
+ * This intentionally removes searchable/selectable source text from the output.
+ */
+export async function redactPdf(file: File, area: { x: number; y: number; width: number; height: number }, report?: (fraction: number) => void): Promise<LocalFileResult> {
+  if (area.width <= 0 || area.height <= 0) throw new Error("أدخل عرضًا وارتفاعًا صالحين لمنطقة التنقيح.");
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
+  const input = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const output = await PDFDocument.create();
+  const scale = 1.5;
+  for (let index = 1; index <= input.numPages; index += 1) {
+    const page = await input.getPage(index); const viewport = page.getViewport({ scale }); const base = page.getViewport({ scale: 1 });
+    const canvas = document.createElement("canvas"); canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
+    const context = canvas.getContext("2d"); if (!context) throw new Error("تعذر تجهيز سطح التنقيح المحلي.");
+    await page.render({ canvasContext: context, viewport }).promise;
+    const x = Math.max(0, Math.min(canvas.width, area.x * scale)); const width = Math.max(0, Math.min(canvas.width - x, area.width * scale));
+    const y = Math.max(0, Math.min(canvas.height, canvas.height - (area.y + area.height) * scale)); const height = Math.max(0, Math.min(canvas.height - y, area.height * scale));
+    context.fillStyle = "#000000"; context.fillRect(x, y, width, height);
+    const jpeg = await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("تعذر إنشاء صفحة التنقيح.")), "image/jpeg", .92));
+    const image = await output.embedJpg(new Uint8Array(await jpeg.arrayBuffer())); const outPage = output.addPage([base.width, base.height]);
+    outPage.drawImage(image, { x: 0, y: 0, width: base.width, height: base.height }); report?.(index / input.numPages);
+  }
+  const bytes = new Uint8Array(await output.save({ useObjectStreams: true })).slice();
+  return { name: outputName(file.name, "redacted", "pdf"), blob: new Blob([bytes], { type: "application/pdf" }), mime: "application/pdf", label: "Permanent rasterized redaction", details: { redaction: "rasterized-rebuild", searchableTextRemoved: true } };
+}
+
 export async function alterPdf(slug: string, file: File, options: PdfOptions, report?: (fraction: number) => void): Promise<LocalFileResult[]> {
   const source = await openPdf(file); const pageCount = source.getPageCount(); const selected = parsePageList(options.pages, pageCount);
   if (["split-pdf", "extract-pdf-pages"].includes(slug)) {
