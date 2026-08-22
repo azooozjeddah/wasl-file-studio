@@ -1,13 +1,10 @@
 import { LocalFileResult, outputName } from "./file-utils";
-import ffmpegWorkerURL from "@ffmpeg/ffmpeg/worker?worker&url";
-
-const ffmpegCoreURL = "/__wasl__/ffmpeg/ffmpeg-core.js?v=0.12.10";
-const ffmpegWasmURL = "/__wasl__/ffmpeg/ffmpeg-core.wasm?v=0.12.10";
+import LocalFfmpegWorker from "./ffmpeg-local-worker?worker";
 
 type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };
 let ffmpegInstance: any;
-export const FFMPEG_CORE_BASE = "vite-local-assets";
+export const FFMPEG_CORE_BASE = "vite-local-esm-worker";
 export const FFMPEG_LOAD_TIMEOUT_MS = 15_000;
 
 export function cancelMediaProcessing() {
@@ -18,13 +15,54 @@ export function cancelMediaProcessing() {
 
 async function getFfmpeg(report?: Progress) {
   if (ffmpegInstance) return ffmpegInstance;
-  const [{ FFmpeg }, { fetchFile }] = await Promise.all([import("@ffmpeg/ffmpeg"), import("@ffmpeg/util")]);
-  const ffmpeg = new FFmpeg();
-  ffmpeg.on("progress", ({ progress }: { progress: number }) => report?.(Math.max(.02, Math.min(.98, progress))));
+  const worker = new LocalFfmpegWorker();
+  let requestId = 0;
+  const pending = new Map<number, { resolve: (value: any) => void; reject: (reason?: unknown) => void }>();
+  const ffmpeg = {
+    call(type: "load" | "writeFile" | "exec" | "readFile" | "deleteFile", data?: unknown, transfer: Transferable[] = []) {
+      const id = ++requestId;
+      return new Promise<any>((resolve, reject) => {
+        pending.set(id, { resolve, reject });
+        worker.postMessage({ id, type, data }, transfer);
+      });
+    },
+    writeFile(path: string, bytes: Uint8Array) {
+      return this.call("writeFile", { path, bytes }, [bytes.buffer]);
+    },
+    exec(args: string[]) {
+      return this.call("exec", { args });
+    },
+    readFile(path: string) {
+      return this.call("readFile", { path });
+    },
+    deleteFile(path: string) {
+      return this.call("deleteFile", { path });
+    },
+    terminate() {
+      worker.terminate();
+      pending.forEach(({ reject }) => reject(new Error("تم إلغاء معالجة الوسائط.")));
+      pending.clear();
+    },
+  };
+  worker.onmessage = ({ data }) => {
+    if (data.type === "progress") {
+      report?.(Math.max(.02, Math.min(.98, data.data?.progress ?? 0)));
+      return;
+    }
+    if (data.type === "log") return;
+    const request = pending.get(data.id);
+    if (!request) return;
+    pending.delete(data.id);
+    data.ok ? request.resolve(data.data) : request.reject(new Error(data.error || "تعذر تشغيل محرك الوسائط المحلي."));
+  };
+  worker.onerror = () => {
+    pending.forEach(({ reject }) => reject(new Error("تعذر تشغيل عامل الوسائط المحلي.")));
+    pending.clear();
+  };
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     await Promise.race([
-      ffmpeg.load({ coreURL: ffmpegCoreURL, wasmURL: ffmpegWasmURL, classWorkerURL: ffmpegWorkerURL }),
+      ffmpeg.call("load"),
       new Promise<never>((_, reject) => {
         timer = setTimeout(() => reject(new Error("انتهت مهلة تحميل محرك الوسائط المحلي. جرّب متصفحًا حديثًا أو أعد المحاولة.")), FFMPEG_LOAD_TIMEOUT_MS);
       }),
@@ -36,7 +74,7 @@ async function getFfmpeg(report?: Progress) {
   } finally {
     if (timer) clearTimeout(timer);
   }
-  ffmpegInstance = { ffmpeg, fetchFile }; return ffmpegInstance;
+  ffmpegInstance = { ffmpeg, fetchFile: async (file: File) => new Uint8Array(await file.arrayBuffer()) }; return ffmpegInstance;
 }
 
 const outputMime = (extension: string) => ({ mp3: "audio/mpeg", wav: "audio/wav", webm: "video/webm", mp4: "video/mp4", png: "image/png" } as Record<string, string>)[extension] || "application/octet-stream";

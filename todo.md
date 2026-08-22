@@ -122,6 +122,7 @@
 - [x] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
 - [ ] Replace the Vite-resolved UMD FFmpeg Core asset with the ESM Core asset required by the module worker, then re-test WAV conversion in production.
 - [ ] Serve the authentic installed FFmpeg ESM core and WASM through same-origin cacheable application routes, then load those routes from the module worker.
+- [ ] Replace the opaque third-party FFmpeg worker with a Vite-built same-origin module worker that imports the ESM core directly and implements the required local RPC operations.
 - [x] Fix the Vite build failure caused by the non-exported deep `@ffmpeg/core` ESM import, then rebuild before publishing any media-loader change.
 - [x] Show explicit compatibility guidance on experimental media tool pages so their local-processing copy never overstates production readiness.
 - [x] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
