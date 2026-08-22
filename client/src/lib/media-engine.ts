@@ -15,7 +15,7 @@ export function cancelMediaProcessing() {
 
 async function getFfmpeg(report?: Progress) {
   if (ffmpegInstance) return ffmpegInstance;
-  const worker = new Worker(ffmpegWorkerURL, { type: "module" });
+  const worker = new Worker(ffmpegWorkerURL);
   let requestId = 0;
   const pending = new Map<number, { resolve: (value: any) => void; reject: (reason?: unknown) => void }>();
   const ffmpeg = {

@@ -4,18 +4,21 @@ import path from "node:path";
 export const FFMPEG_CORE_VERSION = "0.12.10";
 export const FFMPEG_CORE_ROUTE = `/__wasl__/ffmpeg/ffmpeg-core.js?v=${FFMPEG_CORE_VERSION}`;
 export const FFMPEG_WASM_ROUTE = `/__wasl__/ffmpeg/ffmpeg-core.wasm?v=${FFMPEG_CORE_VERSION}`;
+export const FFMPEG_UMD_CORE_ROUTE = `/__wasl__/ffmpeg/ffmpeg-core.umd.js?v=${FFMPEG_CORE_VERSION}`;
 export const FFMPEG_WORKER_ROUTE = `/__wasl__/ffmpeg/worker.js?v=${FFMPEG_CORE_VERSION}`;
 
 const ffmpegEsmDirectory = path.resolve(process.cwd(), "node_modules", "@ffmpeg", "core", "dist", "esm");
+const ffmpegUmdDirectory = path.resolve(process.cwd(), "node_modules", "@ffmpeg", "core", "dist", "umd");
 const corePath = path.join(ffmpegEsmDirectory, "ffmpeg-core.js");
 const wasmPath = path.join(ffmpegEsmDirectory, "ffmpeg-core.wasm");
-const workerScript = `import createFFmpegCore from "${FFMPEG_CORE_ROUTE}";
+const umdCorePath = path.join(ffmpegUmdDirectory, "ffmpeg-core.js");
+const workerScript = `importScripts("${FFMPEG_UMD_CORE_ROUTE}");
 const wasmURL = "${FFMPEG_WASM_ROUTE}";
 let core;
 const reply = (id, ok, data, transfer = []) => self.postMessage(ok ? { id, ok, data } : { id, ok, error: data }, transfer);
 async function loadCore() {
   if (core) return;
-  core = await createFFmpegCore({ mainScriptUrlOrBlob: self.location.href + "#" + btoa(JSON.stringify({ wasmURL })) });
+  core = await self.createFFmpegCore({ mainScriptUrlOrBlob: self.location.href + "#" + btoa(JSON.stringify({ wasmURL })) });
   core.setLogger((data) => self.postMessage({ type: "log", data }));
   core.setProgress((data) => self.postMessage({ type: "progress", data }));
 }
@@ -39,6 +42,10 @@ export function registerFfmpegAssetRoutes(app: Pick<Express, "get">) {
 
   app.get("/__wasl__/ffmpeg/ffmpeg-core.wasm", (_request, response) => {
     response.type("application/wasm").set("Cache-Control", "public, max-age=3600").sendFile(wasmPath);
+  });
+
+  app.get("/__wasl__/ffmpeg/ffmpeg-core.umd.js", (_request, response) => {
+    response.type("application/javascript").set("Cache-Control", "public, max-age=3600").sendFile(umdCorePath);
   });
 
   app.get("/__wasl__/ffmpeg/worker.js", (_request, response) => {

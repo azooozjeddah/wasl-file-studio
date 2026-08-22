@@ -8,7 +8,7 @@ describe("FFmpeg local loader configuration", () => {
 
     expect(source).toContain('"/__wasl__/ffmpeg/worker.js?v=0.12.10"');
     expect(source).not.toContain("https://unpkg.com/@ffmpeg");
-    expect(source).toContain('new Worker(ffmpegWorkerURL, { type: "module" })');
+    expect(source).toContain("new Worker(ffmpegWorkerURL)");
     expect(source).toContain("FFMPEG_LOAD_TIMEOUT_MS = 15_000");
     expect(source).toContain("Promise.race");
   });
