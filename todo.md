@@ -119,6 +119,8 @@
 - [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
 - [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
 - [ ] Fix the reproducible zero-byte MP4 produced by WebM video trimming, then verify the downloaded output is playable and non-empty.
+- [x] Provide a current production-status report and an evidence-based media decision plan before any further FFmpeg testing or implementation.
+- [x] Create and deliver a structured Arabic production-status report based solely on recorded test evidence.
 - [x] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
 - [x] Replace the generic media `FS error` for video files without an audio track with a clear local validation message.
 - [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
