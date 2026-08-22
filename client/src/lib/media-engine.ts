@@ -1,6 +1,6 @@
 import { LocalFileResult, outputName } from "./file-utils";
-import LocalFfmpegWorker from "./ffmpeg-local-worker?worker";
 
+const ffmpegWorkerURL = "/__wasl__/ffmpeg/worker.js?v=0.12.10";
 type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };
 let ffmpegInstance: any;
@@ -15,7 +15,7 @@ export function cancelMediaProcessing() {
 
 async function getFfmpeg(report?: Progress) {
   if (ffmpegInstance) return ffmpegInstance;
-  const worker = new LocalFfmpegWorker();
+  const worker = new Worker(ffmpegWorkerURL, { type: "module" });
   let requestId = 0;
   const pending = new Map<number, { resolve: (value: any) => void; reject: (reason?: unknown) => void }>();
   const ffmpeg = {
