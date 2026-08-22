@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { AudioLines, Barcode, FileCheck2, FileImage, FileText, FileType2, PenLine, QrCode, ScanLine, ScanText, Video } from "lucide-react";
+import { AudioLines, Barcode, FileCheck2, FileImage, FileSpreadsheet, FileText, FileType2, PenLine, QrCode, ScanLine, ScanText, Video } from "lucide-react";
 
-export type ToolCategory = "pdf" | "image" | "document" | "ocr" | "code" | "sign" | "utility" | "audio" | "video";
+export type ToolCategory = "pdf" | "image" | "document" | "spreadsheet" | "ocr" | "code" | "sign" | "utility" | "audio" | "video";
 export type ToolDefinition = {
   slug: string; category: ToolCategory; icon: LucideIcon; labelAr: string; labelEn: string;
   descriptionAr: string; descriptionEn: string; formats: string[]; accepts: string[];
@@ -9,7 +9,7 @@ export type ToolDefinition = {
   multi?: boolean; local: boolean; processingMode?: "local" | "server" | "hybrid"; experimental?: boolean; readiness?: "ready" | "improving" | "experimental";
 };
 
-const pdf = FileType2, image = FileImage, document = FileText, ocr = ScanText, code = QrCode, sign = PenLine, utility = FileCheck2, audio = AudioLines, video = Video;
+const pdf = FileType2, image = FileImage, document = FileText, spreadsheet = FileSpreadsheet, ocr = ScanText, code = QrCode, sign = PenLine, utility = FileCheck2, audio = AudioLines, video = Video;
 export const toolDefinitions: ToolDefinition[] = [
   { slug: "merge-pdf", category: "pdf", icon: pdf, labelAr: "دمج PDF", labelEn: "Merge PDF", descriptionAr: "اجمع ملفات PDF بترتيبك داخل جهازك.", descriptionEn: "Combine PDF files in your preferred order, locally.", formats: ["PDF"], accepts: ["application/pdf"], settings: [], multi: true, local: true },
   { slug: "split-pdf", category: "pdf", icon: pdf, labelAr: "تقسيم PDF", labelEn: "Split PDF", descriptionAr: "قسّم الملف إلى صفحات أو نطاقات مستقلة.", descriptionEn: "Split a PDF into individual pages or ranges.", formats: ["PDF"], accepts: ["application/pdf"], settings: ["pages"], local: true },
@@ -41,6 +41,10 @@ export const toolDefinitions: ToolDefinition[] = [
   { slug: "rtf-to-pdf", category: "document", icon: document, labelAr: "RTF إلى PDF", labelEn: "RTF to PDF", descriptionAr: "حوّل نص RTF إلى PDF بأفضل نتيجة محلية.", descriptionEn: "Convert RTF text into a best-effort local PDF.", formats: ["RTF", "PDF"], accepts: ["application/rtf", ".rtf"], settings: [], local: true, experimental: true },
   { slug: "word-to-pdf", category: "document", icon: document, labelAr: "Word إلى PDF", labelEn: "Word to PDF", descriptionAr: "اعرض DOCX محليًا ثم صدّره إلى PDF بصريًا مع الصفحات والعناوين قدر الإمكان.", descriptionEn: "Render DOCX locally and export a visual PDF with pages and headings where supported.", formats: ["DOCX", "PDF"], accepts: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx"], settings: [], local: true, processingMode: "hybrid", readiness: "improving" },
   { slug: "pdf-to-word", category: "document", icon: document, labelAr: "PDF إلى Word", labelEn: "PDF to Word", descriptionAr: "استخرج النص إلى DOCX قابل للتحرير مع فصل الصفحات؛ استخدم OCR للملفات المصورة.", descriptionEn: "Extract text to editable DOCX with page separation; use OCR for scanned PDFs.", formats: ["PDF", "DOCX"], accepts: ["application/pdf"], settings: [], local: true, processingMode: "hybrid", readiness: "improving" },
+  { slug: "xlsx-to-pdf", category: "spreadsheet", icon: spreadsheet, labelAr: "Excel إلى PDF", labelEn: "Excel to PDF", descriptionAr: "حوّل أوراق Excel المختارة إلى PDF جدولي محليًا.", descriptionEn: "Turn selected Excel sheets into a local table PDF.", formats: ["XLSX", "XLS", "PDF"], accepts: [".xlsx", ".xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"], settings: [], multi: true, local: true },
+  { slug: "xlsx-to-csv", category: "spreadsheet", icon: spreadsheet, labelAr: "Excel إلى CSV", labelEn: "Excel to CSV", descriptionAr: "صدّر الأوراق المختارة من Excel كملفات CSV محلية.", descriptionEn: "Export selected Excel sheets as local CSV files.", formats: ["XLSX", "XLS", "CSV"], accepts: [".xlsx", ".xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"], settings: [], multi: true, local: true },
+  { slug: "csv-to-xlsx", category: "spreadsheet", icon: spreadsheet, labelAr: "CSV إلى Excel", labelEn: "CSV to Excel", descriptionAr: "حوّل ملف CSV أو مجموعة ملفات إلى مصنف Excel محلي.", descriptionEn: "Turn one or more CSV files into a local Excel workbook.", formats: ["CSV", "XLSX"], accepts: [".csv", "text/csv"], settings: [], multi: true, local: true },
+  { slug: "merge-excel", category: "spreadsheet", icon: spreadsheet, labelAr: "دمج ملفات Excel", labelEn: "Merge Excel files", descriptionAr: "ادمج الأوراق المختارة من عدة ملفات Excel في مصنف واحد.", descriptionEn: "Combine selected sheets from multiple Excel files into one workbook.", formats: ["XLSX", "XLS"], accepts: [".xlsx", ".xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"], settings: [], multi: true, local: true },
   { slug: "ocr", category: "ocr", icon: ocr, labelAr: "استخراج النص OCR", labelEn: "OCR text extraction", descriptionAr: "استخرج العربية والإنجليزية من الصور أو صفحات PDF المصورة.", descriptionEn: "Extract Arabic and English text from images or scanned PDFs.", formats: ["JPG", "PNG", "PDF", "TXT", "DOCX"], accepts: ["image/*", "application/pdf"], settings: ["language"], multi: true, local: true, processingMode: "hybrid", readiness: "improving" },
   { slug: "qr-generator", category: "code", icon: QrCode, labelAr: "إنشاء QR Code", labelEn: "QR Code generator", descriptionAr: "أنشئ QR للرابط والنص والاتصال وWi-Fi محليًا.", descriptionEn: "Create local QR codes for links, text, contact, and Wi-Fi.", formats: ["PNG", "SVG", "PDF"], accepts: [], settings: [], local: true },
   { slug: "qr-reader", category: "code", icon: ScanLine, labelAr: "قراءة QR Code", labelEn: "QR Code reader", descriptionAr: "اقرأ QR من صورة أو كاميرا داخل المتصفح.", descriptionEn: "Read QR from an image or camera in your browser.", formats: ["JPG", "PNG", "WebP", "TXT"], accepts: ["image/*"], settings: [], local: true },
@@ -64,6 +68,7 @@ export const categories: Array<{ id: ToolCategory; labelAr: string; labelEn: str
   { id: "pdf", labelAr: "أدوات PDF", labelEn: "PDF tools", icon: pdf, color: "violet" },
   { id: "image", labelAr: "أدوات الصور", labelEn: "Image tools", icon: image, color: "amber" },
   { id: "document", labelAr: "المستندات", labelEn: "Documents", icon: document, color: "blue" },
+  { id: "spreadsheet", labelAr: "Excel والجداول", labelEn: "Excel & spreadsheets", icon: spreadsheet, color: "emerald" },
   { id: "ocr", labelAr: "استخراج النص", labelEn: "OCR", icon: ocr, color: "emerald" },
   { id: "code", labelAr: "QR وBarcode", labelEn: "QR & Barcode", icon: code, color: "violet" },
   { id: "sign", labelAr: "توقيع PDF", labelEn: "Sign PDF", icon: sign, color: "rose" },

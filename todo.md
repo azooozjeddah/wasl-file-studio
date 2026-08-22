@@ -155,3 +155,8 @@
 - [x] Publish a concise Arabic mobile acceptance report covering passes, failures, improvements, release blockers, and the exact physical-device availability limitation.
 - [x] Investigate and fix the reported merge-PDF multi-file picker issue where selecting a second file replaces the first, then re-test once on the connected user browser; the user confirmed that two files now remain in the queue.
 - [x] Fix the Arabic multi-file counter so iPhone/Safari never displays mixed-language text such as "2 ملفs", then re-test once; iPhone/Safari confirmed "ملفان" after publication.
+- [x] Analyze the existing Wasl tool architecture and document the local-first Excel implementation approach without changing PDF or FFmpeg paths.
+- [x] Add local XLSX-to-PDF, XLSX-to-CSV, CSV-to-XLSX, and Excel-merge tools with Arabic routes, privacy disclosures, and output downloads.
+- [x] Add workbook-sheet selection, file preview, and batch processing controls for Excel workflows.
+- [x] Add focused unit tests and necessary browser checks for the Excel local-processing flows, including a mobile-safe interface review; TypeScript, 72 Vitest checks, and 390px interface review passed, while physical iPhone/Safari acceptance remains unexecuted.
+- [x] Publish an Arabic implementation summary with delivered Excel features and remaining compatibility limits, then stop.

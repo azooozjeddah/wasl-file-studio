@@ -1,0 +1,1 @@
+ALTER TABLE `tool_catalog` MODIFY COLUMN `category` enum('pdf','image','document','spreadsheet','ocr','code','sign','utility','audio','video') NOT NULL;

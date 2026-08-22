@@ -17,21 +17,23 @@ export async function buildZip(results: LocalFileResult[]) { const zip = new JSZ
 export async function downloadZip(results: LocalFileResult[], archiveName = "wasl-results.zip") { downloadBlob(await buildZip(results), archiveName); }
 export async function dataUrl(file: Blob) { return new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(reader.error); reader.onload = () => resolve(String(reader.result)); reader.readAsDataURL(file); }); }
 
-type MagicType = "pdf" | "jpeg" | "png" | "webp" | "gif" | "mp3" | "wav" | "ogg" | "mp4" | "webm" | "text" | "unknown";
+type MagicType = "pdf" | "jpeg" | "png" | "webp" | "gif" | "mp3" | "wav" | "ogg" | "mp4" | "webm" | "zip" | "ole" | "text" | "unknown";
 export async function sniffMagic(file: File): Promise<MagicType> {
   const header = new Uint8Array(await file.slice(0, 32).arrayBuffer()); const text = new TextDecoder().decode(header);
   if (text.startsWith("%PDF-")) return "pdf"; if (header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff) return "jpeg";
   if (header[0] === 0x89 && text.slice(1, 4) === "PNG") return "png"; if (text.slice(0, 4) === "RIFF" && text.slice(8, 12) === "WEBP") return "webp";
   if (text.slice(0, 3) === "ID3" || (header[0] === 0xff && (header[1] & 0xe0) === 0xe0)) return "mp3"; if (text.slice(0, 4) === "RIFF" && text.slice(8, 12) === "WAVE") return "wav";
   if (text.slice(0, 4) === "OggS") return "ogg"; if (text.slice(4, 8) === "ftyp") return "mp4"; if (header[0] === 0x1a && header[1] === 0x45 && header[2] === 0xdf && header[3] === 0xa3) return "webm";
+  if (header[0] === 0x50 && header[1] === 0x4b && header[2] === 0x03 && header[3] === 0x04) return "zip"; if (header[0] === 0xd0 && header[1] === 0xcf && header[2] === 0x11 && header[3] === 0xe0) return "ole";
   if (file.type.startsWith("text/") || ["txt", "html", "htm", "rtf"].includes(extensionOf(file.name))) return "text";
   return "unknown";
 }
 
-export async function validateLocalFile(file: File, family: "pdf" | "image" | "document" | "ocr" | "audio" | "video", limitMb = 100) {
+export async function validateLocalFile(file: File, family: "pdf" | "image" | "document" | "ocr" | "audio" | "video" | "spreadsheet", limitMb = 100) {
   if (file.size === 0) throw new Error("الملف فارغ ولا يمكن معالجته."); if (file.size > limitMb * 1024 * 1024) throw new Error(`الحد الأقصى لهذه الأداة هو ${limitMb} MB.`);
   const magic = await sniffMagic(file);
-  const allowed: Record<typeof family, MagicType[]> = { pdf: ["pdf"], image: ["jpeg", "png", "webp"], document: ["text", "unknown"], ocr: ["pdf", "jpeg", "png", "webp"], audio: ["mp3", "wav", "ogg", "unknown"], video: ["mp4", "webm", "unknown"] };
+  const allowed: Record<typeof family, MagicType[]> = { pdf: ["pdf"], image: ["jpeg", "png", "webp"], document: ["text", "unknown"], ocr: ["pdf", "jpeg", "png", "webp"], audio: ["mp3", "wav", "ogg", "unknown"], video: ["mp4", "webm", "unknown"], spreadsheet: ["zip", "ole", "text"] };
+  if (family === "spreadsheet" && !["xlsx", "xls", "csv"].includes(extensionOf(file.name))) throw new Error("تدعم أداة Excel ملفات XLSX وXLS وCSV فقط.");
   if (!allowed[family].includes(magic)) throw new Error("نوع الملف الفعلي غير مدعوم لهذه الأداة. تحقق من الملف ثم أعد المحاولة.");
   return magic;
 }

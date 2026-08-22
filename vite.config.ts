@@ -167,6 +167,16 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/xlsx")) return "excel-engine";
+          if (id.includes("node_modules/pdfjs-dist")) return "pdf-engine";
+          if (id.includes("node_modules/tesseract.js")) return "ocr-engine";
+          if (id.includes("node_modules/@ffmpeg/")) return "media-engine";
+        },
+      },
+    },
   },
   server: {
     host: true,
