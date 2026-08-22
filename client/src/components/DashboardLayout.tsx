@@ -19,7 +19,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { LayoutDashboard, LogOut, PanelLeft, Settings, Users, Wrench } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -28,10 +27,11 @@ import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
 const menuItems = [
-  { key: "dashboard", icon: LayoutDashboard, label: "لوحة وَصل", path: "/admin" },
-  { key: "tools", icon: Wrench, label: "إدارة الأدوات", path: "/admin?tab=tools" },
-  { key: "business", icon: Settings, label: "إعدادات المنصة", path: "/admin?tab=business" },
-  { key: "users", icon: Users, label: "المستخدمون", path: "/admin/users" },
+  { key: "dashboard", icon: LayoutDashboard, label: "نظرة عامة", path: "/admin" },
+  { key: "users", icon: Users, label: "المستخدمون والأدوار", path: "/admin/users" },
+  { key: "tools", icon: Wrench, label: "الأدوات", path: "/admin?tab=tools" },
+  { key: "operations", icon: LayoutDashboard, label: "العمليات والتنبيهات", path: "/admin?tab=operations" },
+  { key: "settings", icon: Settings, label: "الإعدادات", path: "/admin?tab=business" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -58,25 +58,19 @@ export default function DashboardLayout({
     return <DashboardLayoutSkeleton />
   }
 
-  if (!user) {
+  if (!user || user.role !== "admin") {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
           <div className="flex flex-col items-center gap-6">
             <h1 className="text-2xl font-semibold tracking-tight text-center">
-              Sign in to continue
+              دخول الإدارة
             </h1>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
+              تحتاج إلى حساب وَصل يملك صلاحية المدير لمتابعة إدارة المنصة.
             </p>
           </div>
-          <Button
-            onClick={() => startLogin()}
-            size="lg"
-            className="w-full shadow-lg hover:shadow-xl transition-all"
-          >
-            Sign in
-          </Button>
+          <Button onClick={() => window.location.href = "/login"} size="lg" className="w-full shadow-lg hover:shadow-xl transition-all">تسجيل الدخول إلى وَصل</Button>
         </div>
       </div>
     );
@@ -226,7 +220,7 @@ function DashboardLayoutContent({
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
+                  <span>تسجيل الخروج</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

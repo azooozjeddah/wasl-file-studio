@@ -178,3 +178,8 @@
 - [x] Add an optional locally processed QR-center logo with a constrained size control and scan-safety warning.
 - [x] Remove all Wasl/title text from QR PNG, SVG, and PDF exports so every export contains only the code graphic.
 - [x] Test QR generation and PNG/SVG/PDF downloads with no logo and with a logo, then publish a concise report and stop.
+- [x] Audit the existing auth, session, user-role, and admin-dashboard implementation to plan a safe Wasl-native migration.
+- [x] Add independent Wasl email-and-password registration, login, logout, session, and first-admin bootstrap without exposing Manus in the user journey.
+- [x] Enforce user/admin authorization for all administrative routes and mutations, with direct-link denial for unauthenticated and regular users.
+- [x] Redesign the Wasl admin dashboard with a responsive sidebar, concise metrics, user/tool/role/operations/settings views, and safe system alerts.
+- [x] Add focused tests for Wasl login, logout, role routing, route protection, and admin access, then deliver a concise implementation report.

@@ -1,6 +1,6 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
-import { sdk } from "./sdk";
+import { getWaslSessionUser } from "../auth/waslAuth";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -13,12 +13,9 @@ export async function createContext(
 ): Promise<TrpcContext> {
   let user: User | null = null;
 
-  try {
-    user = await sdk.authenticateRequest(opts.req);
-  } catch (error) {
-    // Authentication is optional for public procedures.
-    user = null;
-  }
+  // Public and administrative Wasl sessions are independent from the platform OAuth.
+  // A missing or invalid cookie is safe for public procedures and never redirects users externally.
+  user = await getWaslSessionUser(opts.req);
 
   return {
     req: opts.req,
