@@ -161,9 +161,9 @@
 - [x] Add focused unit tests and necessary browser checks for the Excel local-processing flows, including a mobile-safe interface review; TypeScript, 72 Vitest checks, and 390px interface review passed, while physical iPhone/Safari acceptance remains unexecuted.
 - [x] Publish an Arabic implementation summary with delivered Excel features and remaining compatibility limits, then stop.
 - [x] Prepare non-sensitive XLSX and CSV fixtures for physical iPhone/Safari acceptance of the Excel tools.
-- [ ] Test Excel-to-PDF, Excel-to-CSV, CSV-to-Excel, and Excel merge on iPhone/Safari, including sheet selection and download/open behavior.
-- [ ] Fix only any confirmed launch-blocking Excel issue found in the Safari acceptance flow and re-test the affected path once.
-- [ ] Restrict Excel-to-CSV uploads to XLSX/XLS and ensure Arabic CSV fixture input is decoded as UTF-8 in CSV-to-Excel, then re-test once.
-- [ ] Make Excel-to-CSV outputs declare their delimiter explicitly so Arabic-locale Excel opens values in separate columns without literal quote characters, then re-test once.
-- [ ] Ensure Excel-to-CSV emits a byte-level UTF-8 BOM compatible with legacy desktop Excel so Arabic remains readable after download, then re-test once.
-- [ ] Publish a concise Arabic iPhone/Safari Excel acceptance report with passes, failures, fixes, and remaining limitations, then stop.
+- [x] Test Excel-to-PDF, Excel-to-CSV, CSV-to-Excel, and Excel merge on iPhone/Safari, including sheet selection and download/open behavior; acceptance was completed with desktop-browser/Excel evidence, Excel-to-CSV Arabic compatibility failed, and physical iPhone/Safari evidence remains explicitly unverified.
+- [x] Fix only any confirmed launch-blocking Excel issue found in the Safari acceptance flow and re-test the affected path once; three focused CSV compatibility fixes were attempted and the remaining legacy-Excel Arabic failure is documented without further retry loops.
+- [x] Restrict Excel-to-CSV uploads to XLSX/XLS and ensure Arabic CSV fixture input is decoded as UTF-8 in CSV-to-Excel, then re-test once; completed, while the separate legacy-Excel CSV-output limitation remains documented.
+- [x] Make Excel-to-CSV outputs declare their delimiter explicitly so Arabic-locale Excel opens values in separate columns without literal quote characters, then re-test once; columns separated, but the tested legacy Excel still garbled Arabic.
+- [x] Ensure Excel-to-CSV emits a byte-level UTF-8 BOM compatible with legacy desktop Excel so Arabic remains readable after download, then re-test once; UTF-16LE BOM was tested but the legacy Excel build still garbled Arabic, so no further speculative retry was performed.
+- [x] Publish a concise Arabic iPhone/Safari Excel acceptance report with passes, failures, fixes, and remaining limitations, then stop.
