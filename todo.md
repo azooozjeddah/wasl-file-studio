@@ -78,7 +78,7 @@
 - [x] Remove expired temporary storage references from database records, not only mark them released, according to the supported private-storage lifecycle.
 - [x] Add persisted per-minute server job rate-limit controls to site settings and the protected Admin Processing interface.
 - [x] Add route-level processing API tests for authorization, tool/mode validation, file-size limits, quota exhaustion, rate limits, cancellation, and temporary result visibility.
-- [ ] Configure a daily 06:00 Saudi Arabia backup workflow for project code and configuration without exposing user files or secrets.
+- [x] Configure a daily 06:00 Saudi Arabia backup workflow for project code and configuration without exposing user files or secrets.
 - [ ] Audit every requested tool operation, batch workflow, worker-ready engine adapter, admin control, SaaS entitlement, advertisement slot, security guard, and SEO property against the current code and tests.
 - [x] Add any missing server-engine adapters for LibreOffice, Tesseract, FFmpeg, and multiple workers as disabled future-ready contracts.
 - [x] Run representative end-to-end local tests for PDF, images, documents, OCR, audio, video, and batch ZIP flows; fix all observed errors.
@@ -95,7 +95,7 @@
 - [x] Exercise post-restart authenticated processing status and cancellation authorization paths.
 - [x] Assert a serialized production-mode tRPC error response excludes stack data.
 - [x] Fix the mobile Admin Users layout so protected role and plan controls remain within the viewport without horizontal clipping.
-- [ ] Diagnose the production build termination and complete a resource-safe production build verification.
+- [x] Diagnose the production build termination and complete a resource-safe production build verification.
 - [ ] Run a production end-to-end acceptance matrix covering public navigation, tools, outputs, validation, privacy, security, admin, hybrid APIs, SEO, responsive layouts, and performance.
 - [ ] Record artifacts and exact outcomes for every tool family, including output readability, ZIP contents, rejection messages, and browser console/network behavior.
 - [ ] Fix all reproducible production defects found during end-to-end acceptance and retest each affected flow.
@@ -115,9 +115,13 @@
 - [x] Add only stable utility tools selected from PDF/text/image/file requests, with local processing and automated coverage.
 - [x] Add a local file-integrity hash utility with SHA-256 and SHA-512 results, copy, and TXT download for practical verification without file upload.
 - [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
+- [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
+- [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
+- [ ] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
+- [x] Fix the Vite build failure caused by the non-exported deep `@ffmpeg/core` ESM import, then rebuild before publishing any media-loader change.
 - [x] Classify every public tool as production ready, needs improvement, or experimental and prioritize the homepage around proven tools.
 - [x] Derive homepage featured tools from readiness-ranked definitions and add an automated test that excludes improving and experimental tools from primary promotion.
 - [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.
-- [ ] Fix the production PDF-signature preview failure `i.createElement is not a function`, then retest multi-page visual signing and PDF export.
+- [x] Fix the production PDF-signature preview failure `i.createElement is not a function`, then retest multi-page visual signing and PDF export.
 - [ ] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
 - [ ] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.

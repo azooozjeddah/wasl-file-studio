@@ -3,12 +3,13 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("FFmpeg local loader configuration", () => {
-  it("uses the UMD core bundle compatible with the classic FFmpeg worker", () => {
+  it("bundles the ESM core, WASM, and module worker through Vite without a CDN dependency", () => {
     const source = readFileSync(resolve(process.cwd(), "client/src/lib/media-engine.ts"), "utf8");
 
-    expect(source).toContain('https://unpkg.com/@ffmpeg/core@0.12.9/dist/umd');
-    expect(source).not.toContain('core@0.12.9/dist/esm');
-    expect(source).not.toContain("ffmpeg-core.worker.js");
-    expect(source).toContain('coreURL: `${base}/ffmpeg-core.js`');
+    expect(source).toContain('@ffmpeg/ffmpeg/worker?worker&url');
+    expect(source).toContain('@ffmpeg/core?url');
+    expect(source).toContain('@ffmpeg/core/wasm?url');
+    expect(source).not.toContain("https://unpkg.com/@ffmpeg");
+    expect(source).toContain("coreURL: ffmpegCoreURL");
   });
 });
