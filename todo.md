@@ -149,9 +149,9 @@
 - [x] Fix the production PDF-signature preview failure `i.createElement is not a function`, then retest multi-page visual signing and PDF export.
 - [x] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
 - [x] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.
-- [ ] Execute a practical iPhone/Safari-first mobile acceptance matrix for Wasl core flows, uploads, tools, downloads, navigation, and responsive layout without touching FFmpeg.
-- [ ] Execute the corresponding Android mobile acceptance matrix and classify each observed issue as UI, functional, browser compatibility, or development-required.
-- [ ] Apply only launch-blocking or clearly necessary mobile fixes, re-test each affected flow once, and record the result without retry loops.
-- [ ] Publish a concise Arabic mobile acceptance report covering passes, failures, improvements, release blockers, and the exact physical-device availability limitation.
+- [x] Execute a practical iPhone/Safari-first mobile acceptance matrix for Wasl core flows, uploads, tools, downloads, navigation, and responsive layout without touching FFmpeg; the evidenced physical-Safari core flow is recorded in the mobile acceptance report.
+- [x] Execute the corresponding Android mobile acceptance matrix and classify each observed issue as UI, functional, browser compatibility, or development-required; deliberately closed as not executed because the owner requested no additional tests after the successful iPhone/Safari acceptance.
+- [x] Apply only launch-blocking or clearly necessary mobile fixes, re-test each affected flow once, and record the result without retry loops; fixed multi-file selection and Arabic count display only.
+- [x] Publish a concise Arabic mobile acceptance report covering passes, failures, improvements, release blockers, and the exact physical-device availability limitation.
 - [x] Investigate and fix the reported merge-PDF multi-file picker issue where selecting a second file replaces the first, then re-test once on the connected user browser; the user confirmed that two files now remain in the queue.
-- [ ] Fix the Arabic multi-file counter so iPhone/Safari never displays mixed-language text such as "2 ملفs", then re-test once.
+- [x] Fix the Arabic multi-file counter so iPhone/Safari never displays mixed-language text such as "2 ملفs", then re-test once; iPhone/Safari confirmed "ملفان" after publication.
