@@ -14,7 +14,7 @@ for (const [name, lines] of [
   await writeFile(`${output}/${name}`, await pdf.save());
 }
 
-const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAGElEQVR42mNk+M/wHwAE/gL+PfkB6i1SbYwAAAAASUVORK5CYII=', 'base64');
+const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL7pgAAAABJRU5ErkJggg==', 'base64');
 await writeFile(`${output}/qa-image.png`, png);
 await writeFile(`${output}/qa-notes.txt`, 'Wasl QA\nاختبار محلي آمن\n');
 await writeFile(`${output}/qa-data.csv`, '\uFEFFالاسم,القيمة\nوصل,120\nاختبار,240\n', 'utf8');

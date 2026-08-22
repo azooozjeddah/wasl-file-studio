@@ -224,4 +224,5 @@
 - [x] Fix each reproducible local defect or accurately mark the related public tool unavailable when a reliable free local repair is not possible.
 - [x] Fix the public registration route so the visible Create Account entry opens the Wasl registration form instead of a 404 page.
 - [x] Block direct processing pages for experimental tools so their known URLs show a clear Coming Soon state rather than a workspace.
+- [ ] Fix the reproducible browser-side PNG decode failure in local image transformations and re-test a real resize output.
 - [ ] Run final TypeScript and automated checks, record browser evidence, and publish the concise Arabic QA completion report requested.

@@ -8,8 +8,20 @@ function outputTypeFor(file: File, slug: string, selected?: ImageOptions["output
   return file.type === "image/png" ? "image/png" : "image/jpeg";
 }
 
+async function decodeImage(file: File): Promise<ImageBitmap | HTMLImageElement> {
+  try { return await createImageBitmap(file); }
+  catch {
+    const sourceUrl = URL.createObjectURL(file);
+    try {
+      const image = new Image(); image.decoding = "async";
+      await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error("تعذر فك الصورة المصدر.")); image.src = sourceUrl; });
+      return image;
+    } finally { URL.revokeObjectURL(sourceUrl); }
+  }
+}
+
 async function renderImage(file: File, options: ImageOptions, slug: string) {
-  const bitmap = await createImageBitmap(file); const crop = options.crop || { x: 0, y: 0, width: bitmap.width, height: bitmap.height }; const angle = ((options.rotation || 0) % 360 + 360) % 360;
+  const bitmap = await decodeImage(file); const crop = options.crop || { x: 0, y: 0, width: bitmap.width, height: bitmap.height }; const angle = ((options.rotation || 0) % 360 + 360) % 360;
   let width = options.width || crop.width; let height = options.height || crop.height;
   if (options.keepAspect && options.width && !options.height) height = Math.round(crop.height * (options.width / crop.width)); if (options.keepAspect && options.height && !options.width) width = Math.round(crop.width * (options.height / crop.height));
   const swap = angle === 90 || angle === 270; const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.round(swap ? height : width)); canvas.height = Math.max(1, Math.round(swap ? width : height)); const ctx = canvas.getContext("2d")!;
