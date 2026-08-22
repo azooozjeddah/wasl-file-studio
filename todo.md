@@ -102,8 +102,8 @@
 - [ ] Publish a complete production acceptance report with tested, passed, failed, fixed, local, server-ready, and remaining technical-limit counts.
 - [x] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
 - [x] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
-- [ ] Fix the historical sitemap domain in robots.txt and verify both robots.txt and sitemap.xml on the active production domain.
-- [ ] Serve canonical robots.txt and sitemap.xml routes from the application before the platform SEO fallback so the active domain is authoritative in production.
+- [x] Fix the historical sitemap domain in robots.txt and verify both robots.txt and sitemap.xml on the active production domain.
+- [x] Serve canonical robots.txt and sitemap.xml routes from the application before the platform SEO fallback so the active domain is authoritative in production.
 - [x] Fix mobile tool-category navigation so OCR, audio, and video tabs remain reachable within the viewport without horizontal clipping.
 - [ ] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport.
 - [x] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
@@ -120,6 +120,8 @@
 - [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
 - [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
 - [x] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
+- [ ] Replace the Vite-resolved UMD FFmpeg Core asset with the ESM Core asset required by the module worker, then re-test WAV conversion in production.
+- [ ] Serve the authentic installed FFmpeg ESM core and WASM through same-origin cacheable application routes, then load those routes from the module worker.
 - [x] Fix the Vite build failure caused by the non-exported deep `@ffmpeg/core` ESM import, then rebuild before publishing any media-loader change.
 - [x] Show explicit compatibility guidance on experimental media tool pages so their local-processing copy never overstates production readiness.
 - [x] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
@@ -128,4 +130,4 @@
 - [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.
 - [x] Fix the production PDF-signature preview failure `i.createElement is not a function`, then retest multi-page visual signing and PDF export.
 - [ ] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
-- [ ] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.
+- [x] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.

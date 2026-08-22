@@ -1,7 +1,8 @@
 import { LocalFileResult, outputName } from "./file-utils";
 import ffmpegWorkerURL from "@ffmpeg/ffmpeg/worker?worker&url";
-import ffmpegCoreURL from "@ffmpeg/core?url";
-import ffmpegWasmURL from "@ffmpeg/core/wasm?url";
+
+const ffmpegCoreURL = "/__wasl__/ffmpeg/ffmpeg-core.js?v=0.12.10";
+const ffmpegWasmURL = "/__wasl__/ffmpeg/ffmpeg-core.wasm?v=0.12.10";
 
 type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };

@@ -7,8 +7,8 @@ describe("FFmpeg local loader configuration", () => {
     const source = readFileSync(resolve(process.cwd(), "client/src/lib/media-engine.ts"), "utf8");
 
     expect(source).toContain('@ffmpeg/ffmpeg/worker?worker&url');
-    expect(source).toContain('@ffmpeg/core?url');
-    expect(source).toContain('@ffmpeg/core/wasm?url');
+    expect(source).toContain('"/__wasl__/ffmpeg/ffmpeg-core.js?v=0.12.10"');
+    expect(source).toContain('"/__wasl__/ffmpeg/ffmpeg-core.wasm?v=0.12.10"');
     expect(source).not.toContain("https://unpkg.com/@ffmpeg");
     expect(source).toContain("coreURL: ffmpegCoreURL");
     expect(source).toContain("FFMPEG_LOAD_TIMEOUT_MS = 15_000");
