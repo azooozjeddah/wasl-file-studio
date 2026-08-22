@@ -125,6 +125,8 @@
 - [ ] Fix the reproducible zero-byte MP4 produced by WebM video trimming, then verify the downloaded output is playable and non-empty.
 - [x] Freeze all FFmpeg code, configuration, worker, core, WASM, CDN, and test changes for the remainder of this task; classify unverified media transforms as experimental only.
 - [ ] Complete acceptance testing for every non-FFmpeg public tool with real input, non-empty output, download, and independent verification, then publish a final per-tool acceptance report and stop.
+- [ ] Execute a one-attempt-per-tool production acceptance matrix for all non-FFmpeg public tools, recording input, output, download, independent check, and first failure without retries or fixes.
+- [ ] Preserve the FFmpeg freeze during the full non-FFmpeg acceptance matrix, with no code, configuration, worker, core, WASM, CDN, or media-test changes.
 - [x] Provide a current production-status report and an evidence-based media decision plan before any further FFmpeg testing or implementation.
 - [x] Create and deliver a structured Arabic production-status report based solely on recorded test evidence.
 - [x] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
