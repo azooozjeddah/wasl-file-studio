@@ -18,4 +18,11 @@ describe("public canonical metadata", () => {
     expect(robots).toContain("Sitemap: https://waslfile-b7bks7br.manus.space/sitemap.xml");
     expect(robots).not.toContain("wasl-file-studio.manus.space");
   });
+
+  it("publishes sitemap locations on the active production domain", () => {
+    const sitemap = readFileSync(resolve(process.cwd(), "client/public/sitemap.xml"), "utf8");
+
+    expect(sitemap).toContain("https://waslfile-b7bks7br.manus.space/merge-pdf");
+    expect(sitemap).not.toContain("wasl-file-studio.manus.space");
+  });
 });
