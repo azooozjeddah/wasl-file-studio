@@ -100,12 +100,13 @@
 - [ ] Record artifacts and exact outcomes for every tool family, including output readability, ZIP contents, rejection messages, and browser console/network behavior.
 - [ ] Fix all reproducible production defects found during end-to-end acceptance and retest each affected flow.
 - [ ] Publish a complete production acceptance report with tested, passed, failed, fixed, local, server-ready, and remaining technical-limit counts.
-- [ ] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
-- [ ] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
-- [ ] Fix mobile tool-category navigation so OCR, audio, and video tabs remain reachable within the viewport without horizontal clipping.
+- [x] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
+- [x] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
+- [ ] Fix the historical sitemap domain in robots.txt and verify both robots.txt and sitemap.xml on the active production domain.
+- [x] Fix mobile tool-category navigation so OCR, audio, and video tabs remain reachable within the viewport without horizontal clipping.
 - [ ] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport.
-- [ ] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
-- [ ] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
+- [x] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
+- [x] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
 - [ ] Fix the Vite production-build failure caused by the canonical link resolving to a directory, then verify a resource-safe production build and successful deployment.
 - [ ] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
 - [x] Add a local QR generator for URL, text, phone, email, Wi-Fi, SMS, WhatsApp, and vCard with live preview, colors, correction level, PNG/SVG/PDF downloads, copy, and print.
@@ -117,10 +118,10 @@
 - [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
 - [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
 - [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
-- [ ] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
+- [x] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
 - [x] Fix the Vite build failure caused by the non-exported deep `@ffmpeg/core` ESM import, then rebuild before publishing any media-loader change.
-- [ ] Show explicit compatibility guidance on experimental media tool pages so their local-processing copy never overstates production readiness.
-- [ ] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
+- [x] Show explicit compatibility guidance on experimental media tool pages so their local-processing copy never overstates production readiness.
+- [x] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
 - [x] Classify every public tool as production ready, needs improvement, or experimental and prioritize the homepage around proven tools.
 - [x] Derive homepage featured tools from readiness-ranked definitions and add an automated test that excludes improving and experimental tools from primary promotion.
 - [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.

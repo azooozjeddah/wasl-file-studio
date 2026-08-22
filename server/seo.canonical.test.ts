@@ -11,4 +11,11 @@ describe("public canonical metadata", () => {
     expect(indexHtml).not.toContain("wasl-file-studio.manus.space");
     expect(indexHtml).not.toContain("VITE_ANALYTICS_ENDPOINT");
   });
+
+  it("publishes robots.txt with the active sitemap domain", () => {
+    const robots = readFileSync(resolve(process.cwd(), "client/public/robots.txt"), "utf8");
+
+    expect(robots).toContain("Sitemap: https://waslfile-b7bks7br.manus.space/sitemap.xml");
+    expect(robots).not.toContain("wasl-file-studio.manus.space");
+  });
 });
