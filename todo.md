@@ -217,10 +217,11 @@
 - [x] Classify public tool availability accurately and make incomplete or experimental tools visibly unavailable rather than appearing production-ready.
 - [x] Improve and verify desktop/mobile file selection, drag-and-drop, queue, removal, process status, error, success, and download states without adding paid APIs.
 - [x] Run TypeScript and automated tests, perform desktop/mobile visual checks, and publish a concise Arabic completion report for this improvement phase.
-- [ ] Build safe local acceptance fixtures and inventory every public catalog tool, including its claimed readiness and applicable input/output flow.
+- [x] Build safe local acceptance fixtures and inventory every public catalog tool, including its claimed readiness and applicable input/output flow.
 - [ ] Execute one end-to-end acceptance pass for every publicly usable tool, with real input, output inspection, and download verification where browser access permits.
-- [ ] Exercise invalid, empty, multi-file, repeat, removal, retry, and responsive upload states across representative tool families.
-- [ ] Verify ordinary-user authentication, logout, protected routes, and existing admin authorization behavior without altering real user records.
-- [ ] Fix each reproducible local defect or accurately mark the related public tool unavailable when a reliable free local repair is not possible.
-- [ ] Fix the public registration route so the visible Create Account entry opens the Wasl registration form instead of a 404 page.
+- [x] Exercise invalid, empty, multi-file, repeat, removal, retry, and responsive upload states across representative tool families.
+- [x] Verify ordinary-user authentication, logout, protected routes, and existing admin authorization behavior without altering real user records.
+- [x] Fix each reproducible local defect or accurately mark the related public tool unavailable when a reliable free local repair is not possible.
+- [x] Fix the public registration route so the visible Create Account entry opens the Wasl registration form instead of a 404 page.
+- [x] Block direct processing pages for experimental tools so their known URLs show a clear Coming Soon state rather than a workspace.
 - [ ] Run final TypeScript and automated checks, record browser evidence, and publish the concise Arabic QA completion report requested.
