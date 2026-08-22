@@ -35,7 +35,8 @@ function valueMatrix(sheet: any, XLSX: any, limitRows?: number, limitColumns?: n
 
 async function readWorkbook(file: File) {
   const XLSX = await import("xlsx");
-  const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  const workbook = extension === "csv" ? XLSX.read(await file.text(), { type: "string", codepage: 65001, raw: false }) : XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
   if (!workbook.SheetNames.length) throw new Error("لم يتم العثور على أوراق قابلة للقراءة داخل الملف.");
   return { XLSX, workbook };
 }

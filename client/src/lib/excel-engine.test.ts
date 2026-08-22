@@ -28,6 +28,11 @@ describe("local Excel engine", () => {
     expect(XLSX.utils.sheet_to_json(workbook.Sheets.scores!, { header: 1 })[1]).toEqual(["A", 10]);
   });
 
+  it("keeps Arabic UTF-8 CSV text readable in the local sheet preview", async () => {
+    const preview = await inspectSpreadsheetFiles([new File(["\ufeffالاسم,المدينة\nسارة,الرياض"], "contacts.csv", { type: "text/csv" })]);
+    expect(preview[0]?.sheets[0]?.rows).toEqual([["الاسم", "المدينة"], ["سارة", "الرياض"]]);
+  });
+
   it("merges selected sheets from separate workbooks without file upload", async () => {
     const first = workbookFile("one.xlsx", [{ name: "Summary", rows: [["A"], [1]] }]);
     const second = workbookFile("two.xlsx", [{ name: "Summary", rows: [["B"], [2]] }]);
