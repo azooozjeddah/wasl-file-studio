@@ -5,7 +5,7 @@ import { downloadBlob, downloadZip, formatBytes, LocalFileResult, resultPreviewK
 import { transformImages } from "@/lib/image-engine";
 import { extractOcr } from "@/lib/ocr-engine";
 import { cancelMediaProcessing, mediaInfo, processMedia } from "@/lib/media-engine";
-import { alterPdf, compressPdf, countPdfFormFields, imagesToPdf, mergePdfs, pdfToImages, securePdf } from "@/lib/pdf-engine";
+import { alterPdf, compressPdf, countPdfFormFields, imagesToPdf, mergePdfs, pdfToImages, repairPdf, securePdf } from "@/lib/pdf-engine";
 import { trpc } from "@/lib/trpc";
 import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
@@ -50,6 +50,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
   const processPdf = async () => {
     const report = (amount: number) => setProgress(Math.max(4, Math.round(amount * 100)));
     if (tool.slug === "merge-pdf") return [await mergePdfs(files, report)];
+    if (tool.slug === "repair-pdf") return [await repairPdf(files[0], report)];
     if (tool.slug === "image-to-pdf") return [await imagesToPdf(files, report)];
     if (tool.slug === "compress-pdf") return [await compressPdf(files[0], options.quality, report)];
     if (tool.slug === "protect-pdf") return [await securePdf(files[0], "protect", options.password, report)];

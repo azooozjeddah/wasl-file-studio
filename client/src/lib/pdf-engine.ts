@@ -24,6 +24,15 @@ export async function mergePdfs(files: File[], report?: (fraction: number) => vo
   return result(merged, files[0], "merged");
 }
 
+/** Re-saves a PDF that can be parsed locally. This may repair minor structural issues but does not claim recovery of corrupted files. */
+export async function repairPdf(file: File, report?: (fraction: number) => void) {
+  const source = await openPdf(file);
+  if (!source.getPageCount()) throw new Error("لا يحتوي الملف على صفحات قابلة لإعادة الحفظ.");
+  source.setProducer("Wasl File Studio local re-save");
+  report?.(1);
+  return result(source, file, "re-saved");
+}
+
 export async function alterPdf(slug: string, file: File, options: PdfOptions, report?: (fraction: number) => void): Promise<LocalFileResult[]> {
   const source = await openPdf(file); const pageCount = source.getPageCount(); const selected = parsePageList(options.pages, pageCount);
   if (["split-pdf", "extract-pdf-pages"].includes(slug)) {
