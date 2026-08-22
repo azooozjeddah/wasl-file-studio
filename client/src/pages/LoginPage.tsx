@@ -8,10 +8,10 @@ import { toast } from "sonner";
 type Mode = "login" | "register" | "setup" | "forgot" | "reset";
 
 export default function LoginPage() {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const status = trpc.waslAuth.status.useQuery(undefined, { retry: false });
   const resetToken = new URLSearchParams(window.location.search).get("token") || "";
-  const [mode, setMode] = useState<Mode>(resetToken ? "reset" : "login");
+  const [mode, setMode] = useState<Mode>(resetToken ? "reset" : location === "/register" ? "register" : "login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
