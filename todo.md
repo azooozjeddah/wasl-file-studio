@@ -195,3 +195,7 @@
 - [x] Classify PDF, QR, Barcode, signature, conversion, and other public tools by verified user-cost and operational-cost exposure.
 - [x] Deliver a detailed Arabic cost-audit report with free-tier, paid-tier, and scaling recommendations, then stop without modifying the product.
 - [x] Diagnose and fix the reported desktop admin-dashboard overlap between sidebar, navigation controls, and content, then re-check desktop and mobile layouts.
+- [x] Audit the post-login home route, session lifecycle, account menu, and operation-history signals without changing tool engines.
+- [x] Add a responsive Wasl user dashboard with personalized welcome, primary tool entry, all-tools access, and an empty/recent-tools state.
+- [x] Add a unified desktop/mobile account menu with account, security, and a session-clearing logout that redirects safely.
+- [x] Add focused tests for login redirect, logout cookie clearing, protected dashboard back-navigation, and responsive account UI, then publish a concise report.

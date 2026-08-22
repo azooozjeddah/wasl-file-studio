@@ -19,7 +19,7 @@ export default function LoginPage() {
   const utils = trpc.useUtils();
   const finish = async (user: { role: "admin" | "user" }) => {
     await utils.waslAuth.me.invalidate();
-    navigate(user.role === "admin" ? "/admin" : "/");
+    navigate("/dashboard");
   };
   const login = trpc.waslAuth.login.useMutation({ onSuccess: finish, onError: error => toast.error(error.message) });
   const register = trpc.waslAuth.register.useMutation({ onSuccess: finish, onError: error => toast.error(error.message) });
