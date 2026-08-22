@@ -18,7 +18,9 @@ describe("local Excel engine", () => {
     const results = await processSpreadsheet([source], previews, ["0::Sales"], "xlsx-to-csv");
     expect(results).toHaveLength(1);
     expect(results[0]?.name).toBe("sales-Sales.csv");
-    await expect(results[0]?.blob.text()).resolves.toBe("sep=,\r\nItem,Total\r\nTea,12");
+    const bytes = new Uint8Array(await results[0]!.blob.arrayBuffer());
+    expect([...bytes.slice(0, 2)]).toEqual([0xff, 0xfe]);
+    expect(new TextDecoder("utf-16le").decode(bytes.slice(2))).toBe("sep=,\r\nItem,Total\r\nTea,12");
   });
 
   it("converts a batch of CSV files into a single local XLSX workbook", async () => {
@@ -37,6 +39,14 @@ describe("local Excel engine", () => {
     const results = await processSpreadsheet([new File(["\ufeffالاسم,المدينة\nسارة,الرياض"], "contacts.csv", { type: "text/csv" })], [], [], "csv-to-xlsx");
     const workbook = XLSX.read(await results[0]!.blob.arrayBuffer(), { type: "array" });
     expect(XLSX.utils.sheet_to_json(workbook.Sheets.contacts!, { header: 1 })).toEqual([["الاسم", "المدينة"], ["سارة", "الرياض"]]);
+  });
+
+  it("writes Arabic CSV output with a UTF-16LE BOM for legacy Excel", async () => {
+    const source = workbookFile("arabic.xlsx", [{ name: "ملخص", rows: [["الموقع", "الحالة"], ["الرياض", "متاح"]] }]);
+    const previews = await inspectSpreadsheetFiles([source]); const results = await processSpreadsheet([source], previews, ["0::ملخص"], "xlsx-to-csv");
+    const bytes = new Uint8Array(await results[0]!.blob.arrayBuffer());
+    expect([...bytes.slice(0, 2)]).toEqual([0xff, 0xfe]);
+    expect(new TextDecoder("utf-16le").decode(bytes.slice(2))).toContain("الموقع,الحالة");
   });
 
   it("merges selected sheets from separate workbooks without file upload", async () => {

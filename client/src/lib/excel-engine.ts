@@ -17,11 +17,16 @@ export type SpreadsheetFilePreview = {
 type WorkbookLike = Awaited<ReturnType<typeof readWorkbook>>;
 
 const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-const CSV_MIME = "text/csv;charset=utf-8";
+const CSV_MIME = "text/csv;charset=utf-16le";
 const previewRows = 12;
 const previewColumns = 8;
 
 function sheetKey(fileIndex: number, sheetName: string) { return `${fileIndex}::${sheetName}`; }
+function utf16LeWithBom(value: string) {
+  const bytes = new Uint8Array(2 + value.length * 2); bytes[0] = 0xff; bytes[1] = 0xfe;
+  for (let index = 0; index < value.length; index += 1) { const code = value.charCodeAt(index); bytes[2 + index * 2] = code & 0xff; bytes[3 + index * 2] = code >> 8; }
+  return bytes;
+}
 function cleanSheetName(name: string) { return name.replace(/[\\/?*\[\]:]/g, "-").slice(0, 31) || "Sheet"; }
 function uniqueSheetName(existing: Set<string>, candidate: string) {
   const base = cleanSheetName(candidate); let name = base; let index = 2;
@@ -103,7 +108,7 @@ async function xlsxToCsv(files: File[], previews: SpreadsheetFilePreview[], sele
     const file = files[fileIndex]; const { XLSX, workbook } = await readWorkbook(file); const names = selectedSheetNames(previews, fileIndex, selectedKeys);
     names.forEach((name, sheetIndex) => {
       const csv = `sep=,\r\n${XLSX.utils.sheet_to_csv(workbook.Sheets[name], { FS: ",", RS: "\r\n", forceQuotes: false })}`;
-      results.push({ name: outputName(file.name, cleanSheetName(name), "csv"), blob: new Blob(["\ufeff", csv], { type: CSV_MIME }), mime: "text/csv", details: { source: "local-xlsx-sheet", sheet: name } });
+      results.push({ name: outputName(file.name, cleanSheetName(name), "csv"), blob: new Blob([utf16LeWithBom(csv)], { type: CSV_MIME }), mime: "text/csv", details: { source: "local-xlsx-sheet", sheet: name } });
       report?.((fileIndex + (sheetIndex + 1) / names.length) / files.length);
     });
   }
