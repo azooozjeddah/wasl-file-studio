@@ -194,3 +194,4 @@
 - [x] Research and document current pricing, free allowances, usage limits, and overage models for every verified external service used by the project.
 - [x] Classify PDF, QR, Barcode, signature, conversion, and other public tools by verified user-cost and operational-cost exposure.
 - [x] Deliver a detailed Arabic cost-audit report with free-tier, paid-tier, and scaling recommendations, then stop without modifying the product.
+- [x] Diagnose and fix the reported desktop admin-dashboard overlap between sidebar, navigation controls, and content, then re-check desktop and mobile layouts.
