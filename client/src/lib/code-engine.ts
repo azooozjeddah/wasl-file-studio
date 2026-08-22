@@ -5,6 +5,24 @@ import { jsPDF } from "jspdf";
 export type QrKind = "url" | "text" | "phone" | "email" | "wifi" | "sms" | "whatsapp" | "vcard";
 export type BarcodeFormat = "CODE128" | "CODE39" | "EAN13" | "EAN8" | "UPC";
 
+export function qrLogoSafety(hasLogo: boolean, sizePercent: number, correction: QRCodeErrorCorrectionLevel) {
+  if (!hasLogo) return { safe: true, level: "none" as const };
+  if (correction !== "H") return { safe: false, level: "correction" as const, message: "يحتاج الشعار إلى مستوى تصحيح H." };
+  if (sizePercent > 22) return { safe: false, level: "size" as const, message: "حجم الشعار أكبر من الحد الآمن للمسح." };
+  if (sizePercent > 18) return { safe: true, level: "caution" as const, message: "الحجم مرتفع؛ اختبر المسح قبل مشاركة الرمز." };
+  return { safe: true, level: "safe" as const };
+}
+
+export function addQrLogoToSvg(svg: string, logoDataUrl?: string, sizePercent = 16) {
+  if (!logoDataUrl) return svg;
+  const viewBox = svg.match(/viewBox="([^"]+)"/i)?.[1]?.trim().split(/\s+/).map(Number);
+  const [left, top, width, height] = viewBox && viewBox.length === 4 && viewBox.every(Number.isFinite) ? viewBox : [0, 0, 320, 320];
+  const side = Math.min(width, height) * (sizePercent / 100); const x = left + (width - side) / 2; const y = top + (height - side) / 2; const padding = side * 0.14;
+  const href = logoDataUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  const overlay = `<g id="qr-logo-layer"><rect x="${x - padding}" y="${y - padding}" width="${side + padding * 2}" height="${side + padding * 2}" rx="${padding * .72}" fill="#ffffff"/><image href="${href}" x="${x}" y="${y}" width="${side}" height="${side}" preserveAspectRatio="xMidYMid meet"/></g>`;
+  return svg.replace(/<\/svg>\s*$/i, `${overlay}</svg>`);
+}
+
 export function qrPayload(kind: QrKind, fields: Record<string, string>) {
   const value = fields.value?.trim() || "";
   if (kind === "url") return value.startsWith("http") ? value : `https://${value}`;
@@ -60,6 +78,9 @@ export async function svgToPng(svg: string, width = 900) {
   } finally { URL.revokeObjectURL(url); }
 }
 
-export async function makeCodePdf(dataUrl: string, title: string) {
-  const pdf = new jsPDF({ unit: "pt", format: "a4" }); pdf.setFontSize(16); pdf.text(title, 48, 48); pdf.addImage(dataUrl, "PNG", 72, 90, 451, 451, undefined, "FAST"); return pdf.output("blob");
+export async function makeCodePdf(dataUrl: string, title?: string) {
+  const pdf = new jsPDF({ unit: "pt", format: "a4" }); const side = 451;
+  if (title) { pdf.setFontSize(16); pdf.text(title, 48, 48); pdf.addImage(dataUrl, "PNG", 72, 90, side, side, undefined, "FAST"); }
+  else pdf.addImage(dataUrl, "PNG", (595 - side) / 2, (842 - side) / 2, side, side, undefined, "FAST");
+  return pdf.output("blob");
 }

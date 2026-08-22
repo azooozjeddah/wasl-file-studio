@@ -174,3 +174,7 @@
 - [x] Execute focused iPhone/Safari and Android acceptance for Excel upload, processing, download, and opening results; closed as not executed under the owner's explicit stop instruction, with this limitation documented.
 - [x] Run the full automated test suite and publish a concise Arabic report for the CSV/XLSX and mobile acceptance scope, then stop; closed without a new full run under the owner's explicit stop instruction, preserving prior 72-test evidence plus recent targeted Excel checks.
 - [x] Deliver a comprehensive Arabic project-status report from existing evidence only, with no code changes or new tests.
+- [x] Audit the QR generator implementation and export paths without touching any other tool.
+- [x] Add an optional locally processed QR-center logo with a constrained size control and scan-safety warning.
+- [x] Remove all Wasl/title text from QR PNG, SVG, and PDF exports so every export contains only the code graphic.
+- [x] Test QR generation and PNG/SVG/PDF downloads with no logo and with a logo, then publish a concise report and stop.

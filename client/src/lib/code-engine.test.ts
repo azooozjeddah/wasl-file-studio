@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { qrPayload, validateBarcode } from "./code-engine";
+import { addQrLogoToSvg, qrLogoSafety, qrPayload, validateBarcode } from "./code-engine";
 
 describe("local code payloads", () => {
   it("builds safe QR payloads for common daily actions", () => {
@@ -15,5 +15,15 @@ describe("local code payloads", () => {
     expect(validateBarcode("UPC", "03600029145")).toEqual({ value: "036000291452" });
     expect(validateBarcode("EAN13", "6291234567890")).toHaveProperty("error");
     expect(validateBarcode("CODE39", "INVALID@CHAR")).toHaveProperty("error");
+  });
+
+  it("constrains center-logo QR designs and injects only a logo layer", () => {
+    expect(qrLogoSafety(true, 16, "H")).toMatchObject({ safe: true, level: "safe" });
+    expect(qrLogoSafety(true, 24, "H")).toMatchObject({ safe: false, level: "size" });
+    expect(qrLogoSafety(true, 16, "M")).toMatchObject({ safe: false, level: "correction" });
+    const result = addQrLogoToSvg('<svg viewBox="0 0 100 100"><path d="M0 0"/></svg>', "data:image/png;base64,AA", 16);
+    expect(result).toContain('id="qr-logo-layer"');
+    expect(result).toContain('href="data:image/png;base64,AA"');
+    expect(result).not.toContain("Wasl QR code");
   });
 });
