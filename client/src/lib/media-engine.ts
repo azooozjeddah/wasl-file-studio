@@ -5,7 +5,8 @@ type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };
 let ffmpegInstance: any;
 export const FFMPEG_CORE_BASE = "vite-local-esm-worker";
-export const FFMPEG_LOAD_TIMEOUT_MS = 15_000;
+/** The locally served FFmpeg core can take around 24 seconds to initialise on constrained browsers. */
+export const FFMPEG_LOAD_TIMEOUT_MS = 45_000;
 
 export function cancelMediaProcessing() {
   if (!ffmpegInstance?.ffmpeg) return;

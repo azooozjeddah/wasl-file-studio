@@ -127,7 +127,8 @@
 - [ ] Test a same-origin classic FFmpeg worker with the package UMD core, because the ESM core imports in a worker fail despite succeeding in the page context.
 - [x] Fix the Vite build failure caused by the non-exported deep `@ffmpeg/core` ESM import, then rebuild before publishing any media-loader change.
 - [x] Show explicit compatibility guidance on experimental media tool pages so their local-processing copy never overstates production readiness.
-- [x] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
+- [ ] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
+- [ ] Increase the FFmpeg initialization timeout based on the measured 24-second production worker start, then retest WAV-to-MP3 completion.
 - [x] Classify every public tool as production ready, needs improvement, or experimental and prioritize the homepage around proven tools.
 - [x] Derive homepage featured tools from readiness-ranked definitions and add an automated test that excludes improving and experimental tools from primary promotion.
 - [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.
