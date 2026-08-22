@@ -118,8 +118,9 @@
 - [x] Add a local file-integrity hash utility with SHA-256 and SHA-512 results, copy, and TXT download for practical verification without file upload.
 - [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
 - [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
-- [ ] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
-- [ ] Replace the generic media `FS error` for video files without an audio track with a clear local validation message.
+- [ ] Fix the reproducible zero-byte MP4 produced by WebM video trimming, then verify the downloaded output is playable and non-empty.
+- [x] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
+- [x] Replace the generic media `FS error` for video files without an audio track with a clear local validation message.
 - [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
 - [x] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
 - [ ] Replace the Vite-resolved UMD FFmpeg Core asset with the ESM Core asset required by the module worker, then re-test WAV conversion in production.

@@ -16,6 +16,19 @@ export function mediaErrorMessage(error: unknown, operation?: string) {
   return message || "تعذر إكمال معالجة الوسائط محليًا.";
 }
 
+export function assertMediaOutput(data: unknown) {
+  if (!(data instanceof Uint8Array) || data.byteLength === 0) {
+    throw new Error("تعذر إنشاء ملف وسائط صالح. غيّر الصيغة أو أعد المحاولة.");
+  }
+  return data;
+}
+
+function mediaBlob(data: Uint8Array, mime: string) {
+  const copy = new Uint8Array(data.byteLength);
+  copy.set(data);
+  return new Blob([copy.buffer], { type: mime });
+}
+
 export function cancelMediaProcessing() {
   if (!ffmpegInstance?.ffmpeg) return;
   ffmpegInstance.ffmpeg.terminate();
@@ -89,14 +102,14 @@ async function getFfmpeg(report?: Progress) {
 const outputMime = (extension: string) => ({ mp3: "audio/mpeg", wav: "audio/wav", webm: "video/webm", mp4: "video/mp4", png: "image/png" } as Record<string, string>)[extension] || "application/octet-stream";
 async function run(file: File, args: string[], suffix: string, extension: string, report?: Progress) {
   const { ffmpeg, fetchFile } = await getFfmpeg(report); const input = `input-${Date.now()}.${file.name.split(".").pop() || "bin"}`; const output = `output-${Date.now()}.${extension}`;
-  await ffmpeg.writeFile(input, await fetchFile(file)); await ffmpeg.exec(args.map(arg => arg === "$INPUT" ? input : arg === "$OUTPUT" ? output : arg)); const data = await ffmpeg.readFile(output); await ffmpeg.deleteFile(input); await ffmpeg.deleteFile(output);
-  return { name: outputName(file.name, suffix, extension), blob: new Blob([data], { type: outputMime(extension) }), mime: outputMime(extension), details: { originalSize: file.size } } satisfies LocalFileResult;
+  await ffmpeg.writeFile(input, await fetchFile(file)); const exitCode = await ffmpeg.exec(args.map(arg => arg === "$INPUT" ? input : arg === "$OUTPUT" ? output : arg)); if (typeof exitCode === "number" && exitCode !== 0) throw new Error("تعذر تنفيذ تحويل الوسائط المحلي."); const data = assertMediaOutput(await ffmpeg.readFile(output)); await ffmpeg.deleteFile(input); await ffmpeg.deleteFile(output);
+  return { name: outputName(file.name, suffix, extension), blob: mediaBlob(data, outputMime(extension)), mime: outputMime(extension), details: { originalSize: file.size } } satisfies LocalFileResult;
 }
 
 export async function processMedia(files: File[], slug: string, options: MediaOptions, report?: Progress): Promise<LocalFileResult[]> {
   if (slug === "merge-audio") {
     const { ffmpeg, fetchFile } = await getFfmpeg(report); const names: string[] = []; for (let index = 0; index < files.length; index += 1) { const name = `part-${index}.${files[index].name.split(".").pop() || "audio"}`; names.push(name); await ffmpeg.writeFile(name, await fetchFile(files[index])); }
-    const output = `merged-${Date.now()}.mp3`; const inputs = names.flatMap(name => ["-i", name]); await ffmpeg.exec([...inputs, "-filter_complex", `concat=n=${names.length}:v=0:a=1`, "-b:a", options.bitrate || "128k", "$OUTPUT".replace("$OUTPUT", output)]); const data = await ffmpeg.readFile(output); await Promise.all([...names, output].map(name => ffmpeg.deleteFile(name))); return [{ name: outputName(files[0].name, "merged", "mp3"), blob: new Blob([data], { type: "audio/mpeg" }), mime: "audio/mpeg", details: { originalSize: files.reduce((sum, file) => sum + file.size, 0) } }];
+    const output = `merged-${Date.now()}.mp3`; const inputs = names.flatMap(name => ["-i", name]); const exitCode = await ffmpeg.exec([...inputs, "-filter_complex", `concat=n=${names.length}:v=0:a=1`, "-b:a", options.bitrate || "128k", "$OUTPUT".replace("$OUTPUT", output)]); if (typeof exitCode === "number" && exitCode !== 0) throw new Error("تعذر دمج الملفات الصوتية محليًا."); const data = assertMediaOutput(await ffmpeg.readFile(output)); await Promise.all([...names, output].map(name => ffmpeg.deleteFile(name))); return [{ name: outputName(files[0].name, "merged", "mp3"), blob: mediaBlob(data, "audio/mpeg"), mime: "audio/mpeg", details: { originalSize: files.reduce((sum, file) => sum + file.size, 0) } }];
   }
   if (slug === "extract-frame") return [await extractFrame(files[0], options.start || 0)];
   if (slug === "video-to-mp3") {
@@ -109,7 +122,7 @@ export async function processMedia(files: File[], slug: string, options: MediaOp
   if (slug === "mp4-to-webm") return [await run(files[0], ["-i", "$INPUT", "-c:v", "libvpx-vp9", "-b:v", "1M", "-c:a", "libopus", "$OUTPUT"], "webm", "webm", report)];
   if (slug === "webm-to-mp4") return [await run(files[0], ["-i", "$INPUT", "-c:v", "libx264", "-c:a", "aac", "$OUTPUT"], "mp4", "mp4", report)];
   if (slug === "compress-video") return [await run(files[0], ["-i", "$INPUT", "-vf", `scale=${options.resolution || "1280:-2"}`, "-r", options.fps || "30", "-c:v", "libx264", "-crf", "29", "-c:a", "aac", "-b:a", options.bitrate || "128k", "$OUTPUT"], "compressed", "mp4", report)];
-  if (slug === "trim-video") return [await run(files[0], ["-ss", String(options.start || 0), "-to", String(options.end || 15), "-i", "$INPUT", "-c", "copy", "$OUTPUT"], "trimmed", "mp4", report)];
+  if (slug === "trim-video") return [await run(files[0], ["-ss", String(options.start || 0), "-to", String(options.end || 15), "-i", "$INPUT", "-c:v", "libx264", "-c:a", "aac", "$OUTPUT"], "trimmed", "mp4", report)];
   if (slug === "convert-audio") return [await run(files[0], ["-i", "$INPUT", "-b:a", options.bitrate || "128k", "$OUTPUT"], "converted", "mp3", report)];
   if (slug === "trim-audio") return [await run(files[0], ["-ss", String(options.start || 0), "-to", String(options.end || 15), "-i", "$INPUT", "-b:a", options.bitrate || "128k", "$OUTPUT"], "trimmed", "mp3", report)];
   throw new Error("هذه العملية غير مدعومة بعد في محرك الوسائط المحلي.");
