@@ -5,7 +5,7 @@ export type ToolCategory = "pdf" | "image" | "document" | "spreadsheet" | "ocr" 
 export type ToolDefinition = {
   slug: string; category: ToolCategory; icon: LucideIcon; labelAr: string; labelEn: string;
   descriptionAr: string; descriptionEn: string; formats: string[]; accepts: string[];
-  settings: Array<"quality" | "outputFormat" | "pages" | "rotation" | "flip" | "watermark" | "pageNumbers" | "dimensions" | "crop" | "metadata" | "language" | "bitrate" | "trim" | "resolution" | "fps" | "password">;
+  settings: Array<"quality" | "outputFormat" | "pages" | "rotation" | "flip" | "watermark" | "pageNumbers" | "dimensions" | "crop" | "blur" | "metadata" | "language" | "bitrate" | "trim" | "resolution" | "fps" | "password">;
   multi?: boolean; local: boolean; processingMode?: "local" | "server" | "hybrid"; experimental?: boolean; readiness?: "ready" | "improving" | "experimental";
 };
 
@@ -35,6 +35,7 @@ export const toolDefinitions: ToolDefinition[] = [
   { slug: "resize-image", category: "image", icon: image, labelAr: "تغيير حجم الصور", labelEn: "Resize images", descriptionAr: "حدّد العرض والارتفاع مع الحفاظ على النسبة.", descriptionEn: "Set dimensions while preserving aspect ratio.", formats: ["JPG", "PNG", "WebP"], accepts: ["image/*"], settings: ["dimensions", "outputFormat"], multi: true, local: true },
   { slug: "crop-image", category: "image", icon: image, labelAr: "قص الصور", labelEn: "Crop images", descriptionAr: "قصّ الصورة بنسبة وإطار محددين.", descriptionEn: "Crop images to a defined box and ratio.", formats: ["JPG", "PNG", "WebP"], accepts: ["image/*"], settings: ["crop", "outputFormat"], local: true },
   { slug: "rotate-image", category: "image", icon: image, labelAr: "تدوير وقلب الصور", labelEn: "Rotate & flip", descriptionAr: "دوّر الصورة أو اقلبها أفقيًا وعموديًا.", descriptionEn: "Rotate or flip your image locally.", formats: ["JPG", "PNG", "WebP"], accepts: ["image/*"], settings: ["rotation", "flip", "outputFormat"], multi: true, local: true },
+  { slug: "blur-image", category: "image", icon: image, labelAr: "تمويه جزء من الصورة", labelEn: "Blur part of an image", descriptionAr: "اختر يدويًا منطقة حساسة لتمويهها داخل جهازك.", descriptionEn: "Manually blur a sensitive region on your device.", formats: ["JPG", "PNG", "WebP"], accepts: ["image/*"], settings: ["blur", "outputFormat"], local: true },
   { slug: "txt-to-pdf", category: "document", icon: document, labelAr: "TXT إلى PDF", labelEn: "TXT to PDF", descriptionAr: "حوّل النصوص إلى PDF منسق.", descriptionEn: "Turn plain text into a formatted PDF.", formats: ["TXT", "PDF"], accepts: ["text/plain"], settings: [], local: true },
   { slug: "txt-to-docx", category: "document", icon: document, labelAr: "TXT إلى DOCX", labelEn: "TXT to DOCX", descriptionAr: "أنشئ ملف Word قابلًا للتحرير من النص.", descriptionEn: "Create an editable DOCX from plain text.", formats: ["TXT", "DOCX"], accepts: ["text/plain"], settings: [], local: true },
   { slug: "html-to-pdf", category: "document", icon: document, labelAr: "HTML إلى PDF", labelEn: "HTML to PDF", descriptionAr: "استخرج المحتوى النصي من HTML إلى PDF.", descriptionEn: "Convert HTML content to a text-first PDF.", formats: ["HTML", "PDF"], accepts: ["text/html", ".html"], settings: [], local: true, experimental: true },
