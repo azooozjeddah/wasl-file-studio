@@ -7,6 +7,7 @@ type Progress = (fraction: number) => void;
 type MediaOptions = { bitrate: string; start: number; end: number; resolution: string; fps: string };
 let ffmpegInstance: any;
 export const FFMPEG_CORE_BASE = "vite-local-assets";
+export const FFMPEG_LOAD_TIMEOUT_MS = 15_000;
 
 export function cancelMediaProcessing() {
   if (!ffmpegInstance?.ffmpeg) return;
@@ -19,12 +20,20 @@ async function getFfmpeg(report?: Progress) {
   const [{ FFmpeg }, { fetchFile }] = await Promise.all([import("@ffmpeg/ffmpeg"), import("@ffmpeg/util")]);
   const ffmpeg = new FFmpeg();
   ffmpeg.on("progress", ({ progress }: { progress: number }) => report?.(Math.max(.02, Math.min(.98, progress))));
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    await ffmpeg.load({ coreURL: ffmpegCoreURL, wasmURL: ffmpegWasmURL, classWorkerURL: ffmpegWorkerURL });
+    await Promise.race([
+      ffmpeg.load({ coreURL: ffmpegCoreURL, wasmURL: ffmpegWasmURL, classWorkerURL: ffmpegWorkerURL }),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("انتهت مهلة تحميل محرك الوسائط المحلي. جرّب متصفحًا حديثًا أو أعد المحاولة.")), FFMPEG_LOAD_TIMEOUT_MS);
+      }),
+    ]);
   } catch (error) {
     ffmpeg.terminate();
     console.error("[Wasl] FFmpeg local engine failed to load", error);
     throw error;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
   ffmpegInstance = { ffmpeg, fetchFile }; return ffmpegInstance;
 }

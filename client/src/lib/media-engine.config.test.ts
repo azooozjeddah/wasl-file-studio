@@ -11,5 +11,7 @@ describe("FFmpeg local loader configuration", () => {
     expect(source).toContain('@ffmpeg/core/wasm?url');
     expect(source).not.toContain("https://unpkg.com/@ffmpeg");
     expect(source).toContain("coreURL: ffmpegCoreURL");
+    expect(source).toContain("FFMPEG_LOAD_TIMEOUT_MS = 15_000");
+    expect(source).toContain("Promise.race");
   });
 });
