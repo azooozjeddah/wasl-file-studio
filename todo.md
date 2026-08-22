@@ -211,3 +211,9 @@
 - [x] Add local PDF repair, PDF comparison, and genuine PDF redaction workflows where technically reliable; retain PDF translation as clearly deferred until an approved external translation service exists.
 - [x] Extend image resize/compression controls and add a local manual region blur workflow; document that automatic face/license detection requires an additional model and is not silently faked.
 - [x] Test requested accounts, permissions, watermark, PDF, image, desktop, mobile, and bilingual paths; publish a concise Arabic completion report without adding paid services.
+- [x] Audit the homepage messaging, quick-upload routing, public catalog entries, and workspace upload states without changing active processing engines.
+- [x] Diagnose and fix the production React #300 error reported on the public Wasl homepage, then verify the published page loads normally; the reported view recovered after browser-site-data clearing and no server-side fault was present in production logs.
+- [x] Redesign the homepage as a multi-category file-tools hub and route its upload entry to tool discovery rather than any PDF-specific workflow.
+- [x] Classify public tool availability accurately and make incomplete or experimental tools visibly unavailable rather than appearing production-ready.
+- [x] Improve and verify desktop/mobile file selection, drag-and-drop, queue, removal, process status, error, success, and download states without adding paid APIs.
+- [x] Run TypeScript and automated tests, perform desktop/mobile visual checks, and publish a concise Arabic completion report for this improvement phase.
