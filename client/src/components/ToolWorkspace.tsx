@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
 import { workspaceResultState } from "@/lib/workspace-results";
+import { mergeFileSelection } from "@/lib/file-queue";
 import { AlertCircle, AudioLines, Ban, CheckCircle2, ChevronDown, ChevronUp, Download, FileArchive, FilePlus2, GripVertical, Image as ImageIcon, Loader2, LockKeyhole, RefreshCw, ShieldCheck, Trash2, UploadCloud, Video, X, Zap } from "lucide-react";
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -39,8 +40,8 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
 
   const addFiles = async (incoming: File[]) => {
     setError(undefined); setResults([]); if (!incoming.length) return; const next = tool.multi ? incoming : [incoming[0]];
-    try { await Promise.all(next.map(file => validateLocalFile(file, inputFamily(tool), maxFileMb))); setFiles(next); }
-    catch (validationError) { setFiles([]); setError(errorText(validationError)); }
+    try { await Promise.all(next.map(file => validateLocalFile(file, inputFamily(tool), maxFileMb))); setFiles(current => mergeFileSelection(current, next, Boolean(tool.multi))); }
+    catch (validationError) { setError(errorText(validationError)); }
   };
   const onInput = (event: ChangeEvent<HTMLInputElement>) => { void addFiles(Array.from(event.target.files || [])); event.target.value = ""; };
   const onDrop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); setDragging(false); void addFiles(Array.from(event.dataTransfer.files || [])); };
