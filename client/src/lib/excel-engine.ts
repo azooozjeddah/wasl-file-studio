@@ -17,16 +17,11 @@ export type SpreadsheetFilePreview = {
 type WorkbookLike = Awaited<ReturnType<typeof readWorkbook>>;
 
 const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-const CSV_MIME = "text/csv;charset=utf-16le";
+const CSV_MIME = "text/csv;charset=utf-8";
 const previewRows = 12;
 const previewColumns = 8;
 
 function sheetKey(fileIndex: number, sheetName: string) { return `${fileIndex}::${sheetName}`; }
-function utf16LeWithBom(value: string) {
-  const bytes = new Uint8Array(2 + value.length * 2); bytes[0] = 0xff; bytes[1] = 0xfe;
-  for (let index = 0; index < value.length; index += 1) { const code = value.charCodeAt(index); bytes[2 + index * 2] = code & 0xff; bytes[3 + index * 2] = code >> 8; }
-  return bytes;
-}
 function cleanSheetName(name: string) { return name.replace(/[\\/?*\[\]:]/g, "-").slice(0, 31) || "Sheet"; }
 function uniqueSheetName(existing: Set<string>, candidate: string) {
   const base = cleanSheetName(candidate); let name = base; let index = 2;
@@ -108,7 +103,7 @@ async function xlsxToCsv(files: File[], previews: SpreadsheetFilePreview[], sele
     const file = files[fileIndex]; const { XLSX, workbook } = await readWorkbook(file); const names = selectedSheetNames(previews, fileIndex, selectedKeys);
     names.forEach((name, sheetIndex) => {
       const csv = `sep=,\r\n${XLSX.utils.sheet_to_csv(workbook.Sheets[name], { FS: ",", RS: "\r\n", forceQuotes: false })}`;
-      results.push({ name: outputName(file.name, cleanSheetName(name), "csv"), blob: new Blob([utf16LeWithBom(csv)], { type: CSV_MIME }), mime: "text/csv", details: { source: "local-xlsx-sheet", sheet: name } });
+      results.push({ name: outputName(file.name, cleanSheetName(name), "csv"), blob: new Blob(["\ufeff", csv], { type: CSV_MIME }), mime: "text/csv", details: { source: "local-xlsx-sheet", sheet: name } });
       report?.((fileIndex + (sheetIndex + 1) / names.length) / files.length);
     });
   }
@@ -127,6 +122,18 @@ async function csvToXlsx(files: File[], report?: (fraction: number) => void) {
   return [{ name: outputName(files[0].name, files.length > 1 ? "batch" : "converted", "xlsx"), blob: new Blob([data], { type: XLSX_MIME }), mime: XLSX_MIME, details: { source: "local-csv-workbook", sheets: files.length } }];
 }
 
+async function selectedSheetsToXlsx(files: File[], previews: SpreadsheetFilePreview[], selectedKeys: string[], report?: (fraction: number) => void) {
+  const XLSX = await import("xlsx"); const workbook = XLSX.utils.book_new(); const existing = new Set<string>(); let added = 0;
+  for (let fileIndex = 0; fileIndex < files.length; fileIndex += 1) {
+    const { workbook: source } = await readWorkbook(files[fileIndex]); const names = selectedSheetNames(previews, fileIndex, selectedKeys);
+    names.forEach(name => { XLSX.utils.book_append_sheet(workbook, source.Sheets[name], uniqueSheetName(existing, name)); added += 1; });
+    report?.((fileIndex + 1) / files.length);
+  }
+  if (!added) throw new Error("اختر ورقة واحدة على الأقل لتصدير XLSX.");
+  const data = XLSX.write(workbook, { bookType: "xlsx", type: "array", compression: true });
+  return [{ name: outputName(files[0].name, "selected-sheets", "xlsx"), blob: new Blob([data], { type: XLSX_MIME }), mime: XLSX_MIME, details: { source: "local-selected-sheets", sheets: added } }];
+}
+
 async function mergeWorkbooks(files: File[], previews: SpreadsheetFilePreview[], selectedKeys: string[], report?: (fraction: number) => void) {
   const XLSX = await import("xlsx"); const workbook = XLSX.utils.book_new(); const existing = new Set<string>(); let added = 0;
   for (let fileIndex = 0; fileIndex < files.length; fileIndex += 1) {
@@ -139,10 +146,10 @@ async function mergeWorkbooks(files: File[], previews: SpreadsheetFilePreview[],
   return [{ name: outputName(files[0].name, "merged", "xlsx"), blob: new Blob([data], { type: XLSX_MIME }), mime: XLSX_MIME, details: { source: "local-workbook-merge", sheets: added } }];
 }
 
-export async function processSpreadsheet(files: File[], previews: SpreadsheetFilePreview[], selectedKeys: string[], slug: string, report?: (fraction: number) => void): Promise<LocalFileResult[]> {
+export async function processSpreadsheet(files: File[], previews: SpreadsheetFilePreview[], selectedKeys: string[], slug: string, report?: (fraction: number) => void, outputFormat: "csv" | "xlsx" = "csv"): Promise<LocalFileResult[]> {
   if (!files.length) throw new Error("اختر ملفًا واحدًا على الأقل أولًا.");
   if (slug === "csv-to-xlsx") return csvToXlsx(files, report);
-  if (slug === "xlsx-to-csv") return xlsxToCsv(files, previews, selectedKeys, report);
+  if (slug === "xlsx-to-csv") return outputFormat === "xlsx" ? selectedSheetsToXlsx(files, previews, selectedKeys, report) : xlsxToCsv(files, previews, selectedKeys, report);
   if (slug === "merge-excel") return mergeWorkbooks(files, previews, selectedKeys, report);
   if (slug === "xlsx-to-pdf") {
     const results: LocalFileResult[] = [];

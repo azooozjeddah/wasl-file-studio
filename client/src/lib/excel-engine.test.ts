@@ -19,8 +19,8 @@ describe("local Excel engine", () => {
     expect(results).toHaveLength(1);
     expect(results[0]?.name).toBe("sales-Sales.csv");
     const bytes = new Uint8Array(await results[0]!.blob.arrayBuffer());
-    expect([...bytes.slice(0, 2)]).toEqual([0xff, 0xfe]);
-    expect(new TextDecoder("utf-16le").decode(bytes.slice(2))).toBe("sep=,\r\nItem,Total\r\nTea,12");
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+    expect(new TextDecoder().decode(bytes.slice(3))).toBe("sep=,\r\nItem,Total\r\nTea,12");
   });
 
   it("converts a batch of CSV files into a single local XLSX workbook", async () => {
@@ -41,12 +41,20 @@ describe("local Excel engine", () => {
     expect(XLSX.utils.sheet_to_json(workbook.Sheets.contacts!, { header: 1 })).toEqual([["الاسم", "المدينة"], ["سارة", "الرياض"]]);
   });
 
-  it("writes Arabic CSV output with a UTF-16LE BOM for legacy Excel", async () => {
+  it("writes Arabic CSV output with a UTF-8 BOM for Excel", async () => {
     const source = workbookFile("arabic.xlsx", [{ name: "ملخص", rows: [["الموقع", "الحالة"], ["الرياض", "متاح"]] }]);
     const previews = await inspectSpreadsheetFiles([source]); const results = await processSpreadsheet([source], previews, ["0::ملخص"], "xlsx-to-csv");
     const bytes = new Uint8Array(await results[0]!.blob.arrayBuffer());
-    expect([...bytes.slice(0, 2)]).toEqual([0xff, 0xfe]);
-    expect(new TextDecoder("utf-16le").decode(bytes.slice(2))).toContain("الموقع,الحالة");
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+    expect(new TextDecoder().decode(bytes.slice(3))).toContain("الموقع,الحالة");
+  });
+
+  it("exports selected sheets as one local XLSX alternative", async () => {
+    const source = workbookFile("arabic.xlsx", [{ name: "ملخص", rows: [["الموقع", "الحالة"], ["الرياض", "متاح"]] }, { name: "ثانوي", rows: [["قيمة"], [4]] }]);
+    const previews = await inspectSpreadsheetFiles([source]); const results = await processSpreadsheet([source], previews, ["0::ملخص"], "xlsx-to-csv", undefined, "xlsx");
+    const workbook = XLSX.read(await results[0]!.blob.arrayBuffer(), { type: "array" });
+    expect(workbook.SheetNames).toEqual(["ملخص"]);
+    expect(XLSX.utils.sheet_to_json(workbook.Sheets["ملخص"]!, { header: 1 })).toEqual([["الموقع", "الحالة"], ["الرياض", "متاح"]]);
   });
 
   it("merges selected sheets from separate workbooks without file upload", async () => {
