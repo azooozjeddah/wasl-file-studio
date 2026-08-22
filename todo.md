@@ -199,3 +199,9 @@
 - [x] Add a responsive Wasl user dashboard with personalized welcome, primary tool entry, all-tools access, and an empty/recent-tools state.
 - [x] Add a unified desktop/mobile account menu with account, security, and a session-clearing logout that redirects safely.
 - [x] Add focused tests for login redirect, logout cookie clearing, protected dashboard back-navigation, and responsive account UI, then publish a concise report.
+- [x] Audit users, sessions, roles, tool states, admin mutations, and PDF flattening to identify the required backend and database changes.
+- [x] Implement real admin user lifecycle actions: disable, enable, role change, and safe deletion with session invalidation and confirmations.
+- [x] Implement real admin tool enable/disable controls persisted in the database and enforced in public tool access.
+- [x] Improve PDF flattening to detect AcroForm fields, flatten actual field values, and clearly reject PDFs without fillable fields.
+- [x] Add and run backend, unit, and browser acceptance tests for login/session protection, admin actions, tool availability, and flattening with interactive and plain PDFs.
+- [x] Deliver a concise Arabic completion report listing changes, evidence, limits, and principal files, then stop.

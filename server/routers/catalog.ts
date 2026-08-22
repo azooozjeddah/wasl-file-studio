@@ -10,6 +10,12 @@ export const catalogRouter = router({
     if (!db) return [];
     return db.select().from(toolCatalog).where(eq(toolCatalog.isActive, true)).orderBy(asc(toolCatalog.sortOrder));
   }),
+  availability: publicProcedure.input(z.object({ slug: z.string().min(2).max(80) })).query(async ({ input }) => {
+    const db = await getDb();
+    if (!db) return null;
+    const [tool] = await db.select({ slug: toolCatalog.slug, isActive: toolCatalog.isActive, nameAr: toolCatalog.nameAr, nameEn: toolCatalog.nameEn }).from(toolCatalog).where(eq(toolCatalog.slug, input.slug)).limit(1);
+    return tool || null;
+  }),
   settings: publicProcedure.query(async () => {
     const db = await getDb();
     if (!db) return { analyticsEnabled: true, localMaxFileMb: 100, serverProcessingEnabled: false, serverMaxFileMb: 250, defaultProcessingMode: "local" as const, siteName: "وصل للملفات", logoText: "وصل", logoUrl: null, accentColor: "#7157F8", metaTitle: null, metaDescription: null, supportEmail: null, adsEnabled: false };

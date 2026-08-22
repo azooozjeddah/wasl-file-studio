@@ -5,7 +5,7 @@ import { downloadBlob, downloadZip, formatBytes, LocalFileResult, resultPreviewK
 import { transformImages } from "@/lib/image-engine";
 import { extractOcr } from "@/lib/ocr-engine";
 import { cancelMediaProcessing, mediaInfo, processMedia } from "@/lib/media-engine";
-import { alterPdf, compressPdf, imagesToPdf, mergePdfs, pdfToImages, securePdf } from "@/lib/pdf-engine";
+import { alterPdf, compressPdf, countPdfFormFields, imagesToPdf, mergePdfs, pdfToImages, securePdf } from "@/lib/pdf-engine";
 import { trpc } from "@/lib/trpc";
 import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
@@ -56,6 +56,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     if (tool.slug === "unlock-pdf") return [await securePdf(files[0], "unlock", options.password, report)];
     if (tool.slug === "preview-pdf") return [{ name: files[0].name, blob: files[0], mime: "application/pdf", label: "Preview ready" }];
     if (tool.slug === "pdf-to-jpg" || tool.slug === "pdf-to-png") return pdfToImages(files[0], tool.slug.endsWith("jpg") ? "jpeg" : "png", options.quality, report);
+    if (tool.slug === "flatten-pdf") { const fieldCount = await countPdfFormFields(files[0]); const outputs = await alterPdf(tool.slug, files[0], { pages: options.pages, rotation: options.rotation, watermark: options.watermark, position: options.position, crop: { x: options.cropX, y: options.cropY, width: options.cropWidth, height: options.cropHeight }, dimensions: { width: options.width, height: options.height }, metadataMode: options.metadataMode, quality: options.quality }, report); return outputs.map(output => ({ ...output, label: `تم تسطيح ${fieldCount} حقل قابل للتعبئة` })); }
     return alterPdf(tool.slug, files[0], { pages: options.pages, rotation: options.rotation, watermark: options.watermark, position: options.position, crop: { x: options.cropX, y: options.cropY, width: options.cropWidth, height: options.cropHeight }, dimensions: { width: options.width, height: options.height }, metadataMode: options.metadataMode, quality: options.quality }, report);
   };
   const processImage = () => transformImages(files, tool.slug, { outputType: options.outputType, quality: options.quality, width: tool.slug === "resize-image" ? options.width : undefined, height: tool.slug === "resize-image" ? options.height : undefined, keepAspect: true, crop: tool.slug === "crop-image" ? { x: options.cropX, y: options.cropY, width: options.cropWidth, height: options.cropHeight } : undefined, rotation: tool.slug === "rotate-image" ? options.rotation : 0, flipX: tool.slug === "rotate-image" && options.flipX, flipY: tool.slug === "rotate-image" && options.flipY }, amount => setProgress(Math.max(4, Math.round(amount * 100))));
@@ -69,7 +70,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     try {
       const generated = isPdf ? await processPdf() : isImage ? await processImage() : tool.category === "document" ? await processDocument() : tool.category === "ocr" ? await processOcr(controller.signal) : (tool.category === "audio" || tool.category === "video") ? await processMediaTool() : (() => { throw new Error(t("هذه الأداة لا تملك محرك معالجة مناسبًا.", "This tool does not have a matching processing engine.")); })();
       if (operationId !== operationIdRef.current) return;
-      setResults(generated); setProgress(100); if (publicSettings.data?.analyticsEnabled) telemetry.mutate({ eventType: "process_success", toolSlug: tool.slug, locale: isArabic ? "ar" : "en", processingMs: Math.round(performance.now() - startedAt) }); toast.success(t("اكتملت المعالجة داخل جهازك.", "Processing completed on your device."));
+      setResults(generated); setProgress(100); if (publicSettings.data?.analyticsEnabled) telemetry.mutate({ eventType: "process_success", toolSlug: tool.slug, locale: isArabic ? "ar" : "en", processingMs: Math.round(performance.now() - startedAt) }); toast.success(tool.slug === "flatten-pdf" ? ((generated[0] as LocalFileResult | undefined)?.label || t("تم تسطيح حقول النموذج داخل جهازك.", "Form fields were flattened on your device.")) : t("اكتملت المعالجة داخل جهازك.", "Processing completed on your device."));
     } catch (processError) { if (operationId !== operationIdRef.current) return; const message = errorText(processError); setError(message); if (publicSettings.data?.analyticsEnabled) { telemetry.mutate({ eventType: "process_error", toolSlug: tool.slug, locale: isArabic ? "ar" : "en", processingMs: Math.round(performance.now() - startedAt) }); telemetryError.mutate({ toolSlug: tool.slug, errorCode: processError instanceof Error ? processError.name.slice(0, 80) : "PROCESS_ERROR", message: "LOCAL_PROCESSING_FAILED" }); } toast.error(t("تعذرت المعالجة", "Processing failed"), { description: message }); }
     finally { if (operationId === operationIdRef.current) { cancelControllerRef.current = null; setProcessing(false); } }
   };

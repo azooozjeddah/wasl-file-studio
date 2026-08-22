@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./_core/context";
 
 const dbMock = vi.hoisted(() => ({
-  select: vi.fn(), insert: vi.fn(), update: vi.fn(),
+  select: vi.fn(), insert: vi.fn(), update: vi.fn(), delete: vi.fn(),
 }));
 vi.mock("./db", () => ({ getDb: vi.fn(async () => dbMock) }));
 import { appRouter } from "./routers";
@@ -11,7 +11,7 @@ const chain = () => ({ from: () => ({ where: () => ({ limit: async () => [] }), 
 const adminContext = { user: { id: 9, openId: "admin", email: "admin@example.com", name: "Admin", loginMethod: "manus", role: "admin", createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() }, req: {} as TrpcContext["req"], res: {} as TrpcContext["res"] } as TrpcContext;
 
 describe("admin mutations", () => {
-  beforeEach(() => { vi.clearAllMocks(); dbMock.select.mockImplementation(chain); dbMock.insert.mockImplementation(() => ({ values: vi.fn(async () => [{ insertId: 41 }]) })); dbMock.update.mockImplementation(() => ({ set: () => ({ where: async () => undefined }) })); });
+  beforeEach(() => { vi.clearAllMocks(); dbMock.select.mockImplementation(chain); dbMock.insert.mockImplementation(() => ({ values: vi.fn(async () => [{ insertId: 41 }]) })); dbMock.update.mockImplementation(() => ({ set: () => ({ where: async () => undefined }) })); dbMock.delete.mockImplementation(() => ({ where: async () => undefined })); });
   it("persists operational management inputs and writes audit rows", async () => {
     const caller = appRouter.createCaller(adminContext);
     await expect(caller.admin.saveTool({ slug: "merge-pdf", category: "pdf", nameAr: "دمج PDF", nameEn: "Merge PDF", descriptionAr: "دمج محلي", descriptionEn: "Local merge", icon: "FileCog", processingMode: "local", supportedFormats: ["PDF"], sizeLimitMb: 100, sortOrder: 0, isActive: true, isFeatured: true, showOnHome: true, seoTitleAr: "دمج PDF", seoTitleEn: "Merge PDF", seoDescriptionAr: "", seoDescriptionEn: "" })).resolves.toEqual({ id: 41 });
@@ -22,5 +22,13 @@ describe("admin mutations", () => {
     await expect(caller.admin.saveRole({ code: "content_editor", nameAr: "محرر محتوى", nameEn: "Content editor", description: "", permissions: ["content.manage"], isSystem: false })).resolves.toEqual({ success: true });
     await expect(caller.admin.resolveError({ id: 1, isResolved: true })).resolves.toEqual({ success: true });
     expect(dbMock.insert).toHaveBeenCalled(); expect(dbMock.update).toHaveBeenCalled();
+  });
+  it("persists account suspension and deletes account-linked records through protected mutations", async () => {
+    const caller = appRouter.createCaller(adminContext);
+    dbMock.select.mockImplementationOnce(() => ({ from: () => ({ where: () => ({ limit: async () => [{ id: 41 }] }) }) }));
+    await expect(caller.admin.setUserAccountStatus({ userId: 41, accountStatus: "suspended" })).resolves.toEqual({ success: true });
+    dbMock.select.mockImplementationOnce(() => ({ from: () => ({ where: () => ({ limit: async () => [{ id: 41, email: "member@example.com" }] }) }) }));
+    await expect(caller.admin.deleteUserAccount({ userId: 41 })).resolves.toEqual({ success: true });
+    expect(dbMock.update).toHaveBeenCalled(); expect(dbMock.delete).toHaveBeenCalledTimes(4);
   });
 });

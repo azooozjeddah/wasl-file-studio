@@ -16,6 +16,9 @@ export function parsePageList(value: string | undefined, count: number) {
 async function openPdf(file: File) { try { return await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: false, updateMetadata: false }); } catch (error: any) { if (/encrypt|password|security/i.test(String(error?.message || ""))) throw new Error("الملف محمي بكلمة مرور. استخدم أداة فك حماية PDF فقط إذا كنت تملك كلمة المرور الصحيحة."); throw error; } }
 async function result(document: PDFDocument, source: File, suffix: string, extension = "pdf") { const saved = new Uint8Array(await document.save({ useObjectStreams: true })).slice(); return { name: outputName(source.name, suffix, extension), blob: new Blob([saved], { type: "application/pdf" }), mime: "application/pdf" } satisfies LocalFileResult; }
 
+/** Counts interactive AcroForm fields before any flattening is attempted. */
+export async function countPdfFormFields(file: File) { const source = await openPdf(file); return source.getForm().getFields().length; }
+
 export async function mergePdfs(files: File[], report?: (fraction: number) => void) {
   const merged = await PDFDocument.create(); for (let index = 0; index < files.length; index += 1) { const source = await openPdf(files[index]); const copied = await merged.copyPages(source, source.getPageIndices()); copied.forEach(page => merged.addPage(page)); report?.((index + 1) / files.length); }
   return result(merged, files[0], "merged");
@@ -35,7 +38,7 @@ export async function alterPdf(slug: string, file: File, options: PdfOptions, re
   if (slug === "page-numbers-pdf") { const font = await source.embedFont(StandardFonts.Helvetica); pages.forEach((page, index) => { const { width } = page.getSize(); const label = String(index + 1); page.drawText(label, { x: width / 2 - font.widthOfTextAtSize(label, 10) / 2, y: options.position === "top" ? page.getHeight() - 22 : 13, size: 10, font, color: rgb(.28, .27, .35) }); }); }
   if (slug === "crop-pdf") { const crop = options.crop || { x: 0, y: 0, width: 500, height: 700 }; pages.forEach((page, index) => { if (selected.includes(index)) page.setCropBox(crop.x, crop.y, crop.width, crop.height); }); }
   if (slug === "resize-pdf") { const dimensions = options.dimensions || { width: 595, height: 842 }; pages.forEach((page, index) => { if (!selected.includes(index)) return; const current = page.getSize(); const sx = dimensions.width / current.width; const sy = dimensions.height / current.height; page.scaleContent(sx, sy); page.scaleAnnotations(sx, sy); page.setSize(dimensions.width, dimensions.height); }); }
-  if (slug === "flatten-pdf") { try { source.getForm().flatten(); } catch { /* PDFs without interactive fields are already effectively flat. */ } }
+  if (slug === "flatten-pdf") { const form = source.getForm(); const fieldCount = form.getFields().length; if (!fieldCount) throw new Error("هذا الملف لا يحتوي على حقول PDF قابلة للتعبئة، لذلك لا يحتاج إلى تسطيح."); form.flatten(); }
   if (slug === "compress-pdf") { source.setProducer("Wasl File Studio local optimization"); }
   if (slug === "pdf-metadata") {
     if (options.metadataMode === "clear") { source.setTitle(""); source.setAuthor(""); source.setSubject(""); source.setKeywords([]); source.setCreator(""); source.setProducer(""); return [await result(source, file, "metadata-removed")]; }
