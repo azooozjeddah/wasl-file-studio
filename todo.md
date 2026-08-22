@@ -164,4 +164,5 @@
 - [ ] Test Excel-to-PDF, Excel-to-CSV, CSV-to-Excel, and Excel merge on iPhone/Safari, including sheet selection and download/open behavior.
 - [ ] Fix only any confirmed launch-blocking Excel issue found in the Safari acceptance flow and re-test the affected path once.
 - [ ] Restrict Excel-to-CSV uploads to XLSX/XLS and ensure Arabic CSV fixture input is decoded as UTF-8 in CSV-to-Excel, then re-test once.
+- [ ] Make Excel-to-CSV outputs declare their delimiter explicitly so Arabic-locale Excel opens values in separate columns without literal quote characters, then re-test once.
 - [ ] Publish a concise Arabic iPhone/Safari Excel acceptance report with passes, failures, fixes, and remaining limitations, then stop.

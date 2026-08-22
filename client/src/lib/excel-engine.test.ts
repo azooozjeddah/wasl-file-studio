@@ -18,7 +18,7 @@ describe("local Excel engine", () => {
     const results = await processSpreadsheet([source], previews, ["0::Sales"], "xlsx-to-csv");
     expect(results).toHaveLength(1);
     expect(results[0]?.name).toBe("sales-Sales.csv");
-    await expect(results[0]?.blob.text()).resolves.toContain("Tea");
+    await expect(results[0]?.blob.text()).resolves.toBe("sep=,\r\nItem,Total\r\nTea,12");
   });
 
   it("converts a batch of CSV files into a single local XLSX workbook", async () => {
@@ -31,6 +31,12 @@ describe("local Excel engine", () => {
   it("keeps Arabic UTF-8 CSV text readable in the local sheet preview", async () => {
     const preview = await inspectSpreadsheetFiles([new File(["\ufeffالاسم,المدينة\nسارة,الرياض"], "contacts.csv", { type: "text/csv" })]);
     expect(preview[0]?.sheets[0]?.rows).toEqual([["الاسم", "المدينة"], ["سارة", "الرياض"]]);
+  });
+
+  it("keeps Arabic UTF-8 CSV text readable after converting it to XLSX", async () => {
+    const results = await processSpreadsheet([new File(["\ufeffالاسم,المدينة\nسارة,الرياض"], "contacts.csv", { type: "text/csv" })], [], [], "csv-to-xlsx");
+    const workbook = XLSX.read(await results[0]!.blob.arrayBuffer(), { type: "array" });
+    expect(XLSX.utils.sheet_to_json(workbook.Sheets.contacts!, { header: 1 })).toEqual([["الاسم", "المدينة"], ["سارة", "الرياض"]]);
   });
 
   it("merges selected sheets from separate workbooks without file upload", async () => {

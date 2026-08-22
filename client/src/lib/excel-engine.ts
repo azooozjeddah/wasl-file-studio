@@ -102,7 +102,7 @@ async function xlsxToCsv(files: File[], previews: SpreadsheetFilePreview[], sele
   for (let fileIndex = 0; fileIndex < files.length; fileIndex += 1) {
     const file = files[fileIndex]; const { XLSX, workbook } = await readWorkbook(file); const names = selectedSheetNames(previews, fileIndex, selectedKeys);
     names.forEach((name, sheetIndex) => {
-      const csv = XLSX.utils.sheet_to_csv(workbook.Sheets[name], { FS: ",", RS: "\n", forceQuotes: true });
+      const csv = `sep=,\r\n${XLSX.utils.sheet_to_csv(workbook.Sheets[name], { FS: ",", RS: "\r\n", forceQuotes: false })}`;
       results.push({ name: outputName(file.name, cleanSheetName(name), "csv"), blob: new Blob(["\ufeff", csv], { type: CSV_MIME }), mime: "text/csv", details: { source: "local-xlsx-sheet", sheet: name } });
       report?.((fileIndex + (sheetIndex + 1) / names.length) / files.length);
     });
@@ -113,7 +113,7 @@ async function xlsxToCsv(files: File[], previews: SpreadsheetFilePreview[], sele
 async function csvToXlsx(files: File[], report?: (fraction: number) => void) {
   const XLSX = await import("xlsx"); const workbook = XLSX.utils.book_new(); const existing = new Set<string>();
   for (let index = 0; index < files.length; index += 1) {
-    const file = files[index]; const csvWorkbook = XLSX.read(await file.text(), { type: "string", raw: false }); const sourceName = csvWorkbook.SheetNames[0];
+    const file = files[index]; const csvWorkbook = XLSX.read(await file.text(), { type: "string", codepage: 65001, raw: false }); const sourceName = csvWorkbook.SheetNames[0];
     if (!sourceName) throw new Error(`تعذر قراءة CSV: ${file.name}`);
     XLSX.utils.book_append_sheet(workbook, csvWorkbook.Sheets[sourceName], uniqueSheetName(existing, file.name.replace(/\.[^.]+$/, "")));
     report?.((index + 1) / files.length);
