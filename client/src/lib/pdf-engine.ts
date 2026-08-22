@@ -33,6 +33,33 @@ export async function repairPdf(file: File, report?: (fraction: number) => void)
   return result(source, file, "re-saved");
 }
 
+async function pdfPageSummaries(file: File, report?: (fraction: number) => void) {
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
+  const source = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise; const pages: Array<{ text: string; hash: string }> = [];
+  for (let index = 1; index <= source.numPages; index += 1) {
+    const page = await source.getPage(index); const content = await page.getTextContent(); const text = content.items.map((item: any) => typeof item.str === "string" ? item.str : "").join(" ").replace(/\s+/g, " ").trim();
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); const hash = Array.from(new Uint8Array(digest)).map(value => value.toString(16).padStart(2, "0")).join("");
+    pages.push({ text, hash }); report?.(index / source.numPages);
+  }
+  return pages;
+}
+
+/** Compares two PDFs locally by page count plus extracted text and a SHA-256 digest per page. It does not claim pixel-level visual diffing. */
+export async function comparePdfs(left: File, right: File, report?: (fraction: number) => void): Promise<LocalFileResult> {
+  const [leftPages, rightPages] = await Promise.all([pdfPageSummaries(left, fraction => report?.(fraction * .5)), pdfPageSummaries(right, fraction => report?.(.5 + fraction * .5))]);
+  const count = Math.max(leftPages.length, rightPages.length); const lines = ["تقرير مقارنة PDF محلي", "", `الملف الأيسر: ${left.name} (${leftPages.length} صفحة)`, `الملف الأيمن: ${right.name} (${rightPages.length} صفحة)`, "", "النتائج حسب الصفحة:"];
+  let different = leftPages.length === rightPages.length ? 0 : Math.abs(leftPages.length - rightPages.length);
+  for (let index = 0; index < count; index += 1) {
+    const a = leftPages[index]; const b = rightPages[index]; const same = Boolean(a && b && a.hash === b.hash);
+    if (!same) different += a && b ? 1 : 0;
+    lines.push(`صفحة ${index + 1}: ${same ? "متطابقة نصيًا" : !a ? "توجد في الملف الأيمن فقط" : !b ? "توجد في الملف الأيسر فقط" : "مختلفة نصيًا"}`);
+    if (!same && a && b) { lines.push(`  الأيسر: ${a.text.slice(0, 500) || "[لا نص مستخرج]"}`); lines.push(`  الأيمن: ${b.text.slice(0, 500) || "[لا نص مستخرج]"}`); }
+  }
+  lines.push("", `الخلاصة: ${different} فرق/فروقات مكتشفة عبر عدد الصفحات أو النص المستخرج.`); lines.push("ملاحظة: هذه المقارنة لا تدّعي اكتشاف اختلافات البكسل أو الصور أو التنسيق إذا كان النص المستخرج متطابقًا.");
+  return { name: outputName(left.name, "comparison", "txt"), blob: new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" }), mime: "text/plain", label: "Local PDF comparison report", details: { comparison: true, leftPages: leftPages.length, rightPages: rightPages.length, differences: different } };
+}
+
 /**
  * Permanently redacts one rectangular region from every page by rasterizing the
  * visible page, applying the mask, and rebuilding a new image-backed PDF.
