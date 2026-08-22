@@ -103,6 +103,7 @@
 - [x] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
 - [x] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
 - [ ] Fix the historical sitemap domain in robots.txt and verify both robots.txt and sitemap.xml on the active production domain.
+- [ ] Serve canonical robots.txt and sitemap.xml routes from the application before the platform SEO fallback so the active domain is authoritative in production.
 - [x] Fix mobile tool-category navigation so OCR, audio, and video tabs remain reachable within the viewport without horizontal clipping.
 - [ ] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport.
 - [x] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
