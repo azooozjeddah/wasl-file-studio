@@ -100,6 +100,10 @@
 - [ ] Record artifacts and exact outcomes for every tool family, including output readability, ZIP contents, rejection messages, and browser console/network behavior.
 - [ ] Fix all reproducible production defects found during end-to-end acceptance and retest each affected flow.
 - [ ] Publish a complete production acceptance report with tested, passed, failed, fixed, local, server-ready, and remaining technical-limit counts.
+- [x] Add explicit aggregate counts for tested, passed, failed, fixed, local, server-ready, and remaining technical limits to the final acceptance report.
+- [x] Add a final per-tool acceptance table covering every public tool with status, local/server-ready flag, fixed items, and technical-limit note.
+- [ ] Complete remaining non-frozen production acceptance and artifact capture, then replace provisional rows in the report with fully validated outcomes.
+- [ ] After remaining reproducible non-FFmpeg defect triage, republish the report with fully final counts and conclusions.
 - [x] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
 - [x] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
 - [x] Fix the historical sitemap domain in robots.txt and verify both robots.txt and sitemap.xml on the active production domain.
@@ -119,6 +123,8 @@
 - [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
 - [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
 - [ ] Fix the reproducible zero-byte MP4 produced by WebM video trimming, then verify the downloaded output is playable and non-empty.
+- [x] Freeze all FFmpeg code, configuration, worker, core, WASM, CDN, and test changes for the remainder of this task; classify unverified media transforms as experimental only.
+- [ ] Complete acceptance testing for every non-FFmpeg public tool with real input, non-empty output, download, and independent verification, then publish a final per-tool acceptance report and stop.
 - [x] Provide a current production-status report and an evidence-based media decision plan before any further FFmpeg testing or implementation.
 - [x] Create and deliver a structured Arabic production-status report based solely on recorded test evidence.
 - [x] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
