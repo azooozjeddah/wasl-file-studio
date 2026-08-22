@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { adminAuditLogs, adminRoles, adSlots, analyticsEvents, contentEntries, errorLogs, faqEntries, processingJobs, processingWorkers, siteSettings, subscriptionPlans, toolCatalog, userPlanAssignments, userRoleAssignments, users } from "../../drizzle/schema";
+import { adminAuditLogs, adminRoles, adSlots, analyticsEvents, contactMessages, contentEntries, errorLogs, faqEntries, processingJobs, processingWorkers, siteSettings, subscriptionPlans, toolCatalog, userPlanAssignments, userRoleAssignments, users } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { adminProcedure, router } from "../_core/trpc";
 import { releaseExpiredTemporaryFiles } from "../processing/cleanup";
@@ -22,6 +22,9 @@ export const adminRouter = router({
     const days = Array.from({ length: 7 }, (_, offset) => { const date = new Date(); date.setDate(date.getDate() - (6 - offset)); const key = date.toISOString().slice(0, 10); const dayEvents = events.filter(event => event.createdAt.toISOString().slice(0, 10) === key); return { key, label: key.slice(5), operations: dayEvents.filter(event => event.eventType === "process_success" || event.eventType === "process_error").length, visits: dayEvents.filter(event => event.eventType === "visit").length }; });
     return { totalEvents: events.length, visits: events.filter(event => event.eventType === "visit").length, processedFiles: successful + failed, successful, failed, activeTools: tools.filter(tool => tool.isActive).length, configuredPlans: plans.length, configuredRoles: roles.length, usage, days, recentErrors: errors };
   }),
+  contactMessages: adminProcedure.query(async () => (await dbOrThrow()).select().from(contactMessages).orderBy(desc(contactMessages.createdAt)).limit(200)),
+  setContactMessageStatus: adminProcedure.input(z.object({ id: z.number().int().positive(), status: z.enum(["new", "read"]) })).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); await db.update(contactMessages).set({ status: input.status, readAt: input.status === "read" ? new Date() : null }).where(eq(contactMessages.id, input.id)); await audit(db, ctx.user.id, `contact.${input.status}`, "contact_message", input.id); return { success: true }; }),
+  deleteContactMessage: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); await db.delete(contactMessages).where(eq(contactMessages.id, input.id)); await audit(db, ctx.user.id, "contact.deleted", "contact_message", input.id); return { success: true }; }),
   tools: adminProcedure.query(async () => (await dbOrThrow()).select().from(toolCatalog).orderBy(toolCatalog.sortOrder)),
   saveTool: adminProcedure.input(toolInput).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); const { id, ...values } = input; if (id) { await db.update(toolCatalog).set(values).where(eq(toolCatalog.id, id)); await audit(db, ctx.user.id, "tool.updated", "tool", id, values.slug); return { id }; } const result = await db.insert(toolCatalog).values(values); const newId = Number(result[0].insertId); await audit(db, ctx.user.id, "tool.created", "tool", newId, values.slug); return { id: newId }; }),
   reorderTools: adminProcedure.input(z.array(z.object({ id: z.number(), sortOrder: z.number().int().min(0) })).min(1).max(100)).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); for (const tool of input) await db.update(toolCatalog).set({ sortOrder: tool.sortOrder }).where(eq(toolCatalog.id, tool.id)); await audit(db, ctx.user.id, "tool.reordered", "tool", undefined, `${input.length} tools`); return { success: true }; }),

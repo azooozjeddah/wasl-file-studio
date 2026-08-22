@@ -183,3 +183,10 @@
 - [x] Enforce user/admin authorization for all administrative routes and mutations, with direct-link denial for unauthenticated and regular users.
 - [x] Redesign the Wasl admin dashboard with a responsive sidebar, concise metrics, user/tool/role/operations/settings views, and safe system alerts.
 - [x] Add focused tests for Wasl login, logout, role routing, route protection, and admin access, then deliver a concise implementation report.
+- [x] Audit the current QR, file-integrity, Wasl identity, contact, and admin implementations against the attached requirements without touching conversion tools.
+- [x] Improve File Integrity Check with single-file hashing and a true two-file comparison workflow plus plain-language guidance.
+- [x] Add Wasl password change and secure expiring password-reset flows without exposing account existence; production-wide sender-domain verification for Resend remains documented.
+- [x] Add a public contact form with persisted messages and an admin inbox with new/read/delete actions.
+- [x] Consolidate the admin navigation into overview, tools, users, roles, contact messages, operations, settings, and account security without removing current controls.
+- [x] Add concise nontechnical guidance to QR and file-integrity screens while retaining all existing QR options and clean exports.
+- [x] Test the requested authentication, contact, QR, integrity, access-control, desktop, and mobile flows, then publish a concise Arabic closure report.

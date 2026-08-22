@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hashWaslPassword, toWaslPublicUser, validateWaslPassword, verifyWaslPassword } from "./waslAuth";
+import { hashPasswordResetToken, hashWaslPassword, toWaslPublicUser, validateWaslPassword, verifyWaslPassword } from "./waslAuth";
 
 describe("Wasl password helpers", () => {
   it("accepts only passwords suitable for a Wasl account", () => {
@@ -19,5 +19,13 @@ describe("Wasl password helpers", () => {
     expect(publicUser).toMatchObject({ id: 4, email: "user@example.com", role: "user" });
     expect(publicUser).not.toHaveProperty("passwordHash");
     expect(publicUser).not.toHaveProperty("openId");
+  });
+
+  it("derives a fixed-length digest for reset tokens instead of keeping the raw token", () => {
+    const token = "safe-one-time-token-for-wasl";
+    const digest = hashPasswordResetToken(token);
+    expect(digest).toMatch(/^[a-f0-9]{64}$/);
+    expect(digest).not.toContain(token);
+    expect(hashPasswordResetToken(token)).toBe(digest);
   });
 });

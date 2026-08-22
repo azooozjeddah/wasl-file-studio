@@ -10,6 +10,16 @@ export const users = mysqlTable("users", {
   createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(), lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
+/** One-time reset records store only a SHA-256 token digest, never the raw recovery link token. */
+export const passwordResetTokens = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(), userId: int("userId").notNull(), tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(), expiresAt: timestamp("expiresAt").notNull(), usedAt: timestamp("usedAt"), createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+/** Support messages deliberately store text only; customer files are never attached or persisted here. */
+export const contactMessages = mysqlTable("contact_messages", {
+  id: int("id").autoincrement().primaryKey(), name: varchar("name", { length: 120 }).notNull(), email: varchar("email", { length: 320 }).notNull(), subject: varchar("subject", { length: 180 }).notNull(), message: text("message").notNull(), status: mysqlEnum("status", ["new", "read"]).notNull().default("new"), readAt: timestamp("readAt"), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 /** Central public identity. It stores settings only; file bytes never live in this database. */
 export const siteSettings = mysqlTable("site_settings", {
   id: int("id").primaryKey(), siteName: varchar("siteName", { length: 120 }).notNull().default("وصل للملفات"), taglineAr: text("taglineAr"), taglineEn: text("taglineEn"), logoText: varchar("logoText", { length: 24 }).notNull().default("وصل"), accentColor: varchar("accentColor", { length: 24 }).notNull().default("#7157F8"),

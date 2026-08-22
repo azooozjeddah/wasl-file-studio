@@ -1,10 +1,10 @@
-import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
-import { eq, and } from "drizzle-orm";
+import { eq, and, gt, isNull } from "drizzle-orm";
 import { parse as parseCookie } from "cookie";
 import { SignJWT, jwtVerify } from "jose";
 import { nanoid } from "nanoid";
-import { users, type User } from "../../drizzle/schema";
+import { passwordResetTokens, users, type User } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { ENV } from "../_core/env";
 import { getSessionCookieOptions } from "../_core/cookies";
@@ -13,6 +13,7 @@ import type { Request, Response } from "express";
 const scrypt = promisify(scryptCallback);
 export const WASL_SESSION_COOKIE = "wasl_session";
 const SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 30;
+const PASSWORD_RESET_LIFETIME_MS = 1000 * 60 * 30;
 
 export type WaslPublicUser = Pick<User, "id" | "name" | "email" | "role" | "createdAt" | "lastSignedIn">;
 
@@ -105,4 +106,35 @@ export async function getWaslSessionUser(req: Request): Promise<User | null> {
 export async function touchWaslUser(userId: number) {
   const db = await getDb();
   if (db) await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, userId));
+}
+
+export function hashPasswordResetToken(token: string) { return createHash("sha256").update(token).digest("hex"); }
+
+export async function changeWaslPassword(user: User, currentPassword: string, nextPassword: string) {
+  if (!validateWaslPassword(nextPassword)) throw new Error("كلمة المرور الجديدة يجب أن تكون 10 أحرف على الأقل.");
+  if (!(await verifyWaslPassword(currentPassword, user.passwordHash))) throw new Error("كلمة المرور الحالية غير صحيحة.");
+  const db = await getDb(); if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا");
+  await db.update(users).set({ passwordHash: await hashWaslPassword(nextPassword) }).where(eq(users.id, user.id));
+}
+
+export async function createPasswordResetToken(user: User) {
+  const db = await getDb(); if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا");
+  const rawToken = randomBytes(32).toString("base64url"); const expiresAt = new Date(Date.now() + PASSWORD_RESET_LIFETIME_MS);
+  await db.insert(passwordResetTokens).values({ userId: user.id, tokenHash: hashPasswordResetToken(rawToken), expiresAt });
+  return { rawToken, expiresAt };
+}
+
+export async function resetWaslPassword(rawToken: string, nextPassword: string) {
+  if (!validateWaslPassword(nextPassword)) throw new Error("كلمة المرور الجديدة يجب أن تكون 10 أحرف على الأقل.");
+  const db = await getDb(); if (!db) throw new Error("قاعدة البيانات غير متاحة حاليًا");
+  const [record] = await db.select().from(passwordResetTokens).where(and(eq(passwordResetTokens.tokenHash, hashPasswordResetToken(rawToken)), isNull(passwordResetTokens.usedAt), gt(passwordResetTokens.expiresAt, new Date()))).limit(1);
+  if (!record) throw new Error("رابط إعادة التعيين غير صالح أو انتهت صلاحيته.");
+  await db.update(users).set({ passwordHash: await hashWaslPassword(nextPassword) }).where(eq(users.id, record.userId));
+  await db.update(passwordResetTokens).set({ usedAt: new Date() }).where(eq(passwordResetTokens.id, record.id));
+}
+
+export async function sendPasswordResetEmail(input: { to: string; resetUrl: string }) {
+  if (!ENV.resendApiKey) throw new Error("خدمة البريد غير مهيأة.");
+  const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${ENV.resendApiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Wasl <onboarding@resend.dev>", to: [input.to], subject: "إعادة تعيين كلمة مرور وَصل", html: `<main dir="rtl" style="font-family:Arial,sans-serif;line-height:1.7"><h2>إعادة تعيين كلمة المرور</h2><p>طلبت إعادة تعيين كلمة مرور حسابك في وَصل. الرابط صالح لمدة 30 دقيقة ويستخدم مرة واحدة فقط.</p><p><a href="${input.resetUrl}" style="display:inline-block;background:#7157F8;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none">تعيين كلمة مرور جديدة</a></p><p>إذا لم تطلب ذلك، يمكنك تجاهل هذه الرسالة.</p></main>` }) });
+  if (!response.ok) throw new Error("تعذر إرسال رسالة إعادة التعيين.");
 }

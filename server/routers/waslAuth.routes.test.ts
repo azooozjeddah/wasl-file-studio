@@ -6,7 +6,7 @@ const fakeUser = { id: 8, name: "User", email: "user@wasl.test", role: "user" as
 const account = { id: 7, openId: "wasl_test", name: "Admin", email: "admin@wasl.test", loginMethod: "wasl_password", passwordHash: "hash", waslAccount: true, accountStatus: "active" as const, role: "admin" as const, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
 
 vi.mock("../auth/waslAuth", () => ({
-  hasWaslAdmin: vi.fn(), createWaslAccount: vi.fn(), createWaslSession: vi.fn(), getWaslUserByEmail: vi.fn(), toWaslPublicUser: vi.fn(), touchWaslUser: vi.fn(), validateWaslPassword: vi.fn(), verifyWaslPassword: vi.fn(), writeWaslSession: vi.fn(), clearWaslSession: vi.fn(),
+  hasWaslAdmin: vi.fn(), createWaslAccount: vi.fn(), createWaslSession: vi.fn(), getWaslUserByEmail: vi.fn(), toWaslPublicUser: vi.fn(), touchWaslUser: vi.fn(), validateWaslPassword: vi.fn(), verifyWaslPassword: vi.fn(), writeWaslSession: vi.fn(), clearWaslSession: vi.fn(), changeWaslPassword: vi.fn(), createPasswordResetToken: vi.fn(), resetWaslPassword: vi.fn(), sendPasswordResetEmail: vi.fn(),
 }));
 
 import * as auth from "../auth/waslAuth";
@@ -37,5 +37,12 @@ describe("waslAuth router", () => {
     expect(auth.touchWaslUser).toHaveBeenCalledWith(7);
     expect(auth.writeWaslSession).toHaveBeenCalledWith(ctx.req, ctx.res, "wasl-token");
     expect(result).not.toHaveProperty("passwordHash");
+  });
+  it("returns the same accepted response for an unknown reset email", async () => {
+    vi.mocked(auth.getWaslUserByEmail).mockResolvedValue(undefined);
+    const result = await waslAuthRouter.createCaller(ctx).requestPasswordReset({ email: "unknown@wasl.test" });
+    expect(result).toEqual({ accepted: true });
+    expect(auth.createPasswordResetToken).not.toHaveBeenCalled();
+    expect(auth.sendPasswordResetEmail).not.toHaveBeenCalled();
   });
 });
