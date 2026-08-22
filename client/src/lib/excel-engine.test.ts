@@ -20,7 +20,7 @@ describe("local Excel engine", () => {
     expect(results[0]?.name).toBe("sales-Sales.csv");
     const bytes = new Uint8Array(await results[0]!.blob.arrayBuffer());
     expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
-    expect(new TextDecoder().decode(bytes.slice(3))).toBe("sep=,\r\nItem,Total\r\nTea,12");
+    expect(new TextDecoder().decode(bytes.slice(3))).toBe("Item,Total\r\nTea,12");
   });
 
   it("converts a batch of CSV files into a single local XLSX workbook", async () => {

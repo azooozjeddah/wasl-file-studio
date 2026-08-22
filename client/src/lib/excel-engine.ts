@@ -102,7 +102,7 @@ async function xlsxToCsv(files: File[], previews: SpreadsheetFilePreview[], sele
   for (let fileIndex = 0; fileIndex < files.length; fileIndex += 1) {
     const file = files[fileIndex]; const { XLSX, workbook } = await readWorkbook(file); const names = selectedSheetNames(previews, fileIndex, selectedKeys);
     names.forEach((name, sheetIndex) => {
-      const csv = `sep=,\r\n${XLSX.utils.sheet_to_csv(workbook.Sheets[name], { FS: ",", RS: "\r\n", forceQuotes: false })}`;
+      const csv = XLSX.utils.sheet_to_csv(workbook.Sheets[name], { FS: ",", RS: "\r\n", forceQuotes: false });
       results.push({ name: outputName(file.name, cleanSheetName(name), "csv"), blob: new Blob(["\ufeff", csv], { type: CSV_MIME }), mime: "text/csv", details: { source: "local-xlsx-sheet", sheet: name } });
       report?.((fileIndex + (sheetIndex + 1) / names.length) / files.length);
     });
