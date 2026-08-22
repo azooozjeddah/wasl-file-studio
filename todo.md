@@ -109,7 +109,7 @@
 - [x] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
 - [x] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
 - [ ] Fix the Vite production-build failure caused by the canonical link resolving to a directory, then verify a resource-safe production build and successful deployment.
-- [ ] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
+- [x] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
 - [x] Add a local QR generator for URL, text, phone, email, Wi-Fi, SMS, WhatsApp, and vCard with live preview, colors, correction level, PNG/SVG/PDF downloads, copy, and print.
 - [x] Add a local QR image reader with clear decoded-content output and safe camera scanning where browser permissions permit.
 - [x] Add a local barcode generator for Code 128, Code 39, EAN-13, EAN-8, and UPC-A with format validation, preview, PNG/SVG/PDF export, and print.
@@ -118,20 +118,23 @@
 - [x] Add a local file-integrity hash utility with SHA-256 and SHA-512 results, copy, and TXT download for practical verification without file upload.
 - [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
 - [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
+- [ ] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
+- [ ] Replace the generic media `FS error` for video files without an audio track with a clear local validation message.
 - [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
 - [x] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
 - [ ] Replace the Vite-resolved UMD FFmpeg Core asset with the ESM Core asset required by the module worker, then re-test WAV conversion in production.
-- [ ] Serve the authentic installed FFmpeg ESM core and WASM through same-origin cacheable application routes, then load those routes from the module worker.
-- [ ] Replace the opaque third-party FFmpeg worker with a Vite-built same-origin module worker that imports the ESM core directly and implements the required local RPC operations.
-- [ ] Serve the custom FFmpeg module worker from Express so it inherits cross-origin isolation headers together with the core and WASM routes.
-- [ ] Test a same-origin classic FFmpeg worker with the package UMD core, because the ESM core imports in a worker fail despite succeeding in the page context.
+- [ ] Serve the authentic installed FFmpeg ESM core and WASM through same-origin cacheable application routes, then load those routes from a verified module worker.
+- [x] Replace the opaque third-party FFmpeg worker with a custom same-origin worker that implements the required local RPC operations.
+- [x] Serve the custom FFmpeg worker from Express so it inherits cross-origin isolation headers together with the core and WASM routes.
+- [x] Test a same-origin classic FFmpeg worker with the package UMD core, because the ESM core imports in a worker fail despite succeeding in the page context.
+- [x] Serve and verify the same-origin classic FFmpeg worker with installed UMD Core/WASM as the production media path.
 - [x] Fix the Vite build failure caused by the non-exported deep `@ffmpeg/core` ESM import, then rebuild before publishing any media-loader change.
 - [x] Show explicit compatibility guidance on experimental media tool pages so their local-processing copy never overstates production readiness.
-- [ ] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
-- [ ] Increase the FFmpeg initialization timeout based on the measured 24-second production worker start, then retest WAV-to-MP3 completion.
+- [x] Add a safe FFmpeg load timeout so unsupported browser/worker combinations return a retryable error instead of remaining indefinitely at initial progress.
+- [x] Increase the FFmpeg initialization timeout based on the measured 24-second production worker start, then retest WAV-to-MP3 completion.
 - [x] Classify every public tool as production ready, needs improvement, or experimental and prioritize the homepage around proven tools.
 - [x] Derive homepage featured tools from readiness-ranked definitions and add an automated test that excludes improving and experimental tools from primary promotion.
 - [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.
 - [x] Fix the production PDF-signature preview failure `i.createElement is not a function`, then retest multi-page visual signing and PDF export.
-- [ ] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
+- [x] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
 - [x] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.

@@ -8,6 +8,14 @@ export const FFMPEG_CORE_BASE = "vite-local-esm-worker";
 /** The locally served FFmpeg core can take around 24 seconds to initialise on constrained browsers. */
 export const FFMPEG_LOAD_TIMEOUT_MS = 45_000;
 
+export function mediaErrorMessage(error: unknown, operation?: string) {
+  const message = error instanceof Error ? error.message : String(error || "");
+  if (operation === "video-to-mp3" && message.includes("FS error")) {
+    return "لم يتم العثور على مسار صوت صالح في الفيديو. اختر فيديو يحتوي صوتًا ثم أعد المحاولة.";
+  }
+  return message || "تعذر إكمال معالجة الوسائط محليًا.";
+}
+
 export function cancelMediaProcessing() {
   if (!ffmpegInstance?.ffmpeg) return;
   ffmpegInstance.ffmpeg.terminate();
@@ -91,7 +99,13 @@ export async function processMedia(files: File[], slug: string, options: MediaOp
     const output = `merged-${Date.now()}.mp3`; const inputs = names.flatMap(name => ["-i", name]); await ffmpeg.exec([...inputs, "-filter_complex", `concat=n=${names.length}:v=0:a=1`, "-b:a", options.bitrate || "128k", "$OUTPUT".replace("$OUTPUT", output)]); const data = await ffmpeg.readFile(output); await Promise.all([...names, output].map(name => ffmpeg.deleteFile(name))); return [{ name: outputName(files[0].name, "merged", "mp3"), blob: new Blob([data], { type: "audio/mpeg" }), mime: "audio/mpeg", details: { originalSize: files.reduce((sum, file) => sum + file.size, 0) } }];
   }
   if (slug === "extract-frame") return [await extractFrame(files[0], options.start || 0)];
-  if (slug === "video-to-mp3") return [await run(files[0], ["-i", "$INPUT", "-vn", "-b:a", options.bitrate || "128k", "$OUTPUT"], "audio", "mp3", report)];
+  if (slug === "video-to-mp3") {
+    try {
+      return [await run(files[0], ["-i", "$INPUT", "-vn", "-b:a", options.bitrate || "128k", "$OUTPUT"], "audio", "mp3", report)];
+    } catch (error) {
+      throw new Error(mediaErrorMessage(error, slug));
+    }
+  }
   if (slug === "mp4-to-webm") return [await run(files[0], ["-i", "$INPUT", "-c:v", "libvpx-vp9", "-b:v", "1M", "-c:a", "libopus", "$OUTPUT"], "webm", "webm", report)];
   if (slug === "webm-to-mp4") return [await run(files[0], ["-i", "$INPUT", "-c:v", "libx264", "-c:a", "aac", "$OUTPUT"], "mp4", "mp4", report)];
   if (slug === "compress-video") return [await run(files[0], ["-i", "$INPUT", "-vf", `scale=${options.resolution || "1280:-2"}`, "-r", options.fps || "30", "-c:v", "libx264", "-crf", "29", "-c:a", "aac", "-b:a", options.bitrate || "128k", "$OUTPUT"], "compressed", "mp4", report)];
