@@ -207,7 +207,7 @@
 - [x] Deliver a concise Arabic completion report listing changes, evidence, limits, and principal files, then stop.
 - [x] Audit the attached requirements against existing accounts, roles, watermarks, PDF, image, and UI functions without changing current tool behavior.
 - [x] Implement persisted per-user and per-role allowed-tool policies with public enforcement and audit entries.
-- [ ] Extend PDF watermarking with Arabic/English font choices, text/image marks, size, color, opacity, and position controls.
+- [x] Extend PDF watermarking with Arabic/English font choices, text/image marks, size, color, opacity, and position controls.
 - [x] Add local PDF repair, PDF comparison, and genuine PDF redaction workflows where technically reliable; retain PDF translation as clearly deferred until an approved external translation service exists.
 - [x] Extend image resize/compression controls and add a local manual region blur workflow; document that automatic face/license detection requires an additional model and is not silently faked.
-- [ ] Test requested accounts, permissions, watermark, PDF, image, desktop, mobile, and bilingual paths; publish a concise Arabic completion report without adding paid services.
+- [x] Test requested accounts, permissions, watermark, PDF, image, desktop, mobile, and bilingual paths; publish a concise Arabic completion report without adding paid services.
