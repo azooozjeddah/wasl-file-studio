@@ -108,5 +108,15 @@
 - [ ] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
 - [ ] Fix the Vite production-build failure caused by the canonical link resolving to a directory, then verify a resource-safe production build and successful deployment.
 - [ ] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
+- [x] Add a local QR generator for URL, text, phone, email, Wi-Fi, SMS, WhatsApp, and vCard with live preview, colors, correction level, PNG/SVG/PDF downloads, copy, and print.
+- [x] Add a local QR image reader with clear decoded-content output and safe camera scanning where browser permissions permit.
+- [x] Add a local barcode generator for Code 128, Code 39, EAN-13, EAN-8, and UPC-A with format validation, preview, PNG/SVG/PDF export, and print.
+- [x] Add a clearly labelled visual PDF signing tool with drawn, typed, and image signatures; local multi-page placement; size, rotation, opacity, date, name, and PDF download controls.
+- [x] Add only stable utility tools selected from PDF/text/image/file requests, with local processing and automated coverage.
+- [x] Add a local file-integrity hash utility with SHA-256 and SHA-512 results, copy, and TXT download for practical verification without file upload.
+- [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
+- [x] Classify every public tool as production ready, needs improvement, or experimental and prioritize the homepage around proven tools.
+- [x] Derive homepage featured tools from readiness-ranked definitions and add an automated test that excludes improving and experimental tools from primary promotion.
+- [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.
 - [ ] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
 - [ ] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.

@@ -22,7 +22,7 @@ type WorkspaceOptions = {
 };
 const initialOptions: WorkspaceOptions = { pages: "", rotation: 90, watermark: "", position: "bottom", cropX: 0, cropY: 0, cropWidth: 500, cropHeight: 700, width: 595, height: 842, metadataMode: "view", quality: .82, password: "", outputType: "image/webp", ocrLanguage: "ara+eng", bitrate: "128k", start: 0, end: 15, resolution: "1280:-2", fps: "30", flipX: false, flipY: false };
 const errorText = (error: unknown) => error instanceof Error ? error.message : "تعذر إكمال العملية. تأكد من الملف والإعدادات ثم أعد المحاولة.";
-function inputFamily(tool: ToolDefinition) { if (tool.slug === "image-to-pdf") return "image"; if (tool.slug === "pdf-to-word") return "pdf"; return tool.category === "pdf" ? "pdf" : tool.category === "image" ? "image" : tool.category === "ocr" ? "ocr" : tool.category === "document" ? "document" : tool.category; }
+function inputFamily(tool: ToolDefinition): "pdf" | "image" | "document" | "ocr" | "audio" | "video" { if (tool.slug === "image-to-pdf") return "image"; if (tool.slug === "pdf-to-word") return "pdf"; if (tool.category === "pdf" || tool.category === "image" || tool.category === "ocr" || tool.category === "document" || tool.category === "audio" || tool.category === "video") return tool.category; return "document"; }
 
 export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
   const { isArabic, t } = useLocale(); const inputRef = useRef<HTMLInputElement>(null); const operationIdRef = useRef(0); const cancelControllerRef = useRef<AbortController | null>(null);

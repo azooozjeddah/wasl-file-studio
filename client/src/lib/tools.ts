@@ -1,15 +1,15 @@
 import type { LucideIcon } from "lucide-react";
-import { AudioLines, FileImage, FileText, FileType2, ScanText, Video } from "lucide-react";
+import { AudioLines, Barcode, FileCheck2, FileImage, FileText, FileType2, PenLine, QrCode, ScanLine, ScanText, Video } from "lucide-react";
 
-export type ToolCategory = "pdf" | "image" | "document" | "ocr" | "audio" | "video";
+export type ToolCategory = "pdf" | "image" | "document" | "ocr" | "code" | "sign" | "utility" | "audio" | "video";
 export type ToolDefinition = {
   slug: string; category: ToolCategory; icon: LucideIcon; labelAr: string; labelEn: string;
   descriptionAr: string; descriptionEn: string; formats: string[]; accepts: string[];
   settings: Array<"quality" | "outputFormat" | "pages" | "rotation" | "flip" | "watermark" | "pageNumbers" | "dimensions" | "crop" | "metadata" | "language" | "bitrate" | "trim" | "resolution" | "fps" | "password">;
-  multi?: boolean; local: boolean; processingMode?: "local" | "server" | "hybrid"; experimental?: boolean;
+  multi?: boolean; local: boolean; processingMode?: "local" | "server" | "hybrid"; experimental?: boolean; readiness?: "ready" | "improving" | "experimental";
 };
 
-const pdf = FileType2, image = FileImage, document = FileText, ocr = ScanText, audio = AudioLines, video = Video;
+const pdf = FileType2, image = FileImage, document = FileText, ocr = ScanText, code = QrCode, sign = PenLine, utility = FileCheck2, audio = AudioLines, video = Video;
 export const toolDefinitions: ToolDefinition[] = [
   { slug: "merge-pdf", category: "pdf", icon: pdf, labelAr: "دمج PDF", labelEn: "Merge PDF", descriptionAr: "اجمع ملفات PDF بترتيبك داخل جهازك.", descriptionEn: "Combine PDF files in your preferred order, locally.", formats: ["PDF"], accepts: ["application/pdf"], settings: [], multi: true, local: true },
   { slug: "split-pdf", category: "pdf", icon: pdf, labelAr: "تقسيم PDF", labelEn: "Split PDF", descriptionAr: "قسّم الملف إلى صفحات أو نطاقات مستقلة.", descriptionEn: "Split a PDF into individual pages or ranges.", formats: ["PDF"], accepts: ["application/pdf"], settings: ["pages"], local: true },
@@ -39,9 +39,14 @@ export const toolDefinitions: ToolDefinition[] = [
   { slug: "txt-to-docx", category: "document", icon: document, labelAr: "TXT إلى DOCX", labelEn: "TXT to DOCX", descriptionAr: "أنشئ ملف Word قابلًا للتحرير من النص.", descriptionEn: "Create an editable DOCX from plain text.", formats: ["TXT", "DOCX"], accepts: ["text/plain"], settings: [], local: true },
   { slug: "html-to-pdf", category: "document", icon: document, labelAr: "HTML إلى PDF", labelEn: "HTML to PDF", descriptionAr: "استخرج المحتوى النصي من HTML إلى PDF.", descriptionEn: "Convert HTML content to a text-first PDF.", formats: ["HTML", "PDF"], accepts: ["text/html", ".html"], settings: [], local: true, experimental: true },
   { slug: "rtf-to-pdf", category: "document", icon: document, labelAr: "RTF إلى PDF", labelEn: "RTF to PDF", descriptionAr: "حوّل نص RTF إلى PDF بأفضل نتيجة محلية.", descriptionEn: "Convert RTF text into a best-effort local PDF.", formats: ["RTF", "PDF"], accepts: ["application/rtf", ".rtf"], settings: [], local: true, experimental: true },
-  { slug: "word-to-pdf", category: "document", icon: document, labelAr: "Word إلى PDF", labelEn: "Word to PDF", descriptionAr: "اعرض DOCX محليًا ثم صدّره إلى PDF بصريًا مع الصفحات والعناوين قدر الإمكان.", descriptionEn: "Render DOCX locally and export a visual PDF with pages and headings where supported.", formats: ["DOCX", "PDF"], accepts: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx"], settings: [], local: true, processingMode: "hybrid" },
-  { slug: "pdf-to-word", category: "document", icon: document, labelAr: "PDF إلى Word", labelEn: "PDF to Word", descriptionAr: "استخرج النص إلى DOCX قابل للتحرير مع فصل الصفحات؛ استخدم OCR للملفات المصورة.", descriptionEn: "Extract text to editable DOCX with page separation; use OCR for scanned PDFs.", formats: ["PDF", "DOCX"], accepts: ["application/pdf"], settings: [], local: true, processingMode: "hybrid" },
-  { slug: "ocr", category: "ocr", icon: ocr, labelAr: "استخراج النص OCR", labelEn: "OCR text extraction", descriptionAr: "استخرج العربية والإنجليزية من الصور أو صفحات PDF المصورة.", descriptionEn: "Extract Arabic and English text from images or scanned PDFs.", formats: ["JPG", "PNG", "PDF", "TXT", "DOCX"], accepts: ["image/*", "application/pdf"], settings: ["language"], multi: true, local: true, processingMode: "hybrid" },
+  { slug: "word-to-pdf", category: "document", icon: document, labelAr: "Word إلى PDF", labelEn: "Word to PDF", descriptionAr: "اعرض DOCX محليًا ثم صدّره إلى PDF بصريًا مع الصفحات والعناوين قدر الإمكان.", descriptionEn: "Render DOCX locally and export a visual PDF with pages and headings where supported.", formats: ["DOCX", "PDF"], accepts: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx"], settings: [], local: true, processingMode: "hybrid", readiness: "improving" },
+  { slug: "pdf-to-word", category: "document", icon: document, labelAr: "PDF إلى Word", labelEn: "PDF to Word", descriptionAr: "استخرج النص إلى DOCX قابل للتحرير مع فصل الصفحات؛ استخدم OCR للملفات المصورة.", descriptionEn: "Extract text to editable DOCX with page separation; use OCR for scanned PDFs.", formats: ["PDF", "DOCX"], accepts: ["application/pdf"], settings: [], local: true, processingMode: "hybrid", readiness: "improving" },
+  { slug: "ocr", category: "ocr", icon: ocr, labelAr: "استخراج النص OCR", labelEn: "OCR text extraction", descriptionAr: "استخرج العربية والإنجليزية من الصور أو صفحات PDF المصورة.", descriptionEn: "Extract Arabic and English text from images or scanned PDFs.", formats: ["JPG", "PNG", "PDF", "TXT", "DOCX"], accepts: ["image/*", "application/pdf"], settings: ["language"], multi: true, local: true, processingMode: "hybrid", readiness: "improving" },
+  { slug: "qr-generator", category: "code", icon: QrCode, labelAr: "إنشاء QR Code", labelEn: "QR Code generator", descriptionAr: "أنشئ QR للرابط والنص والاتصال وWi-Fi محليًا.", descriptionEn: "Create local QR codes for links, text, contact, and Wi-Fi.", formats: ["PNG", "SVG", "PDF"], accepts: [], settings: [], local: true },
+  { slug: "qr-reader", category: "code", icon: ScanLine, labelAr: "قراءة QR Code", labelEn: "QR Code reader", descriptionAr: "اقرأ QR من صورة أو كاميرا داخل المتصفح.", descriptionEn: "Read QR from an image or camera in your browser.", formats: ["JPG", "PNG", "WebP", "TXT"], accepts: ["image/*"], settings: [], local: true },
+  { slug: "barcode-generator", category: "code", icon: Barcode, labelAr: "إنشاء Barcode", labelEn: "Barcode generator", descriptionAr: "أنشئ Barcode موثوقًا مع تحقق من الصيغة.", descriptionEn: "Create a validated, printable barcode locally.", formats: ["PNG", "SVG", "PDF"], accepts: [], settings: [], local: true },
+  { slug: "sign-pdf", category: "sign", icon: sign, labelAr: "توقيع PDF", labelEn: "Sign PDF", descriptionAr: "أضف توقيعًا بصريًا محليًا إلى PDF. ليس توقيعًا رقميًا معتمدًا.", descriptionEn: "Add a local visual signature to PDF. Not a certified digital signature.", formats: ["PDF", "PNG"], accepts: ["application/pdf"], settings: [], local: true },
+  { slug: "file-hash", category: "utility", icon: utility, labelAr: "فحص سلامة الملف", labelEn: "File integrity checker", descriptionAr: "احسب SHA-256 وSHA-512 محليًا وقارن بصمة الملف.", descriptionEn: "Calculate local SHA-256 and SHA-512 file hashes.", formats: ["TXT"], accepts: ["*/*"], settings: [], local: true },
   { slug: "convert-audio", category: "audio", icon: audio, labelAr: "تحويل الصوت", labelEn: "Convert audio", descriptionAr: "حوّل الصيغ الصوتية محليًا عند الطلب.", descriptionEn: "Convert audio formats locally when you need it.", formats: ["MP3", "WAV", "M4A", "AAC", "OGG"], accepts: ["audio/*", ".m4a", ".aac", ".ogg"], settings: ["bitrate"], multi: true, local: true, processingMode: "hybrid", experimental: true },
   { slug: "trim-audio", category: "audio", icon: audio, labelAr: "قص الصوت", labelEn: "Trim audio", descriptionAr: "حدّد بداية ونهاية المقطع الصوتي.", descriptionEn: "Set the start and end of your audio clip.", formats: ["MP3", "WAV", "M4A", "AAC", "OGG"], accepts: ["audio/*"], settings: ["trim", "bitrate"], local: true, experimental: true },
   { slug: "merge-audio", category: "audio", icon: audio, labelAr: "دمج الصوت", labelEn: "Merge audio", descriptionAr: "ادمج ملفات صوتية متشابهة محليًا.", descriptionEn: "Merge compatible audio files locally.", formats: ["MP3", "WAV", "M4A", "AAC", "OGG"], accepts: ["audio/*"], settings: ["bitrate"], multi: true, local: true, experimental: true },
@@ -60,8 +65,14 @@ export const categories: Array<{ id: ToolCategory; labelAr: string; labelEn: str
   { id: "image", labelAr: "أدوات الصور", labelEn: "Image tools", icon: image, color: "amber" },
   { id: "document", labelAr: "المستندات", labelEn: "Documents", icon: document, color: "blue" },
   { id: "ocr", labelAr: "استخراج النص", labelEn: "OCR", icon: ocr, color: "emerald" },
+  { id: "code", labelAr: "QR وBarcode", labelEn: "QR & Barcode", icon: code, color: "violet" },
+  { id: "sign", labelAr: "توقيع PDF", labelEn: "Sign PDF", icon: sign, color: "rose" },
+  { id: "utility", labelAr: "أدوات مساعدة", labelEn: "Utilities", icon: utility, color: "sky" },
   { id: "audio", labelAr: "الصوت", labelEn: "Audio", icon: audio, color: "rose" },
   { id: "video", labelAr: "الفيديو", labelEn: "Video", icon: video, color: "cyan" },
 ];
 
 export const findTool = (slug: string) => toolDefinitions.find(tool => tool.slug === slug);
+
+/** Homepage promotion deliberately excludes code/sign utilities until their production interaction matrix is complete. */
+export const featuredToolDefinitions = toolDefinitions.filter(tool => (tool.readiness || (tool.experimental ? "experimental" : "ready")) === "ready" && !["code", "sign", "utility", "audio", "video"].includes(tool.category)).slice(0, 6);
