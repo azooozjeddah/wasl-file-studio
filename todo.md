@@ -205,3 +205,9 @@
 - [x] Improve PDF flattening to detect AcroForm fields, flatten actual field values, and clearly reject PDFs without fillable fields.
 - [x] Add and run backend, unit, and browser acceptance tests for login/session protection, admin actions, tool availability, and flattening with interactive and plain PDFs.
 - [x] Deliver a concise Arabic completion report listing changes, evidence, limits, and principal files, then stop.
+- [x] Audit the attached requirements against existing accounts, roles, watermarks, PDF, image, and UI functions without changing current tool behavior.
+- [x] Implement persisted per-user and per-role allowed-tool policies with public enforcement and audit entries.
+- [ ] Extend PDF watermarking with Arabic/English font choices, text/image marks, size, color, opacity, and position controls.
+- [ ] Add local PDF repair, PDF comparison, and genuine PDF redaction workflows where technically reliable; retain PDF translation as clearly deferred until an approved external translation service exists.
+- [ ] Extend image resize/compression controls and add a local manual region blur workflow; document that automatic face/license detection requires an additional model and is not silently faked.
+- [ ] Test requested accounts, permissions, watermark, PDF, image, desktop, mobile, and bilingual paths; publish a concise Arabic completion report without adding paid services.

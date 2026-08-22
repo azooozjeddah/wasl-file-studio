@@ -73,6 +73,11 @@ export const userRoleAssignments = mysqlTable("user_role_assignments", {
   id: int("id").autoincrement().primaryKey(), userId: int("userId").notNull(), roleId: int("roleId").notNull(), assignedBy: int("assignedBy"), createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+/** Explicit per-user overrides. Missing rows preserve normal availability; a false row blocks only that tool. */
+export const userToolPermissions = mysqlTable("user_tool_permissions", {
+  id: int("id").autoincrement().primaryKey(), userId: int("userId").notNull(), toolSlug: varchar("toolSlug", { length: 80 }).notNull(), isAllowed: boolean("isAllowed").notNull().default(true), assignedBy: int("assignedBy"), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 /** Management actions only: no document payloads or customer file information. */
 export const adminAuditLogs = mysqlTable("admin_audit_logs", {
   id: int("id").autoincrement().primaryKey(), actorUserId: int("actorUserId").notNull(), action: varchar("action", { length: 100 }).notNull(), entityType: varchar("entityType", { length: 80 }).notNull(), entityId: varchar("entityId", { length: 80 }), summary: varchar("summary", { length: 500 }), createdAt: timestamp("createdAt").defaultNow().notNull(),

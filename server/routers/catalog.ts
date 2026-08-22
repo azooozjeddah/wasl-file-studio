@@ -1,6 +1,6 @@
 import { and, asc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { adSlots, contentEntries, faqEntries, siteSettings, toolCatalog } from "../../drizzle/schema";
+import { adminRoles, adSlots, contentEntries, faqEntries, siteSettings, toolCatalog, userRoleAssignments, userToolPermissions } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { publicProcedure, router } from "../_core/trpc";
 
@@ -10,11 +10,19 @@ export const catalogRouter = router({
     if (!db) return [];
     return db.select().from(toolCatalog).where(eq(toolCatalog.isActive, true)).orderBy(asc(toolCatalog.sortOrder));
   }),
-  availability: publicProcedure.input(z.object({ slug: z.string().min(2).max(80) })).query(async ({ input }) => {
+  availability: publicProcedure.input(z.object({ slug: z.string().min(2).max(80) })).query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) return null;
     const [tool] = await db.select({ slug: toolCatalog.slug, isActive: toolCatalog.isActive, nameAr: toolCatalog.nameAr, nameEn: toolCatalog.nameEn }).from(toolCatalog).where(eq(toolCatalog.slug, input.slug)).limit(1);
-    return tool || null;
+    if (!tool) return null;
+    const [override] = ctx.user ? await db.select({ isAllowed: userToolPermissions.isAllowed }).from(userToolPermissions).where(and(eq(userToolPermissions.userId, ctx.user.id), eq(userToolPermissions.toolSlug, input.slug))).limit(1) : [];
+    if (override?.isAllowed === false) return { ...tool, isAllowed: false };
+    if (override?.isAllowed === true || !ctx.user) return { ...tool, isAllowed: true };
+    const roles = await db.select({ permissions: adminRoles.permissions }).from(userRoleAssignments).innerJoin(adminRoles, eq(userRoleAssignments.roleId, adminRoles.id)).where(eq(userRoleAssignments.userId, ctx.user.id));
+    const rolePermissions = roles.flatMap(role => role.permissions || []);
+    const hasToolPolicy = rolePermissions.some(permission => permission === "tool:*" || permission.startsWith("tool:"));
+    const isRoleAllowed = rolePermissions.includes("tool:*") || rolePermissions.includes(`tool:${input.slug}`);
+    return { ...tool, isAllowed: !hasToolPolicy || isRoleAllowed };
   }),
   settings: publicProcedure.query(async () => {
     const db = await getDb();
