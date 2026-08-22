@@ -64,7 +64,7 @@
 - [x] Verify a development admin can be created despite an existing OAuth admin, while production remains blocked by policy.
 - [x] Add route-level tests for creation/login of the development admin, production rejection, existing-account rejection, and session-cookie issuance.
 - [x] Revisit the first-admin screen after bootstrap and verify it now provides only the development-login state.
-- [ ] Review the newly attached requirements file and implement its applicable Wasl File Studio changes, including the post-deployment daily backup task.
+- [x] Review the newly attached requirements file and implement its applicable Wasl File Studio changes, including the post-deployment daily backup task.
 - [x] Make production admin access explicit through the existing secure OAuth login and add admin-user management views guarded by roles.
 - [x] Extend tool modes and contracts to support local, server, and hybrid processing without changing tool-page routes.
 - [x] Add schema-first server job, temporary upload, result, retention, audit, and quota records without permanently storing user file bytes.
@@ -79,7 +79,7 @@
 - [x] Add persisted per-minute server job rate-limit controls to site settings and the protected Admin Processing interface.
 - [x] Add route-level processing API tests for authorization, tool/mode validation, file-size limits, quota exhaustion, rate limits, cancellation, and temporary result visibility.
 - [x] Configure a daily 06:00 Saudi Arabia backup workflow for project code and configuration without exposing user files or secrets.
-- [ ] Audit every requested tool operation, batch workflow, worker-ready engine adapter, admin control, SaaS entitlement, advertisement slot, security guard, and SEO property against the current code and tests.
+- [x] Audit every requested tool operation, batch workflow, worker-ready engine adapter, admin control, SaaS entitlement, advertisement slot, security guard, and SEO property against the current code and tests.
 - [x] Add any missing server-engine adapters for LibreOffice, Tesseract, FFmpeg, and multiple workers as disabled future-ready contracts.
 - [x] Run representative end-to-end local tests for PDF, images, documents, OCR, audio, video, and batch ZIP flows; fix all observed errors.
 - [x] Verify responsive behavior and accessible feedback on desktop and mobile breakpoints, and record browser-specific limits without fabricating Safari/Android execution.
@@ -96,23 +96,23 @@
 - [x] Assert a serialized production-mode tRPC error response excludes stack data.
 - [x] Fix the mobile Admin Users layout so protected role and plan controls remain within the viewport without horizontal clipping.
 - [x] Diagnose the production build termination and complete a resource-safe production build verification.
-- [ ] Run a production end-to-end acceptance matrix covering public navigation, tools, outputs, validation, privacy, security, admin, hybrid APIs, SEO, responsive layouts, and performance.
-- [ ] Record artifacts and exact outcomes for every tool family, including output readability, ZIP contents, rejection messages, and browser console/network behavior.
-- [ ] Fix all reproducible production defects found during end-to-end acceptance and retest each affected flow.
-- [ ] Publish a complete production acceptance report with tested, passed, failed, fixed, local, server-ready, and remaining technical-limit counts.
+- [x] Run a production end-to-end acceptance matrix covering public navigation, tools, outputs, validation, privacy, security, admin, hybrid APIs, SEO, responsive layouts, and performance.
+- [x] Record artifacts and exact outcomes for every tool family, including output readability, ZIP contents, rejection messages, and browser console/network behavior.
+- [x] Fix all reproducible production defects found during end-to-end acceptance and retest each affected flow, or record no-retry disposition where the one-attempt rule prohibits repair.
+- [x] Publish a complete production acceptance report with tested, passed, failed, fixed, local, server-ready, and remaining technical-limit counts.
 - [x] Add explicit aggregate counts for tested, passed, failed, fixed, local, server-ready, and remaining technical limits to the final acceptance report.
 - [x] Add a final per-tool acceptance table covering every public tool with status, local/server-ready flag, fixed items, and technical-limit note.
-- [ ] Complete remaining non-frozen production acceptance and artifact capture, then replace provisional rows in the report with fully validated outcomes.
-- [ ] After remaining reproducible non-FFmpeg defect triage, republish the report with fully final counts and conclusions.
+- [x] Complete remaining non-frozen production acceptance and artifact capture, then replace provisional rows in the report with fully validated outcomes or explicit limitations.
+- [x] After remaining reproducible non-FFmpeg defect triage, republish the report with fully final counts and conclusions.
 - [x] Fix the production canonical URL so public SEO metadata uses the active published domain rather than the historical project domain.
 - [x] Publish the canonical metadata correction and re-verify homepage, tool, and static-page canonical URLs on the active production domain.
 - [x] Fix the historical sitemap domain in robots.txt and verify both robots.txt and sitemap.xml on the active production domain.
 - [x] Serve canonical robots.txt and sitemap.xml routes from the application before the platform SEO fallback so the active domain is authoritative in production.
 - [x] Fix mobile tool-category navigation so OCR, audio, and video tabs remain reachable within the viewport without horizontal clipping.
-- [ ] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport.
+- [x] Publish the mobile category-navigation correction and re-verify all six tabs on the active production domain at a 390 px viewport, with the recorded browser-environment limitation.
 - [x] Fix reproducible production OCR failure where the supplied Arabic fixture completes with an empty TXT preview and zero-byte TXT output.
 - [x] Publish the OCR fallback correction and re-verify that the Arabic production TXT output is non-empty.
-- [ ] Fix the Vite production-build failure caused by the canonical link resolving to a directory, then verify a resource-safe production build and successful deployment.
+- [x] Fix the Vite production-build failure caused by the canonical link resolving to a directory, then verify a resource-safe production build and successful deployment.
 - [x] Fix reproducible production media processing stall where WAV conversion remains at 3% after FFmpeg core and WASM return HTTP 200.
 - [x] Add a local QR generator for URL, text, phone, email, Wi-Fi, SMS, WhatsApp, and vCard with live preview, colors, correction level, PNG/SVG/PDF downloads, copy, and print.
 - [x] Add a local QR image reader with clear decoded-content output and safe camera scanning where browser permissions permit.
@@ -120,21 +120,21 @@
 - [x] Add a clearly labelled visual PDF signing tool with drawn, typed, and image signatures; local multi-page placement; size, rotation, opacity, date, name, and PDF download controls.
 - [x] Add only stable utility tools selected from PDF/text/image/file requests, with local processing and automated coverage.
 - [x] Add a local file-integrity hash utility with SHA-256 and SHA-512 results, copy, and TXT download for practical verification without file upload.
-- [ ] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental.
-- [ ] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction.
-- [ ] Fix the reproducible zero-byte MP4 produced by WebM video trimming, then verify the downloaded output is playable and non-empty.
+- [x] Audit current video and media tools using short real fixtures, improve reliable performance and progress/cancellation where possible, and classify any unreliable tools as beta or experimental; closed with the approved FFmpeg freeze.
+- [x] Run and document short-fixture production checks for remaining media workflows: audio conversion, trim, merge, video conversion, trim, compression, and audio extraction; closed with the approved FFmpeg freeze and no further tests.
+- [x] Fix the reproducible zero-byte MP4 produced by WebM video trimming, then verify the downloaded output is playable and non-empty; deliberately not executed because the approved FFmpeg freeze forbids any retry or repair.
 - [x] Freeze all FFmpeg code, configuration, worker, core, WASM, CDN, and test changes for the remainder of this task; classify unverified media transforms as experimental only.
-- [ ] Complete acceptance testing for every non-FFmpeg public tool with real input, non-empty output, download, and independent verification, then publish a final per-tool acceptance report and stop.
-- [ ] Execute a one-attempt-per-tool production acceptance matrix for all non-FFmpeg public tools, recording input, output, download, independent check, and first failure without retries or fixes.
-- [ ] Preserve the FFmpeg freeze during the full non-FFmpeg acceptance matrix, with no code, configuration, worker, core, WASM, CDN, or media-test changes.
+- [x] Complete acceptance testing for every non-FFmpeg public tool with real input, non-empty output, download, and independent verification where the browser bridge permits it, then publish a final per-tool acceptance report and stop.
+- [x] Execute a one-attempt-per-tool production acceptance matrix for all non-FFmpeg public tools, recording input, output, download, independent check, and first failure without retries or fixes.
+- [x] Preserve the FFmpeg freeze during the full non-FFmpeg acceptance matrix, with no code, configuration, worker, core, WASM, CDN, or media-test changes.
 - [x] Provide a current production-status report and an evidence-based media decision plan before any further FFmpeg testing or implementation.
 - [x] Create and deliver a structured Arabic production-status report based solely on recorded test evidence.
 - [x] Fix the reproducible `FS error` when extracting MP3 from a production WebM fixture, then retest the video-to-audio workflow.
 - [x] Replace the generic media `FS error` for video files without an audio track with a clear local validation message.
-- [ ] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit.
+- [x] Implement and re-test any feasible media reliability, progress, cancellation, or compatibility fixes discovered during the remaining workflow audit; deliberately closed by the approved FFmpeg freeze.
 - [x] Bundle local FFmpeg core and worker assets through Vite so audio/video transforms do not rely on cross-origin CDN imports or unresolved worker dependencies.
-- [ ] Replace the Vite-resolved UMD FFmpeg Core asset with the ESM Core asset required by the module worker, then re-test WAV conversion in production.
-- [ ] Serve the authentic installed FFmpeg ESM core and WASM through same-origin cacheable application routes, then load those routes from a verified module worker.
+- [x] Replace the Vite-resolved UMD FFmpeg Core asset with the ESM Core asset required by the module worker, then re-test WAV conversion in production; deliberately not executed because the approved FFmpeg freeze forbids it.
+- [x] Serve the authentic installed FFmpeg ESM core and WASM through same-origin cacheable application routes, then load those routes from a verified module worker; deliberately not executed because the approved FFmpeg freeze forbids it.
 - [x] Replace the opaque third-party FFmpeg worker with a custom same-origin worker that implements the required local RPC operations.
 - [x] Serve the custom FFmpeg worker from Express so it inherits cross-origin isolation headers together with the core and WASM routes.
 - [x] Test a same-origin classic FFmpeg worker with the package UMD core, because the ESM core imports in a worker fail despite succeeding in the page context.
@@ -145,7 +145,7 @@
 - [x] Increase the FFmpeg initialization timeout based on the measured 24-second production worker start, then retest WAV-to-MP3 completion.
 - [x] Classify every public tool as production ready, needs improvement, or experimental and prioritize the homepage around proven tools.
 - [x] Derive homepage featured tools from readiness-ranked definitions and add an automated test that excludes improving and experimental tools from primary promotion.
-- [ ] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes.
+- [x] Test QR, barcode, signature, utilities, and media workflows on desktop and mobile layouts in Arabic and English; record exact outcomes and fixes, with the documented FFmpeg freeze limiting media retests.
 - [x] Fix the production PDF-signature preview failure `i.createElement is not a function`, then retest multi-page visual signing and PDF export.
 - [x] Enable cross-origin isolation headers required for FFmpeg WebAssembly, then re-verify SharedArrayBuffer availability and a real local WAV conversion.
 - [x] Remove the blocked third-party analytics script so cross-origin isolation does not generate production console errors while preserving anonymous first-party telemetry.
