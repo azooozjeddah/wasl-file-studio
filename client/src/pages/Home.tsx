@@ -4,10 +4,11 @@ import { siteToolCategories, toolsForSiteCategory } from "@/lib/site-categories"
 import { toolDefinitions } from "@/lib/tools";
 import { useLocale } from "@/contexts/LocaleContext";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Check, FileImage, FileText, FileUp, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, FileImage, FileText, FileUp, QrCode, Sparkles } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect } from "react";
+import ToolCard from "@/components/ToolCard";
 import "./assistant-home.css";
 
 export default function Home() {
@@ -26,6 +27,9 @@ export default function Home() {
   const activeSlugs = new Set((catalog.data?.length ? catalog.data : toolDefinitions).map((tool: { slug: string }) => tool.slug).concat(builtInSlugs));
   const visibleTools = toolDefinitions.filter(tool => activeSlugs.has(tool.slug));
   const visibleCategories = siteToolCategories.filter((category) => toolsForSiteCategory(category.id, visibleTools).length > 0);
+  const featuredSlugs = ["compress-pdf", "word-to-pdf", "sign-pdf", "ocr"];
+  const featuredTools = featuredSlugs.map((slug) => visibleTools.find((tool) => tool.slug === slug)).filter(Boolean) as typeof visibleTools;
+  const qrTool = visibleTools.find((tool) => tool.slug === "qr-generator");
 
   return <PublicLayout><main>
     <section id="assistant" className="hero-section assistant-led-hero"><div className="hero-grid"/><div className="assistant-orbit assistant-orbit-one"/><div className="assistant-orbit assistant-orbit-two"/>
@@ -50,6 +54,13 @@ export default function Home() {
       </div><div className="hero-stat-card"><span>{t("ملفك أولًا", "Your file first")}</span><b>{t("خطوة أوضح كل مرة", "A clearer next step")}</b><div className="stat-wave"/></div>
     </section>
     {topAds.data?.map(slot => <ManagedAdSlot key={slot.id} label={slot.label}/>)}
+    <section className="container home-featured-section" aria-labelledby="featured-tools-title">
+      <div className="section-heading home-featured-heading"><div><span className="section-eyebrow">{t("وصول سريع", "QUICK ACCESS")}</span><h2 id="featured-tools-title">{t("ابدأ بأدوات تحتاجها غالبًا", "Start with the tools you use most")}</h2></div><p>{t("اختر أداة شائعة مباشرة، أو ابدأ بالملف في المساعد ليقترح الخطوة الأنسب لك.", "Open a common tool directly, or start with your file and let the assistant recommend the right next step.")}</p></div>
+      <div className="home-featured-layout">
+        <div className="home-featured-grid">{featuredTools.map((tool, index) => <ToolCard tool={tool} index={index} key={tool.slug}/>)}</div>
+        {qrTool && <aside className="qr-home-spotlight" aria-label={t("وصول سريع إلى منشئ QR", "Quick access to QR generator")}><div className="qr-spotlight-top"><span><QrCode size={31}/></span><i>{t("محلي وقابل للمسح", "LOCAL & SCANNABLE")}</i></div><div><small>{t("رموز QR", "QR CODES")}</small><h3>{t("أنشئ رمز QR يليق بمحتواك", "Create a QR code that fits your content")}</h3><p>{t("قوالب وإطارات ومعاينة فورية قبل التنزيل.", "Templates, frames, and live preview before download.")}</p></div><Link href={`/${qrTool.slug}`} className="qr-spotlight-link">{t("فتح منشئ QR", "Open QR generator")}<ArrowLeft size={16} className={isArabic ? "rotate-180" : ""}/></Link><div className="qr-spotlight-matrix" aria-hidden="true">{Array.from({ length: 25 }).map((_, index) => <i key={index} className={index % 3 === 0 || index % 7 === 0 ? "on" : ""}/>)}</div></aside>}
+      </div>
+    </section>
     <section id="tools" className="tools-section container"><div className="section-heading"><div><span className="section-eyebrow">{t("اختر تصنيفًا", "CHOOSE A CATEGORY")}</span><h2>{t("أدواتك مرتبة بوضوح", "Your tools, clearly organized")}</h2></div><p>{t("تظهر الصفحة الرئيسية التصنيفات فقط. افتح التصنيف للوصول إلى كل أدواته دون تكرار أو تمرير طويل.", "The homepage shows categories only. Open one to reach all of its tools without duplication or a long scroll.")}</p></div><div id="categories" className="home-category-cards home-category-cards-short">{visibleCategories.map(category => { const Icon = category.icon; const count = toolsForSiteCategory(category.id, visibleTools).length; return <Link href={`/tools/${category.slug}`} key={category.id} className={`home-category-card tone-${category.tone}`}><span><Icon size={22}/></span><div><b>{isArabic ? category.labelAr : category.labelEn}</b><small>{isArabic ? category.descriptionAr : category.descriptionEn}</small></div><i>{count} {t("أدوات", "tools")}</i><ArrowLeft size={16} className={isArabic ? "rotate-180" : ""}/></Link>;})}</div><Link href="/tools" className="home-tools-directory-link">{t("استعرض كل التصنيفات", "Browse all categories")}<ArrowLeft size={16} className={isArabic ? "rotate-180" : ""}/></Link></section>
     <section id="pricing" className="container pricing-note"><span>{t("الأسعار", "PRICING")}</span><b>{t("الأدوات الأساسية متاحة الآن للاستخدام المحلي دون دفع مفعّل داخل المنصة.", "Core tools are currently available for local use with no payment enabled inside the platform.")}</b><a href="#assistant">{t("ابدأ بملف", "Start with a file")}<ArrowLeft size={15} className={isArabic ? "rotate-180" : ""}/></a></section>
     <section id="faq" className="container faq-section faq-section-compact"><div><span className="section-eyebrow">FAQ</span><h2>{t("أسئلة واضحة، إجابات واضحة.", "Clear questions. Clear answers.")}</h2></div><div className="faq-list">{managedFaq.data?.length ? managedFaq.data.slice(0, 4).map((item, index) => <details key={item.id} open={index === 0}><summary>{item.question}</summary><p>{item.answer}</p></details>) : <DefaultFaq t={t}/>}</div></section>

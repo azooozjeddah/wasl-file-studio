@@ -321,3 +321,9 @@
 - [x] Update responsive header navigation and mobile menu to reach Home, Tools, Pricing, Help, upload, language, and account actions.
 - [x] Verify no public tool is missing or duplicated improperly, and test category navigation, tool opening, file upload, desktop, tablet, and mobile behavior.
 - [x] Run TypeScript, unit tests, production build, bundled checks, publish, and independently verify the final public information architecture.
+- [x] Audit current tool icon treatment, featured-tool selection, QR home placement, and duplicate visual sections against the reference requirements.
+- [x] Create a reusable professional icon treatment with distinct type-aware visual identities for tool and category cards.
+- [x] Replace the Home catalog with a compact featured-tool selection and a dedicated QR quick-access panel while preserving Assistant and category entry points.
+- [x] Keep the tools index category-only and tighten category pages, FAQ, footer, Arabic/English text direction, and mobile spacing without changing routes or tool logic.
+- [x] Test Home, tools index, PDF category, QR category, QR generator, responsive layouts, icon rendering, and tool navigation.
+- [ ] Run TypeScript, tests, production build, publish, and independently verify the updated public UI.
