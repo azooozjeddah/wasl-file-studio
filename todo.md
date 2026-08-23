@@ -379,3 +379,8 @@
 - [x] Run each acceptance file through the DXF web workspace on desktop, download each generated PDF, and inspect the rendered PDF pages for non-empty and correctly scaled vector output.
 - [x] Test mobile conversion, large-file behavior, DWG guidance, unsupported-entity messaging, and network activity to confirm local-only processing.
 - [x] Fix and retest acceptance defects, then verify the Production DXF route and document the final acceptance findings: text, orientation/scale, and HATCH notices were corrected and the public DXF route now loads.
+- [x] Inspect parsed HATCH entities from real DXF files and determine whether a reliable local subset can be rendered as vector SVG/PDF.
+- [x] Implement and test only reliable HATCH support; otherwise retain a clear, non-misleading compatibility notice without placeholder rendering.
+- [x] Clarify supported and unsupported DXF/DWG/binary/3D formats before conversion and confirm unsupported uploads disable conversion with actionable guidance.
+- [x] Re-run real DXF acceptance files, PDF download and visual inspection, desktop/mobile flows, and local-only network verification after the HATCH update.
+- [ ] Run TypeScript, tests, production build, checkpoint, Production verification, and publish a final readiness assessment with remaining limitations.

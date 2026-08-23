@@ -3,10 +3,13 @@ import { outputName } from "./file-utils";
 
 type Point = { x: number; y: number };
 type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
-type ParsedDxf = { entities?: unknown[]; blocks?: Record<string, unknown> | unknown[]; tables?: { layer?: { layers?: Record<string, unknown> } }; sourceEntityTypes?: string[] };
+type SolidHatch = { layer: string; points: Point[] };
+type ParsedDxf = { entities?: unknown[]; blocks?: Record<string, unknown> | unknown[]; tables?: { layer?: { layers?: Record<string, unknown> } }; sourceEntityTypes?: string[]; solidHatches?: SolidHatch[] };
 
 export const DWG_TO_DXF_GUIDANCE = "للحصول على تحويل مجاني محلي، صدّر ملف DWG إلى ASCII DXF من برنامج CAD ثم ارفعه هنا.";
 export const DXF_LARGE_FILE_WARNING = "هذا الملف أكبر من 20 MB. ستتم معالجته داخل جهازك، وقد يحتاج وقتًا وذاكرة أكثر خصوصًا على الهاتف.";
+export const DXF_BINARY_OR_3D_GUIDANCE = "يدعم المحول DXF ASCII ثنائي الأبعاد فقط. DXF الثنائي وCAD ثلاثي الأبعاد غير مدعومين؛ صدّر الرسم كـ DXF ASCII ثنائي الأبعاد ثم أعد المحاولة.";
+const UNSUPPORTED_3D_ENTITY_TYPES = new Set(["3DFACE", "3DSOLID", "BODY", "REGION", "SURFACE", "PLANESURFACE", "REVOLVEDSURFACE", "SWEPTSURFACE", "LOFTEDSURFACE", "MESH"]);
 
 export type DxfPreparedDrawing = {
   svg: string;
@@ -64,8 +67,46 @@ export function dxfEntityTypeHints(text: string) {
   return entityTypes;
 }
 
+const dxfPairs = (text: string) => {
+  const lines = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n").map(line => line.trim());
+  const pairs: Array<[string, string]> = [];
+  for (let index = 0; index < lines.length - 1; index += 2) pairs.push([lines[index], lines[index + 1]]);
+  return pairs;
+};
+
+const pointsMatch = (left: Point, right: Point) => Math.abs(left.x - right.x) < 1e-7 && Math.abs(left.y - right.y) < 1e-7;
+
+/** Reads only SOLID HATCH entities bounded exclusively by chained LINE edges. */
+export function dxfSolidHatches(text: string): SolidHatch[] {
+  const pairs = dxfPairs(text); const hatches: SolidHatch[] = [];
+  for (let index = 0; index < pairs.length; index += 1) {
+    if (pairs[index][0] !== "0" || pairs[index][1].toUpperCase() !== "HATCH") continue;
+    const end = pairs.findIndex((pair, candidate) => candidate > index && pair[0] === "0");
+    const record = pairs.slice(index + 1, end < 0 ? pairs.length : end);
+    const value = (code: string) => record.find(pair => pair[0] === code)?.[1];
+    if (String(value("2") || "").toUpperCase() !== "SOLID" || Number(value("70")) !== 1) continue;
+    const segments: Array<{ start: Point; end: Point }> = [];
+    for (let cursor = 0; cursor < record.length; cursor += 1) {
+      if (record[cursor][0] !== "72" || Number(record[cursor][1]) !== 1) continue;
+      const edge = record.slice(cursor + 1, cursor + 7);
+      const byCode = (code: string) => edge.find(pair => pair[0] === code)?.[1];
+      const start = { x: number(byCode("10")), y: number(byCode("20")) }; const finish = { x: number(byCode("11")), y: number(byCode("21")) };
+      if (Number.isFinite(start.x) && Number.isFinite(start.y) && Number.isFinite(finish.x) && Number.isFinite(finish.y)) segments.push({ start, end: finish });
+    }
+    if (segments.length < 3 || !segments.every((segment, segmentIndex) => pointsMatch(segment.end, segments[(segmentIndex + 1) % segments.length].start))) continue;
+    hatches.push({ layer: String(value("8") || "0"), points: segments.map(segment => segment.start) });
+  }
+  return hatches;
+}
+
 export function assertAsciiDxfText(text: string, fileName = "drawing.dxf") {
   if (!validAsciiDxf(text)) throw new Error(`يدعم محول DXF ملفات ASCII DXF ثنائية الأبعاد فقط. ملف ${fileName} ليس DXF ASCII صالحًا أو يحتوي صيغة ثنائية غير مدعومة.`);
+}
+
+export function dxfPreflightError(text: string) {
+  if (/AutoCAD Binary DXF|\u0000/i.test(text.slice(0, 96))) return DXF_BINARY_OR_3D_GUIDANCE;
+  const has3d = dxfEntityTypeHints(text).some(type => UNSUPPORTED_3D_ENTITY_TYPES.has(type));
+  return has3d ? DXF_BINARY_OR_3D_GUIDANCE : undefined;
 }
 
 export async function parseAsciiDxf(file: File): Promise<ParsedDxf> {
@@ -74,13 +115,14 @@ export async function parseAsciiDxf(file: File): Promise<ParsedDxf> {
   if (!name.endsWith(".dxf")) throw new Error("يدعم هذا المحول ملفات DXF فقط. لا يتم دعم DWG في هذه الأداة.");
   const text = await file.text();
   assertAsciiDxfText(text, file.name);
+  const preflight = dxfPreflightError(text); if (preflight) throw new Error(preflight);
   const module: any = await import("dxf-parser");
   const Parser = module.DxfParser || (typeof module.default === "function" && /^class\s/.test(Function.prototype.toString.call(module.default)) ? module.default : undefined);
   const parse = module.parse || (!Parser ? module.default : undefined);
   try {
     const drawing = typeof parse === "function" ? parse(text) : new Parser().parseSync(text);
     if (!drawing || !Array.isArray((drawing as ParsedDxf).entities)) throw new Error("لم يتعرف المحلل على كائنات DXF قابلة للرسم.");
-    return { ...(drawing as ParsedDxf), sourceEntityTypes: dxfEntityTypeHints(text) };
+    return { ...(drawing as ParsedDxf), sourceEntityTypes: dxfEntityTypeHints(text), solidHatches: dxfSolidHatches(text) };
   } catch (error) {
     throw new Error(`تعذر تحليل DXF ASCII: ${error instanceof Error ? error.message : "بنية الملف غير صالحة."}`);
   }
@@ -155,18 +197,29 @@ function renderEntity(
   addUnsupported();
 }
 
+function renderSolidHatch(hatch: SolidHatch, output: string[], bounds: Bounds, layers: Set<string>) {
+  layers.add(hatch.layer);
+  hatch.points.forEach(point => include(bounds, point));
+  const path = hatch.points.map((point, index) => `${index ? "L" : "M"} ${toSvg(point)}`).join(" ");
+  output.push(`<path d="${path} Z" fill="#25185f" stroke="none"/>`);
+}
+
 export function renderParsedDxf(drawing: ParsedDxf): DxfPreparedDrawing {
   const output: string[] = []; const bounds = createBounds(); const layers = new Set<string>(); const unsupported = new Map<string, number>();
   const entities = Array.isArray(drawing.entities) ? drawing.entities : [];
   for (const entity of entities) renderEntity(entity, drawing, point => point, output, bounds, layers, unsupported, []);
-  const supported = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "POLYLINE", "POINT", "TEXT", "MTEXT", "INSERT"]);
+  const solidHatches = drawing.solidHatches || []; solidHatches.forEach(hatch => renderSolidHatch(hatch, output, bounds, layers));
+  const sourceHatchCount = (drawing.sourceEntityTypes || []).filter(type => type === "HATCH").length;
+  const remainingHatches = Math.max(0, sourceHatchCount - solidHatches.length);
+  if (sourceHatchCount) { unsupported.delete("HATCH"); if (remainingHatches) unsupported.set("HATCH", remainingHatches); }
+  const supported = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "POLYLINE", "POINT", "TEXT", "MTEXT", "INSERT", "HATCH"]);
   for (const type of drawing.sourceEntityTypes || []) {
     if (!supported.has(type) && !unsupported.has(type)) unsupported.set(type, (drawing.sourceEntityTypes || []).filter(candidate => candidate === type).length);
   }
   if (!presentBounds(bounds) || !output.length) throw new Error("لم نجد كائنات DXF ثنائية الأبعاد مدعومة للرسم. يدعم المحول الخطوط والأقواس والدوائر وPolyline والنصوص والكتل الأساسية.");
   const padding = Math.max(10, Math.min(80, Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY) * .04)); const minX = bounds.minX - padding; const maxX = bounds.maxX + padding; const minY = bounds.minY - padding; const maxY = bounds.maxY + padding; const width = Math.max(1, maxX - minX); const height = Math.max(1, maxY - minY);
   const warnings = Array.from(unsupported.entries()).map(([type, count]) => `لم يُرسم ${count} عنصر من نوع ${type} لأنه خارج نطاق DXF ثنائي الأبعاد المدعوم.`);
-  return { svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${minX} ${-maxY} ${width} ${height}" role="img" aria-label="DXF preview"><rect x="${minX}" y="${-maxY}" width="${width}" height="${height}" fill="#ffffff"/>${output.join("")}</svg>`, width, height, entityCount: entities.length, layerCount: layers.size, layers: Array.from(layers).sort(), warnings };
+  return { svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${minX} ${-maxY} ${width} ${height}" role="img" aria-label="DXF preview"><rect x="${minX}" y="${-maxY}" width="${width}" height="${height}" fill="#ffffff"/>${output.join("")}</svg>`, width, height, entityCount: entities.length + solidHatches.length, layerCount: layers.size, layers: Array.from(layers).sort(), warnings };
 }
 
 export async function prepareDxfDrawing(file: File, report?: (fraction: number) => void) {

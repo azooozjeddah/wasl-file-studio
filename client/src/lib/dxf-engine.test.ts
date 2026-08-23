@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { assertAsciiDxfText, dxfEntityTypeHints, dxfPdfLayout, parseAsciiDxf, renderParsedDxf } from "./dxf-engine";
+import { assertAsciiDxfText, dxfEntityTypeHints, dxfPdfLayout, dxfPreflightError, dxfSolidHatches, parseAsciiDxf, renderParsedDxf } from "./dxf-engine";
 
 describe("DXF local rendering", () => {
   it("renders basic geometry, text, layers, blocks, and warns about unsupported hatch entities", () => {
@@ -49,5 +49,18 @@ describe("DXF local rendering", () => {
   it("detects unsupported HATCH records from ASCII source even when a parser omits them", () => {
     const source = "0\nSECTION\n2\nENTITIES\n0\nLINE\n0\nHATCH\n0\nENDSEC\n0\nEOF\n";
     expect(dxfEntityTypeHints(source)).toEqual(["LINE", "HATCH"]);
+  });
+
+  it("extracts only a closed SOLID HATCH bounded by LINE edges for reliable vector fill", () => {
+    const source = "0\nSECTION\n2\nENTITIES\n0\nHATCH\n8\nFills\n2\nSOLID\n70\n1\n72\n1\n10\n0\n20\n0\n11\n10\n21\n0\n72\n1\n10\n10\n20\n0\n11\n0\n21\n10\n72\n1\n10\n0\n20\n10\n11\n0\n21\n0\n0\nENDSEC\n0\nEOF\n";
+    const hatches = dxfSolidHatches(source);
+    expect(hatches).toHaveLength(1);
+    expect(hatches[0].layer).toBe("Fills");
+    expect(hatches[0].points).toHaveLength(3);
+  });
+
+  it("flags binary DXF and CAD three-dimensional entities before conversion", () => {
+    expect(dxfPreflightError("AutoCAD Binary DXF\u0000")).toContain("DXF الثنائي");
+    expect(dxfPreflightError("0\nSECTION\n2\nENTITIES\n0\n3DFACE\n0\nENDSEC\n0\nEOF\n")).toContain("ثلاثي الأبعاد");
   });
 });
