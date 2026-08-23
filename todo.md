@@ -314,3 +314,10 @@
 - [x] Correct the published FAQ wording for Word-to-PDF so it matches the now-ready local conversion route.
 - [x] Replace the CORP-blocked external reference-logo request with the identical embedded local data source and recheck public console errors.
 - [x] Correct the published FAQ wording for Word-to-PDF so it matches the now-ready local conversion route.
+- [x] Audit the current tool-to-category mapping and route table against the approved information architecture.
+- [x] Create reusable category metadata and public category routes for PDF, documents, Excel, images, media, QR, developer/data, and other tools.
+- [x] Shorten the Home page to assistant upload, category cards, compact FAQ, and a concise footer without duplicating the full tool catalog or QR workspace.
+- [x] Implement category pages that list every existing tool in its single primary category without changing tool processing logic.
+- [x] Update responsive header navigation and mobile menu to reach Home, Tools, Pricing, Help, upload, language, and account actions.
+- [x] Verify no public tool is missing or duplicated improperly, and test category navigation, tool opening, file upload, desktop, tablet, and mobile behavior.
+- [ ] Run TypeScript, unit tests, production build, bundled checks, publish, and independently verify the final public information architecture.
