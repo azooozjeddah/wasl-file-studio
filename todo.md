@@ -333,3 +333,7 @@
 - [x] Add a single-purpose Word category route and remove tool-count numerals from Home category cards without duplicating document tools.
 - [x] Ensure all categories route to complete category pages and preserve icons, tools, and responsive behavior without a visual rebrand.
 - [x] Test the reorganized Home, categories, QR generator, tool routes, desktop, and mobile; then build and verify the local Production bundle.
+- [x] Audit the current QR quick-access card and all shared tool-card icon render paths without altering routes or processing.
+- [x] Restyle only the Home QR generator card with the supplied reference’s premium QR-preview composition while preserving the current Wasl palette.
+- [x] Apply the same professional icon frame, stroke, size, color, and type-specific treatment to every shared tool-card variant across category and tool pages.
+- [ ] Verify QR card prominence, all icon variants, desktop/mobile responsiveness, route preservation, TypeScript, tests, build, and Production publication.
