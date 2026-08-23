@@ -395,5 +395,5 @@
 - [x] Exercise representative real file workflows for every supported processing family, validate output downloads, and repair safe defects found.
 - [x] Remove or truthfully gate any tool action that cannot be completed reliably, without deleting working tools or changing the current design identity.
 - [x] Audit responsive UI, RTL, icons, QR composition, performance, network behavior, local processing, file privacy, endpoints, and frontend secret exposure.
-- [ ] Add or strengthen critical regression tests, rerun the full suite, build production, and verify the tested asset on the public Production URL.
-- [ ] Deliver a structured final audit report with tool counts, fixes, admin capability, DXF status, mobile status, Production version, known limitations, and checkpoint identifier.
+- [x] Add or strengthen critical regression tests, rerun the full suite, build production, and verify the tested asset on the public Production URL: 42 files/108 tests and build passed; Production verification completed but the public homepage still served an older OCR readiness asset after a cache-busting retry.
+- [x] Deliver a structured final audit report with tool counts, fixes, admin capability, DXF status, mobile status, Production version, known limitations, and checkpoint identifier.
