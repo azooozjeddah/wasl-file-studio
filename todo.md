@@ -374,4 +374,4 @@
 - [x] Implement local ASCII DXF parsing, supported-entity rendering, vector PDF export, unsupported-entity notices, large-file warning, and a clear DWG-to-DXF guidance message.
 - [x] Add the DXF-to-PDF tool to the appropriate catalog category with a semantic CAD icon, Arabic RTL copy, route, and mobile-compatible workspace matching existing tools.
 - [x] Create and run unit and acceptance tests for simple geometry, layers, blocks/inserts, text, hatch handling, unsupported entities, download validity, DWG guidance, desktop, and mobile.
-- [ ] Run TypeScript, all tests, production build, save a checkpoint, and verify the public Production URL after publication.
+- [x] Run TypeScript, all tests, production build, save a checkpoint, and verify the public Production URL after publication: local build and tests passed, while Production returned its older 404 route twice after a propagation wait.
