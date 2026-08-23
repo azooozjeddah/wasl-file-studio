@@ -360,3 +360,9 @@
 - [x] Audit the current header actions and authenticated/unauthenticated login behavior at mobile and desktop sizes.
 - [x] Replace the header upload-file action with the existing login action while preserving the upload action only inside the file assistant.
 - [x] Verify header navigation, login route/action, and assistant file selection at mobile and desktop breakpoints, then run TypeScript, tests, build, and Production verification.
+- [x] Audit the small QR spotlight descriptor and overall card height at phone width using the supplied reference without modifying the image.
+- [x] Increase the QR spotlight descriptor legibility and reduce the mobile card footprint while preserving the title, preview, controls, and generator link.
+- [x] Verify the refined QR spotlight on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Audit Home, header, mobile navigation, and footer for every visible prices section or link.
+- [x] Remove the Home prices section and visible prices links from header, mobile navigation, and footer without changing other sections or tool behavior.
+- [x] Verify mobile and desktop navigation/layout after removing prices, then run TypeScript, tests, build, and Production verification.

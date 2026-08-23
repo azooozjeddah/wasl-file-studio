@@ -55,32 +55,33 @@
 
 @media (max-width: 620px) {
   .home-featured-section .qr-home-spotlight {
-    grid-template-columns: 40px minmax(0, 1fr) 74px;
-    grid-template-rows: 17px minmax(0, 1fr) auto;
-    padding: 15px 14px;
-    column-gap: 8px;
-    row-gap: 5px;
+    grid-template-columns: 38px minmax(0, 1fr) 68px;
+    grid-template-rows: 19px minmax(0, 1fr) auto;
+    padding: 12px 13px;
+    column-gap: 7px;
+    row-gap: 3px;
     border-radius: 18px;
   }
 
-  .qr-spotlight-top > span { width: 40px; height: 40px; border-radius: 12px; }
-  .qr-spotlight-top > span svg { width: 20px; height: 20px; }
-  .qr-spotlight-top i { font-size: 7px; }
+  .qr-spotlight-top > span { width: 38px; height: 38px; border-radius: 12px; }
+  .qr-spotlight-top > span svg { width: 19px; height: 19px; }
+  .qr-spotlight-top i { align-self: center; overflow: hidden; color: #5c43c7; font-size: 9px; font-style: normal; font-weight: 800; line-height: 1.2; white-space: nowrap; text-overflow: ellipsis; }
   .qr-home-spotlight small { font-size: 8px; }
-  .qr-home-spotlight h3 { margin: 4px 0 5px; font-size: 19px; line-height: 1.22; }
-  .qr-home-spotlight p { font-size: 9px; line-height: 1.58; }
-  .qr-spotlight-preview { gap: 3px; padding: 5px; border-radius: 12px; background: rgba(255,255,255,.56); }
-  .qr-preview-code { width: 52px; height: 52px; border-radius: 9px; box-shadow: 0 5px 12px rgba(35,23,104,.1); }
-  .qr-preview-code svg { width: 40px; height: 40px; }
+  .qr-home-spotlight h3 { margin: 2px 0 4px; font-size: 19px; line-height: 1.2; }
+  .qr-home-spotlight p { font-size: 9px; line-height: 1.48; }
+  .qr-spotlight-preview { gap: 2px; padding: 4px; border-radius: 12px; background: rgba(255,255,255,.56); }
+  .qr-preview-code { width: 48px; height: 48px; border-radius: 9px; box-shadow: 0 5px 12px rgba(35,23,104,.1); }
+  .qr-preview-code svg { width: 37px; height: 37px; }
   .qr-preview-controls small { display: none; }
   .qr-preview-controls i b { width: 7px; height: 7px; }
-  .qr-spotlight-link { min-height: 32px; margin-top: 3px; padding: 8px 10px; font-size: 9px; }
+  .qr-spotlight-link { min-height: 30px; margin-top: 2px; padding: 7px 9px; font-size: 9px; }
 }
 
 @media (max-width: 380px) {
-  .home-featured-section .qr-home-spotlight { grid-template-columns: 36px minmax(0,1fr) 68px; padding: 13px; }
+  .home-featured-section .qr-home-spotlight { grid-template-columns: 34px minmax(0,1fr) 62px; padding: 11px; }
   .qr-spotlight-top > span { width: 36px; height: 36px; }
+  .qr-spotlight-top i { font-size: 8px; }
   .qr-home-spotlight h3 { font-size: 18px; }
-  .qr-preview-code { width: 48px; height: 48px; }
-  .qr-preview-code svg { width: 37px; height: 37px; }
+  .qr-preview-code { width: 44px; height: 44px; }
+  .qr-preview-code svg { width: 34px; height: 34px; }
 }
