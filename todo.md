@@ -357,3 +357,6 @@
 - [x] Inspect the current public asset state at mobile width before triggering a clean re-publication of the saved QR mobile layout release.
 - [x] Re-publish the saved QR mobile layout release without changing code or functionality.
 - [x] Verify the public URL at mobile width with a cache-busting query and report the exact visible release state: the public domain still served an older stylesheet after two cache-busting checks and a 45-second propagation wait.
+- [x] Audit the current header actions and authenticated/unauthenticated login behavior at mobile and desktop sizes.
+- [x] Replace the header upload-file action with the existing login action while preserving the upload action only inside the file assistant.
+- [x] Verify header navigation, login route/action, and assistant file selection at mobile and desktop breakpoints, then run TypeScript, tests, build, and Production verification.

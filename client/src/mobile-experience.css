@@ -8,12 +8,12 @@
   .header-inner { min-height: 64px; gap: 7px; }
   .brand-reference-logo { width: 96px; }
   .brand-sub { display: none; }
-  .header-upload { min-width: 88px; height: 42px; justify-content: center; padding-inline: 10px; border-radius: 12px; font-size: 11px; }
+  .header-login-primary { display: inline-flex !important; min-width: 96px; height: 42px; justify-content: center; padding-inline: 12px; border: 0; border-radius: 12px; background: var(--wasl-violet); box-shadow: 0 9px 20px rgba(103,70,232,.22); color: #fff; font-size: 11px; font-weight: 800; }
+  .header-login-primary:hover { background: var(--wasl-violet); color: #fff; }
   .mobile-menu-trigger { width: 42px !important; height: 42px !important; border-radius: 12px !important; }
   .mobile-nav { inset: 64px 0 auto; max-height: calc(100dvh - 64px); overflow-y: auto; padding: 12px 0 calc(18px + env(safe-area-inset-bottom)); }
   .mobile-nav .container { gap: 8px; }
   .mobile-nav a { display: flex; align-items: center; min-height: 48px; padding: 12px 14px; border: 1px solid #eeebf5; border-radius: 13px; background: #fff; font-size: 14px; }
-  .mobile-nav-upload { justify-content: center; border: 0 !important; background: var(--wasl-violet) !important; color: #fff !important; }
 
   .assistant-led-hero .container { padding-top: 24px !important; padding-bottom: 28px !important; }
   .assistant-hero-layout { gap: 22px; }
@@ -120,7 +120,7 @@
 }
 
 @media (max-width: 360px) {
-  .header-upload { min-width: 82px; padding-inline: 8px; font-size: 10px; }
+  .header-login-primary { min-width: 88px; padding-inline: 9px; font-size: 10px; }
   .brand-reference-logo { width: 88px; }
   .assistant-hero-copy h1 { font-size: 34px; }
   .assistant-scenario-strip > span { min-height: 48px; padding: 8px; }
