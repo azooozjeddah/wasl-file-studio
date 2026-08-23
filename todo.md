@@ -229,3 +229,9 @@
 - [x] Resolve the Firefox Cross-Origin-Resource-Policy logo load error and eliminate acceptance-fixture image decode warnings where a reliable local fix is available; the remaining platform-managed logo request is documented as a non-functional deployment-layer constraint.
 - [x] Create and verify a project checkpoint backup limited to source code and non-sensitive configuration, excluding user files, database records, credentials, and secrets.
 - [x] Run final TypeScript and automated checks, record browser evidence, and publish the concise Arabic QA completion report requested.
+- [x] Inventory every public page and catalog tool, then execute a fresh independent audit as a visitor on desktop and mobile breakpoints.
+- [x] Verify the normal-user journey: registration/login, welcome and account UI, local tool use, logout, protected-route denial, Arabic/English, and download flow.
+- [x] Verify administrative routes and tool/user enablement safeguards without changing or exposing real user records or secrets.
+- [x] Audit source and browser behavior for broken links, empty pages, client errors, external paid-service calls, and obvious secret exposure.
+- [x] Fix all reproducible defects found during this final audit without adding tools or paid dependencies, then re-test affected flows.
+- [x] Run final automated checks, record page/tool/test counts and outcomes, and publish the requested Arabic final-audit report.
