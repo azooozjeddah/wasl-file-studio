@@ -346,3 +346,7 @@
 - [x] Improve category cards with distinct semantic icons, concise descriptions, clear entry arrows, and stable RTL handling without changing the Home → Category → Tools architecture.
 - [x] Apply the same semantic icon system to category tool cards and tool pages without altering routes, tool readiness, uploads, or processing engines.
 - [x] Verify the updated UI and RTL at mobile and desktop breakpoints, category/QR routes, TypeScript, tests, build, and Production publication.
+- [x] Audit mobile navigation, header actions, touch targets, Home sections, category/tool cards, tool workspaces, and RTL at phone breakpoints.
+- [x] Improve mobile-only layout, spacing, typography, controls, overflow behavior, and navigation affordances without altering the current identity, routes, or file-processing functionality.
+- [x] Verify the mobile experience across Home, category pages, QR Generator, and representative file tools, then regression-check desktop and core routes.
+- [x] Run TypeScript, unit tests, production build, and Production verification after the mobile usability pass.
