@@ -354,3 +354,6 @@
 - [x] Increase the Home QR spotlight text hierarchy while reducing and integrating the QR preview so the card remains compact and balanced.
 - [x] Replace the tall QR style-library phone layout with a compact, touch-friendly selection flow that preserves templates, frames, live preview, scan verification, and exports.
 - [x] Verify Home QR and QR Generator at phone and desktop sizes, selection interactions, TypeScript, tests, build, and Production publication.
+- [ ] Inspect the current public asset state at mobile width before triggering a clean re-publication of the saved QR mobile layout release.
+- [ ] Re-publish the saved QR mobile layout release without changing code or functionality.
+- [ ] Verify the public URL at mobile width with a cache-busting query and report the exact visible release state.
