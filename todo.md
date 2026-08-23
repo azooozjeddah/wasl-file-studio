@@ -366,3 +366,6 @@
 - [x] Audit Home, header, mobile navigation, and footer for every visible prices section or link.
 - [x] Remove the Home prices section and visible prices links from header, mobile navigation, and footer without changing other sections or tool behavior.
 - [x] Verify mobile and desktop navigation/layout after removing prices, then run TypeScript, tests, build, and Production verification.
+- [x] Research the feasibility of free, local AutoCAD-to-PDF conversion for DWG, DXF, and related formats without adding any website tool or interface.
+- [x] Compare open-source libraries, client-side viability, licensing, file-size constraints, operating costs, and sustainable usage limits.
+- [x] Deliver a concise Arabic technical recommendation with an evidence-backed supported-format decision and a practical free fallback if DWG is not viable.
