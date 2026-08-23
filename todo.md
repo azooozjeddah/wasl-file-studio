@@ -225,4 +225,7 @@
 - [x] Fix the public registration route so the visible Create Account entry opens the Wasl registration form instead of a 404 page.
 - [x] Block direct processing pages for experimental tools so their known URLs show a clear Coming Soon state rather than a workspace.
 - [ ] Fix the reproducible browser-side PNG decode failure in local image transformations and re-test a real resize output.
+- [ ] Establish and run browser-independent acceptance coverage for upload, processing, output inspection, and downloads wherever the project environment supports it.
+- [ ] Resolve the Firefox Cross-Origin-Resource-Policy logo load error and eliminate acceptance-fixture image decode warnings where a reliable local fix is available.
+- [ ] Create and verify a project checkpoint backup limited to source code and non-sensitive configuration, excluding user files, database records, credentials, and secrets.
 - [ ] Run final TypeScript and automated checks, record browser evidence, and publish the concise Arabic QA completion report requested.
