@@ -295,10 +295,10 @@
 - [x] Save the tested production-build source as a release checkpoint without further code changes.
 - [x] Verify that the resulting release is promoted to Production and the public domain serves its asset revision.
 - [x] Test the public domain independently for the homepage, PDF compression, Word-to-PDF, QR export/read, File Assistant, console errors, and asset 404s.
-- [ ] Create an isolated Premium Minimal visual prototype with desktop and mobile screens only.
-- [ ] Create an isolated Smart File Assistant visual prototype with desktop and mobile screens only.
-- [ ] Create an isolated Professional File Studio visual prototype with desktop and mobile screens only.
-- [ ] Present all visual components requested for the three prototypes, without changing project files, app behavior, or Production.
+- [x] Create an isolated Premium Minimal visual prototype with desktop and mobile screens only.
+- [x] Create an isolated Smart File Assistant visual prototype with desktop and mobile screens only.
+- [x] Create an isolated Professional File Studio visual prototype with desktop and mobile screens only.
+- [x] Present all visual components requested for the three prototypes, without changing project files, app behavior, or Production.
 - [x] Create an isolated Premium Minimal visual prototype with desktop and mobile screens only.
 - [x] Create an isolated Smart File Assistant visual prototype with desktop and mobile screens only.
 - [x] Create an isolated Professional File Studio visual prototype with desktop and mobile screens only.
@@ -311,3 +311,6 @@
 - [x] Validate QR options, Word-to-PDF, PDF compression, responsive navigation, and non-empty public sections after redesign.
 - [ ] Run TypeScript, unit tests, production build, bundled-app checks, and independent public-domain acceptance tests.
 - [ ] Save, publish, and verify the redesign on Production only after all required checks pass.
+- [x] Correct the published FAQ wording for Word-to-PDF so it matches the now-ready local conversion route.
+- [ ] Replace the CORP-blocked external reference-logo request with the identical embedded local data source and recheck public console errors.
+- [x] Correct the published FAQ wording for Word-to-PDF so it matches the now-ready local conversion route.
