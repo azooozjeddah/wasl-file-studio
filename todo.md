@@ -292,6 +292,22 @@
 - [x] Apply a minimal, function-preserving production build optimization and prove a complete successful build.
 - [x] Verify built JavaScript and CSS assets plus PDF compression, Word-to-PDF, QR export/read, and Smart Assistant without browser console or asset-loading failures.
 - [x] Prepare a production-release readiness report without executing Promotion/Rebind or publishing.
-- [ ] Save the tested production-build source as a release checkpoint without further code changes.
-- [ ] Verify that the resulting release is promoted to Production and the public domain serves its asset revision.
-- [ ] Test the public domain independently for the homepage, PDF compression, Word-to-PDF, QR export/read, File Assistant, console errors, and asset 404s.
+- [x] Save the tested production-build source as a release checkpoint without further code changes.
+- [x] Verify that the resulting release is promoted to Production and the public domain serves its asset revision.
+- [x] Test the public domain independently for the homepage, PDF compression, Word-to-PDF, QR export/read, File Assistant, console errors, and asset 404s.
+- [ ] Create an isolated Premium Minimal visual prototype with desktop and mobile screens only.
+- [ ] Create an isolated Smart File Assistant visual prototype with desktop and mobile screens only.
+- [ ] Create an isolated Professional File Studio visual prototype with desktop and mobile screens only.
+- [ ] Present all visual components requested for the three prototypes, without changing project files, app behavior, or Production.
+- [x] Create an isolated Premium Minimal visual prototype with desktop and mobile screens only.
+- [x] Create an isolated Smart File Assistant visual prototype with desktop and mobile screens only.
+- [x] Create an isolated Professional File Studio visual prototype with desktop and mobile screens only.
+- [x] Present all visual components requested for the three prototypes, without changing project files, app behavior, or Production.
+- [x] Wait for the user's concept selection before any redesign implementation or publishing action.
+- [x] Audit the current frontend, tool catalog, routes, PDF loader, Word-to-PDF, QR generator, and public assets before redesign.
+- [x] Apply the supplied reference layout and the approved «وصّل» brand treatment in reusable visual tokens without changing tool logic.
+- [x] Rebuild the public header, navigation, Home layout, upload area, Smart File Assistant, tool categories, QR preview, FAQ, and footer responsively.
+- [x] Unify tool iconography and cards without removing existing tools or fabricating empty content.
+- [x] Validate QR options, Word-to-PDF, PDF compression, responsive navigation, and non-empty public sections after redesign.
+- [ ] Run TypeScript, unit tests, production build, bundled-app checks, and independent public-domain acceptance tests.
+- [ ] Save, publish, and verify the redesign on Production only after all required checks pass.
