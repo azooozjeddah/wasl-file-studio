@@ -11,9 +11,8 @@ describe("homepage tool prioritization", () => {
     });
   });
 
-  it("publishes the verified PowerPoint path and removes the linear barcode definition", () => {
-    expect(findTool("pptx-to-pdf")).toMatchObject({ category: "document", local: true });
-    expect(findTool("pptx-to-pdf")?.experimental).not.toBe(true);
+  it("keeps PowerPoint deferred until a verified local conversion path exists and removes the linear barcode definition", () => {
+    expect(findTool("pptx-to-pdf")).toMatchObject({ category: "document", local: true, experimental: true, readiness: "improving" });
     expect(findTool("barcode-generator")).toBeUndefined();
     expect(toolDefinitions.some(tool => tool.slug === "barcode-generator")).toBe(false);
     expect(toolIconFor("pptx-to-pdf", findTool("pptx-to-pdf")!.icon)).toBeDefined();

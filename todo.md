@@ -389,11 +389,11 @@
 - [x] Run public desktop DXF acceptance for SOLID HATCH, a landscape drawing, text, preview, and PDF download.
 - [x] Run public mobile DXF acceptance and verify DWG/3D rejection, absence of experimental wording, and local-only processing.
 - [x] Report the exact Production version, verified public results, and an evidence-based Production Ready decision.
-- [ ] Create a safe baseline checkpoint and complete an inventory of public pages, categories, tools, admin routes, hidden/featured catalog records, and broken-link candidates.
-- [ ] Audit catalog and admin capabilities, role protections, enabled/visible/featured/status behavior, ordering, and direct-route handling for unavailable tools.
-- [ ] Validate every catalog tool route and classify each tool as genuinely ready, disabled, maintenance, or hidden based on code and runtime behavior.
-- [ ] Exercise representative real file workflows for every supported processing family, validate output downloads, and repair safe defects found.
-- [ ] Remove or truthfully gate any tool action that cannot be completed reliably, without deleting working tools or changing the current design identity.
-- [ ] Audit responsive UI, RTL, icons, QR composition, performance, network behavior, local processing, file privacy, endpoints, and frontend secret exposure.
+- [x] Create a safe baseline checkpoint and complete an inventory of public pages, categories, tools, admin routes, hidden/featured catalog records, and broken-link candidates.
+- [x] Audit catalog and admin capabilities, role protections, enabled/visible/featured/status behavior, ordering, and direct-route handling for unavailable tools.
+- [x] Validate every catalog tool route and classify each tool as genuinely ready, disabled, maintenance, or hidden based on code and runtime behavior.
+- [x] Exercise representative real file workflows for every supported processing family, validate output downloads, and repair safe defects found.
+- [x] Remove or truthfully gate any tool action that cannot be completed reliably, without deleting working tools or changing the current design identity.
+- [x] Audit responsive UI, RTL, icons, QR composition, performance, network behavior, local processing, file privacy, endpoints, and frontend secret exposure.
 - [ ] Add or strengthen critical regression tests, rerun the full suite, build production, and verify the tested asset on the public Production URL.
 - [ ] Deliver a structured final audit report with tool counts, fixes, admin capability, DXF status, mobile status, Production version, known limitations, and checkpoint identifier.

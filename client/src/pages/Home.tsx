@@ -25,8 +25,7 @@ export default function Home() {
   useEffect(() => { if (!loading && user) navigate("/dashboard"); }, [loading, navigate, user]);
   if (user) return null;
 
-  const builtInSlugs = ["qr-generator", "qr-reader", "sign-pdf", "file-hash"];
-  const activeSlugs = new Set((catalog.data?.length ? catalog.data : toolDefinitions).map((tool: { slug: string }) => tool.slug).concat(builtInSlugs));
+  const activeSlugs = new Set((catalog.data ? catalog.data : toolDefinitions).map((tool: { slug: string }) => tool.slug));
   const visibleTools = toolDefinitions.filter(tool => activeSlugs.has(tool.slug));
   const visibleCategories = siteToolCategories.filter((category) => toolsForSiteCategory(category.id, visibleTools).length > 0);
   const featuredSlugs = ["compress-pdf", "word-to-pdf", "sign-pdf", "ocr"];

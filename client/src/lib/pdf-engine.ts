@@ -98,6 +98,30 @@ export async function redactPdf(file: File, area: { x: number; y: number; width:
   return { name: outputName(file.name, "redacted", "pdf"), blob: new Blob([bytes], { type: "application/pdf" }), mime: "application/pdf", label: "Permanent rasterized redaction", details: { redaction: "rasterized-rebuild", searchableTextRemoved: true } };
 }
 
+/**
+ * Flattens interactive fields by rebuilding each rendered page as a static image-backed PDF.
+ * This deliberately trades selectable source text for predictable removal of AcroForm widgets
+ * across browser PDF implementations, while preserving the visible completed form.
+ */
+async function flattenPdfForm(file: File, report?: (fraction: number) => void): Promise<LocalFileResult> {
+  const fieldCount = await countPdfFormFields(file);
+  if (!fieldCount) throw new Error("هذا الملف لا يحتوي على حقول PDF قابلة للتعبئة، لذلك لا يحتاج إلى تسطيح.");
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
+  const input = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const output = await PDFDocument.create(); const scale = 1.55;
+  for (let index = 1; index <= input.numPages; index += 1) {
+    const page = await input.getPage(index); const viewport = page.getViewport({ scale }); const base = page.getViewport({ scale: 1 });
+    const canvas = document.createElement("canvas"); canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
+    await page.render({ canvasContext: canvas.getContext("2d")!, viewport }).promise;
+    const jpeg = await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("تعذر تجهيز صفحة النموذج للتسطيح.")), "image/jpeg", .92));
+    const image = await output.embedJpg(new Uint8Array(await jpeg.arrayBuffer())); const outPage = output.addPage([base.width, base.height]);
+    outPage.drawImage(image, { x: 0, y: 0, width: base.width, height: base.height }); report?.(index / input.numPages);
+  }
+  const bytes = new Uint8Array(await output.save({ useObjectStreams: false })).slice();
+  return { name: outputName(file.name, "flattened", "pdf"), blob: new Blob([bytes], { type: "application/pdf" }), mime: "application/pdf", label: `تم تسطيح ${fieldCount} حقلًا داخل نسخة مرئية ثابتة`, details: { flatten: "rasterized-rebuild", fieldCount, searchableTextRemoved: true } };
+}
+
 export async function alterPdf(slug: string, file: File, options: PdfOptions, report?: (fraction: number) => void): Promise<LocalFileResult[]> {
   const source = await openPdf(file); const pageCount = source.getPageCount(); const selected = parsePageList(options.pages, pageCount);
   if (["split-pdf", "extract-pdf-pages"].includes(slug)) {
@@ -120,7 +144,7 @@ export async function alterPdf(slug: string, file: File, options: PdfOptions, re
   if (slug === "page-numbers-pdf") { const font = await source.embedFont(StandardFonts.Helvetica); pages.forEach((page, index) => { const { width } = page.getSize(); const label = String(index + 1); page.drawText(label, { x: width / 2 - font.widthOfTextAtSize(label, 10) / 2, y: options.position === "top" ? page.getHeight() - 22 : 13, size: 10, font, color: rgb(.28, .27, .35) }); }); }
   if (slug === "crop-pdf") { const crop = options.crop || { x: 0, y: 0, width: 500, height: 700 }; pages.forEach((page, index) => { if (selected.includes(index)) page.setCropBox(crop.x, crop.y, crop.width, crop.height); }); }
   if (slug === "resize-pdf") { const dimensions = options.dimensions || { width: 595, height: 842 }; pages.forEach((page, index) => { if (!selected.includes(index)) return; const current = page.getSize(); const sx = dimensions.width / current.width; const sy = dimensions.height / current.height; page.scaleContent(sx, sy); page.scaleAnnotations(sx, sy); page.setSize(dimensions.width, dimensions.height); }); }
-  if (slug === "flatten-pdf") { const form = source.getForm(); const fieldCount = form.getFields().length; if (!fieldCount) throw new Error("هذا الملف لا يحتوي على حقول PDF قابلة للتعبئة، لذلك لا يحتاج إلى تسطيح."); form.flatten(); }
+  if (slug === "flatten-pdf") return [await flattenPdfForm(file, report)];
   if (slug === "compress-pdf") { source.setProducer("Wasl File Studio local optimization"); }
   if (slug === "pdf-metadata") {
     if (options.metadataMode === "clear") { source.setTitle(""); source.setAuthor(""); source.setSubject(""); source.setKeywords([]); source.setCreator(""); source.setProducer(""); return [await result(source, file, "metadata-removed")]; }
@@ -131,7 +155,13 @@ export async function alterPdf(slug: string, file: File, options: PdfOptions, re
 }
 
 export async function imagesToPdf(files: File[], report?: (fraction: number) => void) {
-  const output = await PDFDocument.create(); for (let index = 0; index < files.length; index += 1) { const file = files[index]; const bytes = new Uint8Array(await file.arrayBuffer()); const image = file.type === "image/png" ? await output.embedPng(bytes) : file.type === "image/jpeg" ? await output.embedJpg(bytes) : await output.embedPng(await canvasToPng(file)); const page = output.addPage([image.width, image.height]); page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height }); report?.((index + 1) / files.length); }
+  const output = await PDFDocument.create(); for (let index = 0; index < files.length; index += 1) { const file = files[index]; const bytes = new Uint8Array(await file.arrayBuffer()); let image: any;
+    if (file.type === "image/jpeg") image = await output.embedJpg(bytes);
+    else if (file.type === "image/png") {
+      try { image = await output.embedPng(bytes); }
+      catch { image = await output.embedPng(await canvasToPng(file)); }
+    } else image = await output.embedPng(await canvasToPng(file));
+    const page = output.addPage([image.width, image.height]); page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height }); report?.((index + 1) / files.length); }
   return result(output, files[0], "images");
 }
 
