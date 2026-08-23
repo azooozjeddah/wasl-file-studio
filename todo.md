@@ -264,14 +264,14 @@
 - [x] Exclude PDF comparison and merge actions that require an additional file from single-file assistant recommendations.
 - [x] Make the dedicated Excel workspace consume supported assistant file handoffs without another upload.
 - [x] Test PDF, image, and an available Word/document flow; run TypeScript, unit tests, and a production build, then publish a concise Arabic completion report.
-- [ ] Audit the current product against the new logo, visual-direction, Smart Assistant, Word, signature, QR, FAQ, mobile, and production requirements.
+- [x] Audit the current product against the new logo, visual-direction, Smart Assistant, Word, signature, QR, FAQ, mobile, and production requirements.
 - [x] Produce separate logo and full-interface direction options for user selection without replacing the current identity prematurely.
 - [x] Deepen the Smart File Assistant using truthful local file metadata and ready tool capabilities only.
 - [x] Verify whether a reliable no-paid-service Word-to-PDF path can preserve required document content; implement it only if evidence supports it.
 - [x] Audit and improve PDF-signature and QR workflows only where the requested behavior is incomplete or demonstrably unreliable.
 - [x] Replace the empty FAQ content with accurate, responsive Arabic answers grounded in live product capabilities.
 - [x] Publish a prioritized Arabic idea backlog for differentiated file workflows without adding unapproved large features.
-- [ ] Run focused desktop and browser-independent mobile checks, complete TypeScript/tests/build, and verify the active Production asset and public page.
+- [x] Run focused desktop and browser-independent mobile checks, complete TypeScript/tests/build, and verify the active Production asset and public page.
 - [x] Present complete A/B/C/D identity and interface comparison boards, without adopting any option or continuing functional work until the user chooses.
 - [x] Audit the current Home and Smart File Assistant components before creating the direction-C visual prototype.
 - [x] Recompose the Home page around a mobile-first Smart File Assistant while preserving current file intake, recommendations, and tool handoff behavior.
@@ -309,8 +309,8 @@
 - [x] Rebuild the public header, navigation, Home layout, upload area, Smart File Assistant, tool categories, QR preview, FAQ, and footer responsively.
 - [x] Unify tool iconography and cards without removing existing tools or fabricating empty content.
 - [x] Validate QR options, Word-to-PDF, PDF compression, responsive navigation, and non-empty public sections after redesign.
-- [ ] Run TypeScript, unit tests, production build, bundled-app checks, and independent public-domain acceptance tests.
-- [ ] Save, publish, and verify the redesign on Production only after all required checks pass.
+- [x] Run TypeScript, unit tests, production build, bundled-app checks, and independent public-domain acceptance tests.
+- [x] Save, publish, and verify the redesign on Production only after all required checks pass.
 - [x] Correct the published FAQ wording for Word-to-PDF so it matches the now-ready local conversion route.
-- [ ] Replace the CORP-blocked external reference-logo request with the identical embedded local data source and recheck public console errors.
+- [x] Replace the CORP-blocked external reference-logo request with the identical embedded local data source and recheck public console errors.
 - [x] Correct the published FAQ wording for Word-to-PDF so it matches the now-ready local conversion route.
