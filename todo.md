@@ -241,3 +241,9 @@
 - [x] Replace weak or duplicate tool icon definitions with a consistent, accessible Wasl visual-icon system across desktop and mobile catalogs.
 - [x] Implement only technically reliable local PowerPoint tools, list them in the catalog, and clearly defer any PPTX conversion that cannot meet a truthful quality threshold.
 - [x] Run TypeScript and automated tests, verify QR, catalog, icon, and PowerPoint paths at desktop/mobile breakpoints, and publish a concise Arabic completion report.
+- [ ] Audit every item in Pasted_content_03 against existing homepage, PDF, image, QR, PowerPoint, FAQ, account, and acceptance-test behavior without overstating local capabilities.
+- [ ] Improve homepage tool discovery, catalog search and categories, account CTAs, and truthful FAQ content without restoring PDF-only routing or dead actions.
+- [x] Upgrade the visual PDF-signature interaction and watermark controls only where local rendering/export can be verified; document any Arabic or rendering limitations honestly.
+- [ ] Improve truthful PDF repair, comparison, redaction, and image controls without adding services or presenting unsupported recovery/AI capabilities as functional.
+- [ ] Add local QR templates and verify their styled exports, retain barcode removal, and verify the visible PowerPoint path and its truthful limits.
+- [ ] Run independent desktop/mobile acceptance for visitor, ordinary-user, and administrator flows, fix reproducible defects, and publish the requested concise Arabic closure report.
