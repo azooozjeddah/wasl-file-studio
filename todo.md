@@ -218,14 +218,14 @@
 - [x] Improve and verify desktop/mobile file selection, drag-and-drop, queue, removal, process status, error, success, and download states without adding paid APIs.
 - [x] Run TypeScript and automated tests, perform desktop/mobile visual checks, and publish a concise Arabic completion report for this improvement phase.
 - [x] Build safe local acceptance fixtures and inventory every public catalog tool, including its claimed readiness and applicable input/output flow.
-- [ ] Execute one end-to-end acceptance pass for every publicly usable tool, with real input, output inspection, and download verification where browser access permits.
+- [x] Execute one end-to-end acceptance pass for every publicly usable tool, with real input, output inspection, and download verification where browser access permits.
 - [x] Exercise invalid, empty, multi-file, repeat, removal, retry, and responsive upload states across representative tool families.
 - [x] Verify ordinary-user authentication, logout, protected routes, and existing admin authorization behavior without altering real user records.
 - [x] Fix each reproducible local defect or accurately mark the related public tool unavailable when a reliable free local repair is not possible.
 - [x] Fix the public registration route so the visible Create Account entry opens the Wasl registration form instead of a 404 page.
 - [x] Block direct processing pages for experimental tools so their known URLs show a clear Coming Soon state rather than a workspace.
-- [ ] Fix the reproducible browser-side PNG decode failure in local image transformations and re-test a real resize output.
-- [ ] Establish and run browser-independent acceptance coverage for upload, processing, output inspection, and downloads wherever the project environment supports it.
-- [ ] Resolve the Firefox Cross-Origin-Resource-Policy logo load error and eliminate acceptance-fixture image decode warnings where a reliable local fix is available.
+- [x] Fix the reproducible browser-side PNG decode failure in local image transformations and re-test a real resize output.
+- [x] Establish and run browser-independent acceptance coverage for upload, processing, output inspection, and downloads wherever the project environment supports it.
+- [x] Resolve the Firefox Cross-Origin-Resource-Policy logo load error and eliminate acceptance-fixture image decode warnings where a reliable local fix is available; the remaining platform-managed logo request is documented as a non-functional deployment-layer constraint.
 - [x] Create and verify a project checkpoint backup limited to source code and non-sensitive configuration, excluding user files, database records, credentials, and secrets.
-- [ ] Run final TypeScript and automated checks, record browser evidence, and publish the concise Arabic QA completion report requested.
+- [x] Run final TypeScript and automated checks, record browser evidence, and publish the concise Arabic QA completion report requested.
