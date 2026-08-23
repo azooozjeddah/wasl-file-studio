@@ -21,5 +21,5 @@ export function isReadyAssistantTool(tool: ToolDefinition) { return tool.local &
 
 /** These tools cannot perform their core operation until the user supplies an additional file. */
 export function isSingleFileReadyAssistantTool(tool: ToolDefinition) {
-  return isReadyAssistantTool(tool) && !["merge-pdf", "compare-pdf", "merge-excel", "file-hash"].includes(tool.slug);
+  return isReadyAssistantTool(tool) && !["merge-pdf", "compare-pdf", "merge-excel", "file-hash", "qr-reader"].includes(tool.slug);
 }

@@ -11,6 +11,7 @@ describe("smart file assistant matching", () => {
     expect(isSingleFileReadyAssistantTool(findTool("compare-pdf")!)).toBe(false);
     expect(isSingleFileReadyAssistantTool(findTool("merge-pdf")!)).toBe(false);
     expect(isSingleFileReadyAssistantTool(findTool("file-hash")!)).toBe(false);
+    expect(isSingleFileReadyAssistantTool(findTool("qr-reader")!)).toBe(false);
   });
   it("matches image and text document tools by local input contract", () => {
     expect(matchesToolInput({ name: "photo.png", type: "image/png" } as File, findTool("compress-image")!)).toBe(true);

@@ -4,9 +4,9 @@ import { jsPDF } from "jspdf";
 
 export type QrKind = "url" | "text" | "phone" | "email" | "wifi" | "sms" | "whatsapp" | "vcard";
 export type BarcodeFormat = "CODE128" | "CODE39" | "EAN13" | "EAN8" | "UPC";
-export type QrDotStyle = "square" | "dots" | "rounded" | "classy" | "classy-rounded" | "extra-rounded";
-export type QrFrameStyle = "none" | "outline" | "soft" | "ticket" | "badge" | "pill" | "double" | "scan";
-export type QrEyeStyle = "square" | "rounded" | "dots";
+export type QrDotStyle = "square" | "dots" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "diamond" | "vertical" | "horizontal";
+export type QrFrameStyle = "none" | "outline" | "soft" | "ticket" | "badge" | "pill" | "double" | "scan" | "card" | "seal" | "brackets" | "ribbon" | "poster" | "caption";
+export type QrEyeStyle = "square" | "rounded" | "dots" | "ring" | "leaf";
 export type QrLabelPosition = "top" | "bottom";
 
 export function qrLogoSafety(hasLogo: boolean, sizePercent: number, correction: QRCodeErrorCorrectionLevel) {
@@ -68,8 +68,11 @@ export async function makeStyledQrSvg(payload: string, options: {
   for (let row = 0; row < count; row++) for (let col = 0; col < count; col++) if (matrix.modules.data[row * count + col]) {
     const x = (col + quiet) * unit; const y = (row + quiet) * unit; const finder = finderCell(row, col, count);
     const dot = (options.dots === "dots" && !finder) || (finder && options.eyeStyle === "dots");
-    const cellRadius = finder && options.eyeStyle === "rounded" ? unit * .28 : !finder ? radius : 0;
+    const cellRadius = finder ? options.eyeStyle === "rounded" ? unit * .28 : options.eyeStyle === "ring" ? unit * .16 : options.eyeStyle === "leaf" ? unit * .46 : 0 : radius;
     if (dot) cells += `<circle cx="${x + unit / 2}" cy="${y + unit / 2}" r="${unit * .43}" fill="${fill}"/>`;
+    else if (!finder && options.dots === "diamond") cells += `<path d="M${x + unit / 2} ${y + unit * .06}L${x + unit * .94} ${y + unit / 2}L${x + unit / 2} ${y + unit * .94}L${x + unit * .06} ${y + unit / 2}Z" fill="${fill}"/>`;
+    else if (!finder && options.dots === "vertical") cells += `<rect x="${x + unit * .17}" y="${y}" width="${unit * .66}" height="${unit + .03}" rx="${unit * .18}" fill="${fill}"/>`;
+    else if (!finder && options.dots === "horizontal") cells += `<rect x="${x}" y="${y + unit * .17}" width="${unit + .03}" height="${unit * .66}" rx="${unit * .18}" fill="${fill}"/>`;
     else cells += `<rect x="${x}" y="${y}" width="${unit + .03}" height="${unit + .03}"${cellRadius ? ` rx="${cellRadius}" ry="${cellRadius}"` : ""} fill="${fill}"/>`;
   }
   const source = addQrLogoToSvg(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qrSize} ${qrSize}" width="${qrSize}" height="${qrSize}">${cells}</svg>`, options.logo, options.logoSize);
@@ -89,6 +92,16 @@ export async function makeStyledQrSvg(payload: string, options: {
       ? `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="16" fill="${options.light}" stroke="${frameStroke}" stroke-width="3"/><rect x="13" y="13" width="${totalWidth - 26}" height="${totalHeight - 26}" rx="10" fill="none" stroke="${frameStroke}" stroke-width="1.5"/>`
       : options.frame === "scan"
         ? `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="14" fill="${options.light}" stroke="${frameStroke}" stroke-width="3"/><path d="M16 34V16H34 M${totalWidth - 34} 16H${totalWidth - 16}V34 M${totalWidth - 16} ${totalHeight - 34}V${totalHeight - 16}H${totalWidth - 34} M34 ${totalHeight - 16}H16V${totalHeight - 34}" fill="none" stroke="${frameStroke}" stroke-width="3" stroke-linecap="round"/>`
+        : options.frame === "brackets"
+          ? `<rect x="5" y="5" width="${totalWidth - 10}" height="${totalHeight - 10}" rx="10" fill="${options.light}" stroke="${frameStroke}" stroke-width="1.5"/><path d="M14 36V14H36 M${totalWidth - 36} 14H${totalWidth - 14}V36 M${totalWidth - 14} ${totalHeight - 36}V${totalHeight - 14}H${totalWidth - 36} M36 ${totalHeight - 14}H14V${totalHeight - 36}" fill="none" stroke="${frameStroke}" stroke-width="4" stroke-linecap="round"/>`
+          : options.frame === "seal"
+            ? `<rect x="5" y="5" width="${totalWidth - 10}" height="${totalHeight - 10}" rx="${Math.round(padding * .7)}" fill="${options.light}" stroke="${frameStroke}" stroke-width="3" stroke-dasharray="2 5"/><rect x="13" y="13" width="${totalWidth - 26}" height="${totalHeight - 26}" rx="${Math.round(padding * .45)}" fill="none" stroke="${frameStroke}" stroke-width="1.2"/>`
+            : options.frame === "ribbon"
+              ? `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="15" fill="${options.light}" stroke="${frameStroke}" stroke-width="2.5"/><path d="M${totalWidth / 2 - 58} 4H${totalWidth / 2 + 58}V${Math.max(24, padding * .72)}H${totalWidth / 2 + 42}L${totalWidth / 2} ${Math.max(34, padding)}L${totalWidth / 2 - 42} ${Math.max(24, padding * .72)}H${totalWidth / 2 - 58}Z" fill="${frameStroke}"/>`
+              : options.frame === "poster"
+                ? `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="18" fill="${options.light}" stroke="${frameStroke}" stroke-width="3"/><path d="M16 ${totalHeight - 17}H${totalWidth - 16}" stroke="${frameStroke}" stroke-width="3" stroke-linecap="round"/>`
+                : options.frame === "caption"
+                  ? `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="12" fill="${options.light}" stroke="${frameStroke}" stroke-width="2"/><rect x="4" y="${totalHeight - Math.max(28, padding * .9)}" width="${totalWidth - 8}" height="${Math.max(24, padding * .9) - 4}" rx="0" fill="${frameStroke}"/>`
         : `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="${options.frame === "pill" ? Math.round(totalHeight / 2) : options.frame === "badge" ? Math.round(padding * .55) : options.frame === "soft" ? Math.round(padding * 1.1) : 10}" fill="${options.frame === "badge" ? frameStroke : options.light}" stroke="${frameStroke}" stroke-width="${options.frame === "soft" ? 0 : 3}"/>`;
   const labelY = options.labelPosition === "top" ? padding + labelHeight * .68 : contentY + sourceHeight + labelHeight * .68;
   const labelLayer = label ? `<text x="${totalWidth / 2}" y="${labelY}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${Math.max(13, Math.round(options.size * .055))}" font-weight="700" fill="${options.frame === "badge" ? options.light : options.dark}">${svgEscapedText(label)}</text>` : "";

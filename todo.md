@@ -272,3 +272,26 @@
 - [x] Replace the empty FAQ content with accurate, responsive Arabic answers grounded in live product capabilities.
 - [x] Publish a prioritized Arabic idea backlog for differentiated file workflows without adding unapproved large features.
 - [ ] Run focused desktop and browser-independent mobile checks, complete TypeScript/tests/build, and verify the active Production asset and public page.
+- [x] Present complete A/B/C/D identity and interface comparison boards, without adopting any option or continuing functional work until the user chooses.
+- [x] Audit the current Home and Smart File Assistant components before creating the direction-C visual prototype.
+- [x] Recompose the Home page around a mobile-first Smart File Assistant while preserving current file intake, recommendations, and tool handoff behavior.
+- [x] Add visual file-detail and type-specific recommendation treatments for PDF, DOCX, images, and Excel without inventing unsupported operations.
+- [x] Verify the direction-C prototype in desktop and mobile views, including upload, recommendation, and handoff navigation, without publishing Production.
+- [x] Run an end-to-end PDF compression acceptance test with a real PDF, downloadable output, and dynamic-module error monitoring.
+- [x] Run an end-to-end DOCX-to-PDF acceptance test with a real Word sample and downloadable, structurally valid PDF output.
+- [x] Re-verify Smart File Assistant recommendations and one handoff per PDF, DOCX, image, and XLSX sample against the live ready-tool intake.
+- [x] Fix or truthfully exclude the QR-reader recommendation if its custom page does not consume the assistant file handoff.
+- [x] Exclude QR reader from generic image recommendations unless local QR-content detection is added in a future dedicated scope.
+- [x] Define a future QR expansion backlog for more templates and previewable professional frames without implementing it in this validation task.
+- [x] Diagnose and eliminate the corrupt or truncated image warning encountered during the DOCX-to-PDF acceptance path.
+- [x] Expand local QR templates, professional frame variants, dot and eye styles, and gradients into clear use-case collections.
+- [x] Add direct preview behavior for QR template and frame selection while preserving local scan verification.
+- [x] Run local scan acceptance across representative QR styles and rerun PDF compression, Word-to-PDF, Smart Assistant, and QR checks without publishing Production.
+- [x] Clear inherited QR frame text when a frame has no label so neutral frames remain scan-safe after template changes.
+- [x] Diagnose exit 143 during production rendering and identify the largest chunking or memory pressure sources.
+- [x] Apply a minimal, function-preserving production build optimization and prove a complete successful build.
+- [x] Verify built JavaScript and CSS assets plus PDF compression, Word-to-PDF, QR export/read, and Smart Assistant without browser console or asset-loading failures.
+- [x] Prepare a production-release readiness report without executing Promotion/Rebind or publishing.
+- [ ] Save the tested production-build source as a release checkpoint without further code changes.
+- [ ] Verify that the resulting release is promoted to Production and the public domain serves its asset revision.
+- [ ] Test the public domain independently for the homepage, PDF compression, Word-to-PDF, QR export/read, File Assistant, console errors, and asset 404s.

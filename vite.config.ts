@@ -167,15 +167,24 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
-    minify: false,
-    cssMinify: false,
+    target: "es2020",
+    minify: "esbuild",
+    cssMinify: "esbuild",
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          if (id.includes("react") || id.includes("scheduler") || id.includes("wouter")) return "vendor-react";
+          if (id.includes("@radix-ui") || id.includes("react-hook-form") || id.includes("@hookform")) return "vendor-ui";
+          if (id.includes("lucide-react") || id.includes("framer-motion")) return "vendor-interaction";
+          if (id.includes("pdf-lib") || id.includes("pdfjs-dist") || id.includes("jspdf")) return "pdf-engine";
           if (id.includes("node_modules/xlsx")) return "excel-engine";
-          if (id.includes("node_modules/pdfjs-dist")) return "pdf-engine";
-          if (id.includes("node_modules/tesseract.js")) return "ocr-engine";
-          if (id.includes("node_modules/@ffmpeg/")) return "media-engine";
+          if (id.includes("docx-preview") || id.includes("node_modules/docx") || id.includes("mammoth")) return "document-engine";
+          if (id.includes("tesseract.js")) return "ocr-engine";
+          if (id.includes("@ffmpeg/")) return "media-engine";
+          if (id.includes("qrcode") || id.includes("jsqr") || id.includes("jsbarcode")) return "code-engine";
+          if (id.includes("recharts")) return "analytics-engine";
         },
       },
     },

@@ -9,6 +9,7 @@ import { ArrowLeft, Check, ChevronDown, FileImage, FileText, FileUp, LockKeyhole
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect } from "react";
+import "./assistant-home.css";
 
 export default function Home() {
   const { isArabic, t } = useLocale();
@@ -28,18 +29,26 @@ export default function Home() {
   const visiblePopular = featuredToolDefinitions.filter(tool => visibleTools.some(item => item.slug === tool.slug));
 
   return <PublicLayout><main>
-    <section className="hero-section"><div className="hero-grid"/>
-      <div className="container relative z-10 py-16 md:py-24">
-        <div className="hero-kicker"><Sparkles size={15}/>{t("منصة أدوات ملفات محلية", "A local file-tools platform")}</div>
-        <h1>{t("ملفاتك،", "Your files,")}<span>{t(" بلا تعقيد.", " without friction.")}</span></h1>
-        <p className="hero-copy">{t("منصة واحدة لـPDF والصور والمستندات والجداول والرموز. اختر الأداة المناسبة أولًا، ثم عالج ملفاتك داخل متصفحك بوضوح وخصوصية.", "One platform for PDFs, images, documents, spreadsheets and codes. Choose the right tool first, then process files privately in your browser.")}</p>
-        <p className="hero-copy text-sm font-semibold text-primary">{t("وصل — أدواتك، ملفاتك، في مكان واحد.", "Wasl — your tools and files, in one place.")}</p>
-        {homeContent.data?.[0] && <p className="managed-home-notice">{homeContent.data[0].title}{homeContent.data[0].body ? ` — ${homeContent.data[0].body}` : ""}</p>}
-        <div className="hero-actions"><a href="#tools" className="hero-cta button button-default">{t("اختر أداة لمعالجة ملفك", "Choose a tool for your file")}<ArrowLeft size={17} className={isArabic ? "rotate-180" : ""}/></a><a href="#categories" className="hero-link">{t("استعرض التصنيفات", "Browse categories")}<ChevronDown size={17}/></a></div>
-        <div className="hero-trust"><span><Check size={15}/>{t("لا تسجيل مطلوب", "No sign-up")}</span><span><Check size={15}/>{t("معالجة محلية", "Local processing")}</span><span><Check size={15}/>{t("واجهة عربية", "Arabic-first")}</span></div>
-        <SmartFileAssistant tools={visibleTools}/>
-        <a href="#tools" className="quick-drop" aria-label={t("انتقل لاختيار أداة الملفات", "Go to choose a file tool")}><span className="quick-drop-icon"><FileUp size={28}/></span><div><strong>{t("لديك ملف؟ اختر الأداة المناسبة أولًا", "Have a file? Choose the right tool first")}</strong><p>{t("من الصفحة التالية اختر PDF أو الصور أو المستندات أو الجداول؛ لن نربط ملفك بأداة تلقائيًا.", "Choose PDF, images, documents, or spreadsheets below; your file will not be sent to a tool automatically.")}</p></div><span className="quick-drop-button">{t("اختيار أداة", "Choose tool")}</span></a>
-      </div><div className="hero-stat-card"><span>{t("مصمم للخصوصية", "Privacy by design")}</span><b>{t("المعالجة داخل جهازك", "Processing on your device")}</b><div className="stat-wave"/></div>
+    <section className="hero-section assistant-led-hero"><div className="hero-grid"/><div className="assistant-orbit assistant-orbit-one"/><div className="assistant-orbit assistant-orbit-two"/>
+      <div className="container relative z-10 py-10 md:py-20">
+        <div className="assistant-hero-layout">
+          <div className="assistant-hero-copy">
+            <div className="hero-kicker"><Sparkles size={15}/>{t("مساعد الملفات الذكي", "Smart File Assistant")}</div>
+            <h1>{t("ارفع ملفك،", "Upload your file,")}<span>{t(" ووَصَل يعرف ماذا يحتاج.", " and Wasl knows what it needs.")}</span></h1>
+            <p className="hero-copy">{t("ابدأ بالملف بدلًا من البحث بين الأدوات. يتعرف وَصَل على نوعه وخصائصه محليًا، ثم يضع أمامك الخطوة المناسبة فقط.", "Start with the file instead of searching through tools. Wasl recognizes its type and local properties, then shows only the right next step.")}</p>
+            <div className="hero-trust"><span><Check size={15}/>{t("لا تسجيل مطلوب", "No sign-up")}</span><span><Check size={15}/>{t("تحليل محلي", "Local analysis")}</span><span><Check size={15}/>{t("اقتراحات واضحة", "Clear suggestions")}</span></div>
+            {homeContent.data?.[0] && <p className="managed-home-notice">{homeContent.data[0].title}{homeContent.data[0].body ? ` — ${homeContent.data[0].body}` : ""}</p>}
+            <div className="assistant-scenario-strip" aria-label={t("أنواع الملفات المدعومة في المساعد", "Supported file types in the assistant")}>
+              <span><FileText size={15}/><b>PDF</b><small>{t("توقيع وتحويل", "Sign & convert")}</small></span>
+              <span><FileText size={15}/><b>Word</b><small>{t("تحويل بصري", "Visual export")}</small></span>
+              <span><FileImage size={15}/><b>{t("صورة", "Image")}</b><small>{t("ضغط وتعديل", "Compress & edit")}</small></span>
+              <span><FileUp size={15}/><b>Excel</b><small>{t("أوراق وتحويل", "Sheets & export")}</small></span>
+            </div>
+          </div>
+          <div className="assistant-hero-panel"><SmartFileAssistant tools={visibleTools}/></div>
+        </div>
+        <div className="assistant-hero-foot"><a href="#tools">{t("تفضّل اختيار الأداة بنفسك؟", "Prefer choosing a tool yourself?")} <b>{t("استعرض المكتبة", "Browse the library")}</b><ArrowLeft size={15} className={isArabic ? "rotate-180" : ""}/></a><span>{t("المساعد لا يرفع ملفك ولا يختار إجراءً بالنيابة عنك.", "The assistant never uploads your file or chooses an action for you.")}</span></div>
+      </div><div className="hero-stat-card"><span>{t("ملفك أولًا", "Your file first")}</span><b>{t("خطوة أوضح كل مرة", "A clearer next step")}</b><div className="stat-wave"/></div>
     </section>
     {topAds.data?.map(slot => <ManagedAdSlot key={slot.id} label={slot.label}/>)}
     <section id="tools" className="tools-section container"><div className="section-heading"><div><span className="section-eyebrow">{t("المكتبة", "THE LIBRARY")}</span><h2>{t("اختر ما تحتاجه الآن", "Pick what you need now")}</h2></div><p>{t("ابدأ بنوع ملفك، ثم افتح أداة محددة لرفع الملف ومعالجته. الأدوات غير المستقرة تحمل حالة واضحة ولا تبدأ المعالجة تلقائيًا.", "Start with your file type, then open a specific tool to upload and process it. Unstable tools show a clear status and never start automatically.")}</p></div>

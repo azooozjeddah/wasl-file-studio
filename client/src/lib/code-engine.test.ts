@@ -43,4 +43,12 @@ describe("local code payloads", () => {
     expect(svg).toContain("امسح للوصول");
     expect(svg).toContain("stroke-linecap");
   });
+
+  it("renders expanded professional styles without external assets", async () => {
+    const svg = await makeStyledQrSvg("https://wasl.example/pro", { size: 480, dark: "#7c3aed", light: "#fffbed", correction: "H", dots: "diamond", eyeStyle: "leaf", margin: 7, gradientFrom: "#7c3aed", gradientTo: "#ea580c", frame: "ribbon", label: "امسح للمزيد", labelPosition: "bottom" });
+    expect(svg).toContain("L");
+    expect(svg).toContain("امسح للمزيد");
+    expect(svg).toContain("url(#qr-gradient)");
+    expect(svg).not.toContain("Wasl QR code");
+  });
 });
