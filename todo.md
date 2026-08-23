@@ -369,3 +369,9 @@
 - [x] Research the feasibility of free, local AutoCAD-to-PDF conversion for DWG, DXF, and related formats without adding any website tool or interface.
 - [x] Compare open-source libraries, client-side viability, licensing, file-size constraints, operating costs, and sustainable usage limits.
 - [x] Deliver a concise Arabic technical recommendation with an evidence-backed supported-format decision and a practical free fallback if DWG is not viable.
+- [x] Audit the existing tool registry, processing engines, shared workspace patterns, lazy-loading approach, route wiring, and category placement for a local DXF-to-PDF tool.
+- [x] Add MIT-licensed DXF parsing and vector-PDF export dependencies using lazy client-side imports, without server upload, a paid API, or any DWG support claim.
+- [x] Implement local ASCII DXF parsing, supported-entity rendering, vector PDF export, unsupported-entity notices, large-file warning, and a clear DWG-to-DXF guidance message.
+- [x] Add the DXF-to-PDF tool to the appropriate catalog category with a semantic CAD icon, Arabic RTL copy, route, and mobile-compatible workspace matching existing tools.
+- [x] Create and run unit and acceptance tests for simple geometry, layers, blocks/inserts, text, hatch handling, unsupported entities, download validity, DWG guidance, desktop, and mobile.
+- [ ] Run TypeScript, all tests, production build, save a checkpoint, and verify the public Production URL after publication.

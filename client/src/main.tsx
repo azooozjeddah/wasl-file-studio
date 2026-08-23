@@ -6,6 +6,7 @@ import superjson from "superjson";
 import App from "./App";
 import "./index.css";
 import "./mobile-experience.css";
+import "./components/dxf-workspace.css";
 
 const queryClient = new QueryClient();
 

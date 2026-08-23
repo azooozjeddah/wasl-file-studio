@@ -1,0 +1,10 @@
+.dxf-workspace .drop-zone input[type="file"] { display: none; }
+.dxf-clear-file { border: 0; background: transparent; color: #7b7397; font-size: .78rem; cursor: pointer; }
+.dxf-notice { display: flex; align-items: flex-start; gap: .55rem; margin-top: .8rem; padding: .75rem .85rem; border: 1px solid #ded8f0; border-radius: .9rem; color: #5f5879; background: #faf9fe; font-size: .82rem; line-height: 1.7; }
+.dxf-notice.warning { border-color: #f3d494; background: #fffaf0; color: #8b651d; }
+.dxf-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; margin-bottom: 1rem; }
+.dxf-stat-grid > div { display: grid; gap: .18rem; padding: .75rem; border: 1px solid #e4e0f1; border-radius: .9rem; background: #fbfaff; color: #685f83; }
+.dxf-stat-grid svg { color: #6d4ce8; }.dxf-stat-grid span { font-size: .72rem; }.dxf-stat-grid b { color: #25185f; font-size: .78rem; }
+.dxf-preview { overflow: hidden; margin-top: 1rem; border: 1px solid #e2ddef; border-radius: 1.1rem; background: #fff; }.dxf-preview > div:first-child { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .9rem; border-bottom: 1px solid #eeeaf7; color: #675e82; font-size: .78rem; }.dxf-preview > div:first-child b { color: #5431d5; }.dxf-svg { min-height: 240px; padding: .75rem; background: repeating-linear-gradient(0deg, #faf9fe 0, #faf9fe 23px, #f5f3fb 24px); }.dxf-svg svg { display: block; width: 100%; height: auto; min-height: 220px; max-height: 480px; }
+.dxf-warnings { margin-top: .85rem; padding: .85rem; border-radius: .9rem; background: #fff8eb; color: #795416; font-size: .83rem; line-height: 1.7; }.dxf-warnings ul { margin: .4rem 0 0; padding-inline-start: 1.1rem; }.dxf-layer-list { display: grid; gap: .3rem; margin-top: .85rem; padding: .8rem; border: 1px solid #e5e0f2; border-radius: .9rem; color: #6d6681; font-size: .8rem; }.dxf-layer-list b { color: #25185f; font-weight: 700; }
+@media (max-width: 620px) { .dxf-stat-grid { grid-template-columns: 1fr 1fr; }.dxf-svg { min-height: 180px; padding: .45rem; }.dxf-svg svg { min-height: 170px; }.dxf-preview > div:first-child { padding: .62rem .72rem; }.dxf-notice { font-size: .76rem; } }
