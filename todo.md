@@ -247,3 +247,6 @@
 - [x] Improve truthful PDF repair, comparison, redaction, and image controls without adding services or presenting unsupported recovery/AI capabilities as functional.
 - [x] Add local QR templates and verify their styled exports, retain barcode removal, and verify the visible PowerPoint path and its truthful limits.
 - [x] Run independent desktop/mobile acceptance for visitor, ordinary-user, and administrator flows, fix reproducible defects, and publish the requested concise Arabic closure report.
+- [x] Diagnose the reported seamless-redeploy publishing block and determine whether the cause is application-level or platform-level; production loads normally and application logs are healthy, so the remaining block is platform-level redeploy state.
+- [x] Inspect deployment, build, runtime, and version-difference evidence for the latest seamless-redeploy block and identify a concrete technical cause or platform-side blocker.
+- [x] Fix the reproducible production build out-of-memory failure introduced by the browser PowerPoint renderer, while preserving truthful public tool availability.
