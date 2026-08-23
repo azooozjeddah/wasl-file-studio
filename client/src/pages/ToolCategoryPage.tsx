@@ -6,6 +6,7 @@ import { toolDefinitions } from "@/lib/tools";
 import { ArrowLeft, Check, Sparkles } from "lucide-react";
 import { Link, useRoute } from "wouter";
 import "./tool-categories.css";
+import "./category-polish.css";
 
 export default function ToolCategoryPage() {
   const { isArabic, t } = useLocale();

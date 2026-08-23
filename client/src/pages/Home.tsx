@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import ToolCard from "@/components/ToolCard";
 import "./assistant-home.css";
 import "./qr-compact.css";
+import "./category-polish.css";
 
 export default function Home() {
   const { isArabic, t } = useLocale();

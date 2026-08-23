@@ -341,3 +341,8 @@
 - [x] Restructure only the QR Home card into a compact unified preview composition without changing its destination or QR generator behavior.
 - [x] Map category and tool icons to distinct function-specific professional glyphs rather than generic document variants, including Smart Assistant recommendation cards.
 - [x] Verify RTL alignment, compact category cards, QR preview, all category routes, QR generator, upload handoff, desktop/mobile responsiveness, TypeScript, tests, build, and Production.
+- [x] Audit the current QR compact card, category cards, category/tool icons, and Arabic RTL mixing at desktop and mobile breakpoints.
+- [x] Refine only the Home QR entry into a compact unified professional module while preserving its existing destination and generator behavior.
+- [x] Improve category cards with distinct semantic icons, concise descriptions, clear entry arrows, and stable RTL handling without changing the Home → Category → Tools architecture.
+- [x] Apply the same semantic icon system to category tool cards and tool pages without altering routes, tool readiness, uploads, or processing engines.
+- [x] Verify the updated UI and RTL at mobile and desktop breakpoints, category/QR routes, TypeScript, tests, build, and Production publication.
