@@ -14,7 +14,7 @@ const pdf = FileType2, image = FileImage, document = FileText, spreadsheet = Fil
 const toolIconMap: Record<string, LucideIcon> = {
   "merge-pdf": Combine, "split-pdf": Scissors, "extract-pdf-pages": FileOutput, "delete-pdf-pages": Trash2, "reorder-pdf-pages": ArrowDownUp, "rotate-pdf": RotateCw, "pdf-to-jpg": ImageDown, "pdf-to-png": ImageDown, "image-to-pdf": Images, "compress-pdf": Minimize2, "repair-pdf": Wrench, "compare-pdf": Files, "redact-pdf": Eraser, "watermark-pdf": Stamp, "page-numbers-pdf": ListOrdered, "protect-pdf": LockKeyhole, "unlock-pdf": LockOpen, "crop-pdf": Crop, "resize-pdf": Maximize2, "flatten-pdf": Layers, "pdf-metadata": Info, "preview-pdf": Eye,
   "convert-image": Rotate3D, "compress-image": Minimize2, "resize-image": Maximize2, "crop-image": Crop, "rotate-image": RotateCw, "blur-image": EyeOff,
-  "txt-to-pdf": FileText, "txt-to-docx": FilePenLine, "html-to-pdf": FileCode2, "rtf-to-pdf": FilePenLine, "word-to-pdf": FileText, "pdf-to-word": FilePenLine, "pptx-to-pdf": Presentation,
+  "txt-to-pdf": FileText, "txt-to-docx": FilePenLine, "html-to-pdf": FileCode2, "rtf-to-pdf": FilePenLine, "word-to-pdf": FilePenLine, "pdf-to-word": FilePenLine, "pptx-to-pdf": Presentation,
   "xlsx-to-pdf": FileSpreadsheet, "xlsx-to-csv": TableProperties, "csv-to-xlsx": TableProperties, "merge-excel": Merge,
   "ocr": ScanText, "qr-generator": QrCode, "qr-reader": ScanLine, "sign-pdf": PenLine, "file-hash": FileCheck2,
   "convert-audio": AudioLines, "trim-audio": Scissors, "merge-audio": Combine, "audio-metadata": Info,

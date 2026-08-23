@@ -337,3 +337,7 @@
 - [x] Restyle only the Home QR generator card with the supplied reference’s premium QR-preview composition while preserving the current Wasl palette.
 - [x] Apply the same professional icon frame, stroke, size, color, and type-specific treatment to every shared tool-card variant across category and tool pages.
 - [x] Verify QR card prominence, all icon variants, desktop/mobile responsiveness, route preservation, TypeScript, tests, build, and Production publication.
+- [x] Audit the compactness of the Home QR card and every icon-rendering location across Home, categories, cards, tools, navigation, and Smart Assistant.
+- [x] Restructure only the QR Home card into a compact unified preview composition without changing its destination or QR generator behavior.
+- [x] Map category and tool icons to distinct function-specific professional glyphs rather than generic document variants, including Smart Assistant recommendation cards.
+- [x] Verify RTL alignment, compact category cards, QR preview, all category routes, QR generator, upload handoff, desktop/mobile responsiveness, TypeScript, tests, build, and Production.

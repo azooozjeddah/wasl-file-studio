@@ -10,6 +10,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect } from "react";
 import ToolCard from "@/components/ToolCard";
 import "./assistant-home.css";
+import "./qr-compact.css";
 
 export default function Home() {
   const { isArabic, t } = useLocale();
