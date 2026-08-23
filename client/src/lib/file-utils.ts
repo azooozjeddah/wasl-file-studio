@@ -32,7 +32,8 @@ export async function sniffMagic(file: File): Promise<MagicType> {
 export async function validateLocalFile(file: File, family: "pdf" | "image" | "document" | "ocr" | "audio" | "video" | "spreadsheet", limitMb = 100) {
   if (file.size === 0) throw new Error("الملف فارغ ولا يمكن معالجته."); if (file.size > limitMb * 1024 * 1024) throw new Error(`الحد الأقصى لهذه الأداة هو ${limitMb} MB.`);
   const magic = await sniffMagic(file);
-  const allowed: Record<typeof family, MagicType[]> = { pdf: ["pdf"], image: ["jpeg", "png", "webp"], document: ["text", "unknown"], ocr: ["pdf", "jpeg", "png", "webp"], audio: ["mp3", "wav", "ogg", "unknown"], video: ["mp4", "webm", "unknown"], spreadsheet: ["zip", "ole", "text"] };
+  const allowed: Record<typeof family, MagicType[]> = { pdf: ["pdf"], image: ["jpeg", "png", "webp"], document: ["text", "unknown", "zip"], ocr: ["pdf", "jpeg", "png", "webp"], audio: ["mp3", "wav", "ogg", "unknown"], video: ["mp4", "webm", "unknown"], spreadsheet: ["zip", "ole", "text"] };
+  if (family === "document" && magic === "zip" && extensionOf(file.name) !== "docx") throw new Error("تدعم أداة المستندات هذه حاوية DOCX فقط عند رفع ملف ZIP.");
   if (family === "spreadsheet" && !["xlsx", "xls", "csv"].includes(extensionOf(file.name))) throw new Error("تدعم أداة Excel ملفات XLSX وXLS وCSV فقط.");
   if (!allowed[family].includes(magic)) throw new Error("نوع الملف الفعلي غير مدعوم لهذه الأداة. تحقق من الملف ثم أعد المحاولة.");
   return magic;

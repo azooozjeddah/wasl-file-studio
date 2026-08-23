@@ -11,7 +11,7 @@ import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
 import { workspaceResultState } from "@/lib/workspace-results";
 import { formatSelectedFileCount, mergeFileSelection } from "@/lib/file-queue";
-import { takePendingFileForTool } from "@/lib/file-handoff";
+import { matchesToolInput, takePendingFileForTool } from "@/lib/file-handoff";
 import { AlertCircle, AudioLines, Ban, CheckCircle2, ChevronDown, ChevronUp, Download, FileArchive, FilePlus2, GripVertical, Image as ImageIcon, Loader2, LockKeyhole, RefreshCw, ShieldCheck, Trash2, UploadCloud, Video, X, Zap } from "lucide-react";
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
 
   const addFiles = async (incoming: File[]) => {
     setError(undefined); setResults([]); if (!incoming.length) return; const next = tool.multi ? incoming : [incoming[0]];
-    try { await Promise.all(next.map(file => validateLocalFile(file, inputFamily(tool), maxFileMb))); setFiles(current => mergeFileSelection(current, next, Boolean(tool.multi))); }
+    try { await Promise.all(next.map(async file => { await validateLocalFile(file, inputFamily(tool), maxFileMb); if (!matchesToolInput(file, tool)) throw new Error("صيغة هذا الملف غير مدعومة لهذه الأداة."); })); setFiles(current => mergeFileSelection(current, next, Boolean(tool.multi))); }
     catch (validationError) { setError(errorText(validationError)); }
   };
   const onInput = (event: ChangeEvent<HTMLInputElement>) => { void addFiles(Array.from(event.target.files || [])); event.target.value = ""; };

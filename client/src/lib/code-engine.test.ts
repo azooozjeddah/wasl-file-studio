@@ -35,4 +35,12 @@ describe("local code payloads", () => {
     expect(svg).toContain("rx=");
     expect(svg).not.toContain("Wasl QR code");
   });
+
+  it("renders a local QR template with gradient, eye style, larger quiet zone, and a scan frame", async () => {
+    const svg = await makeStyledQrSvg("https://wasl.example/template", { size: 480, dark: "#171326", light: "#ffffff", correction: "H", dots: "rounded", eyeStyle: "rounded", margin: 7, gradientFrom: "#321b84", gradientTo: "#171326", frame: "scan", label: "امسح للوصول", labelPosition: "top" });
+    expect(svg).toContain('id="qr-gradient"');
+    expect(svg).toContain("url(#qr-gradient)");
+    expect(svg).toContain("امسح للوصول");
+    expect(svg).toContain("stroke-linecap");
+  });
 });

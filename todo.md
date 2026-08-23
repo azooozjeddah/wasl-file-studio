@@ -266,9 +266,9 @@
 - [x] Test PDF, image, and an available Word/document flow; run TypeScript, unit tests, and a production build, then publish a concise Arabic completion report.
 - [ ] Audit the current product against the new logo, visual-direction, Smart Assistant, Word, signature, QR, FAQ, mobile, and production requirements.
 - [x] Produce separate logo and full-interface direction options for user selection without replacing the current identity prematurely.
-- [ ] Deepen the Smart File Assistant using truthful local file metadata and ready tool capabilities only.
-- [ ] Verify whether a reliable no-paid-service Word-to-PDF path can preserve required document content; implement it only if evidence supports it.
-- [ ] Audit and improve PDF-signature and QR workflows only where the requested behavior is incomplete or demonstrably unreliable.
-- [ ] Replace the empty FAQ content with accurate, responsive Arabic answers grounded in live product capabilities.
-- [ ] Publish a prioritized Arabic idea backlog for differentiated file workflows without adding unapproved large features.
+- [x] Deepen the Smart File Assistant using truthful local file metadata and ready tool capabilities only.
+- [x] Verify whether a reliable no-paid-service Word-to-PDF path can preserve required document content; implement it only if evidence supports it.
+- [x] Audit and improve PDF-signature and QR workflows only where the requested behavior is incomplete or demonstrably unreliable.
+- [x] Replace the empty FAQ content with accurate, responsive Arabic answers grounded in live product capabilities.
+- [x] Publish a prioritized Arabic idea backlog for differentiated file workflows without adding unapproved large features.
 - [ ] Run focused desktop and browser-independent mobile checks, complete TypeScript/tests/build, and verify the active Production asset and public page.
