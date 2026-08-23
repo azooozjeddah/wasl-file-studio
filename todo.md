@@ -250,3 +250,4 @@
 - [x] Diagnose the reported seamless-redeploy publishing block and determine whether the cause is application-level or platform-level; production loads normally and application logs are healthy, so the remaining block is platform-level redeploy state.
 - [x] Inspect deployment, build, runtime, and version-difference evidence for the latest seamless-redeploy block and identify a concrete technical cause or platform-side blocker.
 - [x] Fix the reproducible production build out-of-memory failure introduced by the browser PowerPoint renderer, while preserving truthful public tool availability.
+- [ ] Verify the public domain serves the latest version markers and identify or resolve any production-assignment or seamless-redeploy blocker.
