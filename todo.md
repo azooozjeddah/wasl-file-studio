@@ -378,4 +378,4 @@
 - [x] Prepare multiple representative ASCII DXF acceptance files covering lines, circles, arcs, polylines, layers, text, blocks/inserts, hatches, and a larger drawing.
 - [x] Run each acceptance file through the DXF web workspace on desktop, download each generated PDF, and inspect the rendered PDF pages for non-empty and correctly scaled vector output.
 - [x] Test mobile conversion, large-file behavior, DWG guidance, unsupported-entity messaging, and network activity to confirm local-only processing.
-- [ ] Fix and retest any acceptance defect, then verify the Production DXF route and document the final acceptance findings.
+- [x] Fix and retest acceptance defects, then verify the Production DXF route and document the final acceptance findings: text, orientation/scale, and HATCH notices were corrected and the public DXF route now loads.
