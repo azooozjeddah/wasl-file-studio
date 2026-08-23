@@ -384,3 +384,8 @@
 - [x] Clarify supported and unsupported DXF/DWG/binary/3D formats before conversion and confirm unsupported uploads disable conversion with actionable guidance.
 - [x] Re-run real DXF acceptance files, PDF download and visual inspection, desktop/mobile flows, and local-only network verification after the HATCH update.
 - [x] Run TypeScript, tests, production build, checkpoint, Production verification, and publish a final readiness assessment with remaining limitations: local checks succeeded, while the public route continued serving the previous stylesheet after a cache-busting verification and republish attempt.
+- [x] Inspect the public DXF route and deployed asset content to determine whether the SOLID HATCH release is serving.
+- [x] Re-publish the tested DXF SOLID HATCH release without modifying code, then re-check the public asset version.
+- [x] Run public desktop DXF acceptance for SOLID HATCH, a landscape drawing, text, preview, and PDF download.
+- [x] Run public mobile DXF acceptance and verify DWG/3D rejection, absence of experimental wording, and local-only processing.
+- [x] Report the exact Production version, verified public results, and an evidence-based Production Ready decision.
