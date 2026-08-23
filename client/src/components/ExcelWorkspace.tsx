@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { inspectSpreadsheetFiles, processSpreadsheet, SpreadsheetFilePreview } from "@/lib/excel-engine";
+import { takePendingFileForTool } from "@/lib/file-handoff";
 import { downloadBlob, downloadZip, formatBytes, LocalFileResult, validateLocalFile } from "@/lib/file-utils";
 import { formatSelectedFileCount, mergeFileSelection } from "@/lib/file-queue";
 import type { ToolDefinition } from "@/lib/tools";
@@ -17,6 +18,7 @@ export default function ExcelWorkspace({ tool }: { tool: ToolDefinition }) {
   const reset = () => { setFiles([]); setPreviews([]); setSelectedKeys([]); setResults([]); setError(undefined); setProgress(0); };
   useEffect(() => { let active = true; if (!files.length) { setPreviews([]); return; } void inspectSpreadsheetFiles(files).then(next => { if (!active) return; setPreviews(next); setSelectedKeys(current => current.length ? Array.from(new Set([...current, ...allSheetKeys(next)])) : allSheetKeys(next)); }).catch(reason => { if (active) setError(reason instanceof Error ? reason.message : "تعذر معاينة ملف Excel محليًا."); }); return () => { active = false; }; }, [files]);
   const addFiles = async (incoming: File[]) => { setError(undefined); setResults([]); if (!incoming.length) return; const allowedExtensions = tool.slug === "csv-to-xlsx" ? ["csv"] : ["xlsx", "xls"]; try { await Promise.all(incoming.map(async file => { await validateLocalFile(file, "spreadsheet"); const extension = file.name.split(".").pop()?.toLowerCase(); if (!extension || !allowedExtensions.includes(extension)) throw new Error(tool.slug === "csv-to-xlsx" ? t("هذه الأداة تقبل CSV فقط.", "This tool accepts CSV only.") : t("هذه الأداة تقبل ملفات XLSX وXLS فقط.", "This tool accepts XLSX and XLS files only.")); })); setFiles(current => mergeFileSelection(current, incoming, true)); } catch (reason) { setError(reason instanceof Error ? reason.message : "تعذر قبول الملف."); } };
+  useEffect(() => { const handedOff = takePendingFileForTool(tool.slug); if (handedOff) void addFiles([handedOff]); }, [tool.slug]);
   const onInput = (event: ChangeEvent<HTMLInputElement>) => { void addFiles(Array.from(event.target.files || [])); event.target.value = ""; };
   const onDrop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); setDragging(false); void addFiles(Array.from(event.dataTransfer.files || [])); };
   const toggleSheet = (key: string) => setSelectedKeys(current => current.includes(key) ? current.filter(item => item !== key) : [...current, key]);

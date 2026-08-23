@@ -11,6 +11,7 @@ import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
 import { workspaceResultState } from "@/lib/workspace-results";
 import { formatSelectedFileCount, mergeFileSelection } from "@/lib/file-queue";
+import { takePendingFileForTool } from "@/lib/file-handoff";
 import { AlertCircle, AudioLines, Ban, CheckCircle2, ChevronDown, ChevronUp, Download, FileArchive, FilePlus2, GripVertical, Image as ImageIcon, Loader2, LockKeyhole, RefreshCw, ShieldCheck, Trash2, UploadCloud, Video, X, Zap } from "lucide-react";
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -44,6 +45,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     catch (validationError) { setError(errorText(validationError)); }
   };
   const onInput = (event: ChangeEvent<HTMLInputElement>) => { void addFiles(Array.from(event.target.files || [])); event.target.value = ""; };
+  useEffect(() => { const handedOff = takePendingFileForTool(tool.slug); if (handedOff) void addFiles([handedOff]); }, [tool.slug, maxFileMb]);
   const onDrop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); setDragging(false); void addFiles(Array.from(event.dataTransfer.files || [])); };
   const moveFile = (index: number, direction: -1 | 1) => setFiles(current => { const destination = index + direction; if (destination < 0 || destination >= current.length) return current; const reordered = [...current]; const [item] = reordered.splice(index, 1); reordered.splice(destination, 0, item); return reordered; });
   const moveFileTo = (from: number, to: number) => setFiles(current => { if (from === to || from < 0 || to < 0 || from >= current.length || to >= current.length) return current; const reordered = [...current]; const [item] = reordered.splice(from, 1); reordered.splice(to, 0, item); return reordered; });

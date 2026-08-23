@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import PublicLayout from "@/components/PublicLayout";
 import { useLocale } from "@/contexts/LocaleContext";
 import { downloadBlob } from "@/lib/file-utils";
+import { takePendingFileForTool } from "@/lib/file-handoff";
 import { applyVisualStamps, type VisualStamp } from "@/lib/sign-pdf-engine";
 import { CalendarDays, Camera, Download, ImageUp, PenLine, Plus, RotateCw, Type, Upload, X } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
@@ -22,6 +23,7 @@ export default function SignPdfPage() {
   const selected = useMemo(() => stamps.find(stamp => stamp.id === selectedId && stamp.page === page), [stamps, selectedId, page]);
   const change = (id: string, patch: Partial<VisualStamp>) => setStamps(current => current.map(stamp => stamp.id === id ? { ...stamp, ...patch } : stamp));
   const uploadPdf = async (next?: File) => { if (!next || next.type !== "application/pdf") { setStatus(t("اختر ملف PDF صالحًا.", "Choose a valid PDF file.")); return; } try { const pdf = await PDFDocument.load(await next.arrayBuffer(), { ignoreEncryption: false, updateMetadata: false }); const nextUrl = URL.createObjectURL(next); setUrl(current => { if (current) URL.revokeObjectURL(current); return nextUrl; }); setFile(next); setPages(pdf.getPageCount()); setPage(0); setStamps([]); setSelectedId(undefined); setStatus(""); } catch { setStatus(t("تعذر فتح PDF أو أنه محمي.", "The PDF could not be opened or is protected.")); } };
+  useEffect(() => { const handedOff = takePendingFileForTool("sign-pdf"); if (handedOff) void uploadPdf(handedOff); }, []);
   const startDraw = (event: PointerEvent<HTMLCanvasElement>) => { const canvas = draw.current!; const ctx = canvas.getContext("2d")!; const rect = canvas.getBoundingClientRect(); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = ink; ctx.lineWidth = thickness; ctx.beginPath(); ctx.moveTo((event.clientX - rect.left) * canvas.width / rect.width, (event.clientY - rect.top) * canvas.height / rect.height); drawing.current = true; canvas.setPointerCapture(event.pointerId); };
   const drawMove = (event: PointerEvent<HTMLCanvasElement>) => { if (!drawing.current) return; const canvas = draw.current!; const rect = canvas.getBoundingClientRect(); const ctx = canvas.getContext("2d")!; ctx.lineTo((event.clientX - rect.left) * canvas.width / rect.width, (event.clientY - rect.top) * canvas.height / rect.height); ctx.stroke(); };
   const finishDraw = () => { drawing.current = false; if (draw.current) setSignature(draw.current.toDataURL("image/png")); };
