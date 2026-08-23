@@ -336,4 +336,4 @@
 - [x] Audit the current QR quick-access card and all shared tool-card icon render paths without altering routes or processing.
 - [x] Restyle only the Home QR generator card with the supplied reference’s premium QR-preview composition while preserving the current Wasl palette.
 - [x] Apply the same professional icon frame, stroke, size, color, and type-specific treatment to every shared tool-card variant across category and tool pages.
-- [ ] Verify QR card prominence, all icon variants, desktop/mobile responsiveness, route preservation, TypeScript, tests, build, and Production publication.
+- [x] Verify QR card prominence, all icon variants, desktop/mobile responsiveness, route preservation, TypeScript, tests, build, and Production publication.
