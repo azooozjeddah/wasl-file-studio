@@ -383,4 +383,4 @@
 - [x] Implement and test only reliable HATCH support; otherwise retain a clear, non-misleading compatibility notice without placeholder rendering.
 - [x] Clarify supported and unsupported DXF/DWG/binary/3D formats before conversion and confirm unsupported uploads disable conversion with actionable guidance.
 - [x] Re-run real DXF acceptance files, PDF download and visual inspection, desktop/mobile flows, and local-only network verification after the HATCH update.
-- [ ] Run TypeScript, tests, production build, checkpoint, Production verification, and publish a final readiness assessment with remaining limitations.
+- [x] Run TypeScript, tests, production build, checkpoint, Production verification, and publish a final readiness assessment with remaining limitations: local checks succeeded, while the public route continued serving the previous stylesheet after a cache-busting verification and republish attempt.
