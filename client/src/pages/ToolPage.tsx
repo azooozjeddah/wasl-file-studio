@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import ExcelWorkspace from "@/components/ExcelWorkspace";
 import ToolWorkspace from "@/components/ToolWorkspace";
 import { useLocale } from "@/contexts/LocaleContext";
-import { findTool } from "@/lib/tools";
+import { findTool, toolIconFor } from "@/lib/tools";
 import { trpc } from "@/lib/trpc";
 import { AlertTriangle, CheckCircle2, FileSearch, LockKeyhole } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -38,7 +38,7 @@ export default function ToolPage() {
   if (!tool || (!availability.isLoading && !disabled && catalogHasEntries && !record)) return <NotFound/>;
   if (disabled) return <PublicLayout><main className="tool-page"><div className="container"><section className="mx-auto my-16 max-w-xl rounded-3xl border bg-card p-8 text-center shadow-sm"><LockKeyhole className="mx-auto mb-4 text-violet-600" size={30}/><h1 className="text-2xl font-bold">هذه الأداة غير متاحة حاليًا</h1><p className="mt-3 leading-7 text-muted-foreground">{availability.data?.isAllowed === false ? "هذه الأداة غير مسموحة لحسابك حاليًا. تواصل مع مدير وَصل إذا احتجتها." : `تم إيقاف ${name} مؤقتًا للصيانة أو الإدارة. لم تتم معالجة أي ملف، ويمكنك العودة إلى قائمة الأدوات واختيار أداة أخرى.`}</p><Button className="mt-6" asChild><Link href="/#tools">العودة إلى جميع الأدوات</Link></Button></section></div></main></PublicLayout>;
 
-  const Icon = tool.icon;
+  const Icon = toolIconFor(tool.slug, tool.icon);
   const isExperimental = (tool.readiness || (tool.experimental ? "experimental" : "ready")) === "experimental";
   if (isExperimental) return <PublicLayout><main className="tool-page"><div className="container"><section className="mx-auto my-16 max-w-xl rounded-3xl border bg-card p-8 text-center shadow-sm"><AlertTriangle className="mx-auto mb-4 text-amber-600" size={30}/><span className="section-eyebrow">{t("قريبًا", "COMING SOON")}</span><h1 className="mt-3 text-2xl font-bold">{name}</h1><p className="mt-3 leading-7 text-muted-foreground">{t("هذه الأداة مؤجلة حتى تكتمل مراجعة مسار محلي موثوق. لم نفتح مساحة رفع أو معالجة حتى لا تبدو الأداة جاهزة قبل التحقق منها.", "This tool is deferred until a reliable local path is verified. Upload and processing are intentionally unavailable so it is not presented as ready.")}</p><Button className="mt-6" asChild><Link href="/#tools">{t("العودة إلى جميع الأدوات", "Back to all tools")}</Link></Button></section></div></main></PublicLayout>;
   const localAnswer = tool.local ? t("تعمل هذه الأداة محليًا داخل متصفحك ولا تُرفع ملفاتها من أجل التحويل.", "This tool runs locally in your browser and does not upload files for conversion.") : t("يعرض الموقع بوضوح طريقة المعالجة قبل بدء الاستخدام.", "The site clearly explains processing mode before use.");

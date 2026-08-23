@@ -4,6 +4,9 @@ import { jsPDF } from "jspdf";
 
 export type QrKind = "url" | "text" | "phone" | "email" | "wifi" | "sms" | "whatsapp" | "vcard";
 export type BarcodeFormat = "CODE128" | "CODE39" | "EAN13" | "EAN8" | "UPC";
+export type QrDotStyle = "square" | "dots" | "rounded" | "classy" | "classy-rounded" | "extra-rounded";
+export type QrFrameStyle = "none" | "outline" | "soft" | "ticket";
+export type QrLabelPosition = "top" | "bottom";
 
 export function qrLogoSafety(hasLogo: boolean, sizePercent: number, correction: QRCodeErrorCorrectionLevel) {
   if (!hasLogo) return { safe: true, level: "none" as const };
@@ -44,6 +47,42 @@ export async function makeQrPng(payload: string, options: { size: number; dark: 
   return QRCode.toDataURL(payload, { width: options.size, margin: 2, errorCorrectionLevel: options.correction, color: { dark: options.dark, light: options.light } });
 }
 
+function svgEscapedText(value: string) { return value.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[character] || character)); }
+
+function finderCell(row: number, col: number, count: number) { return (row < 7 && col < 7) || (row < 7 && col >= count - 7) || (row >= count - 7 && col < 7); }
+
+/** Builds QR cells directly from the trusted QR matrix so styles remain local and SVG/PNG exports stay decoder-friendly. */
+export async function makeStyledQrSvg(payload: string, options: {
+  size: number; dark: string; light: string; correction: QRCodeErrorCorrectionLevel;
+  dots: QrDotStyle; frame: QrFrameStyle; label?: string; labelPosition: QrLabelPosition; logo?: string; logoSize?: number;
+}) {
+  if (!payload.trim()) throw new Error("أدخل محتوى لإنشاء رمز QR.");
+  const matrix = QRCode.create(payload, { errorCorrectionLevel: options.correction }); const count = matrix.modules.size; const quiet = 4; const unit = Math.max(4, Math.round(options.size / (count + quiet * 2))); const qrSize = unit * (count + quiet * 2);
+  const radius = options.dots === "extra-rounded" ? unit * .46 : options.dots === "rounded" || options.dots === "classy-rounded" ? unit * .32 : options.dots === "classy" ? unit * .18 : 0;
+  let cells = `<rect width="${qrSize}" height="${qrSize}" fill="${options.light}"/>`;
+  for (let row = 0; row < count; row++) for (let col = 0; col < count; col++) if (matrix.modules.data[row * count + col]) {
+    const x = (col + quiet) * unit; const y = (row + quiet) * unit; const finder = finderCell(row, col, count);
+    if (options.dots === "dots" && !finder) cells += `<circle cx="${x + unit / 2}" cy="${y + unit / 2}" r="${unit * .43}" fill="${options.dark}"/>`;
+    else cells += `<rect x="${x}" y="${y}" width="${unit + .03}" height="${unit + .03}"${!finder && radius ? ` rx="${radius}" ry="${radius}"` : ""} fill="${options.dark}"/>`;
+  }
+  const source = addQrLogoToSvg(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qrSize} ${qrSize}" width="${qrSize}" height="${qrSize}">${cells}</svg>`, options.logo, options.logoSize);
+  const sourceViewBox = source.match(/viewBox="([^"]+)"/i)?.[1]?.trim().split(/\s+/).map(Number);
+  const [, , sourceWidth, sourceHeight] = sourceViewBox && sourceViewBox.length === 4 ? sourceViewBox : [0, 0, options.size, options.size];
+  const label = options.label?.trim().slice(0, 60) || "";
+  const padding = options.frame === "none" ? 0 : Math.max(22, Math.round(options.size * .07));
+  const labelHeight = label ? Math.max(30, Math.round(options.size * .12)) : 0;
+  const totalWidth = sourceWidth + padding * 2;
+  const totalHeight = sourceHeight + padding * 2 + labelHeight;
+  const contentY = padding + (label && options.labelPosition === "top" ? labelHeight : 0);
+  const inner = source.replace(/^<svg[^>]*>/i, "").replace(/<\/svg>\s*$/i, "");
+  const border = options.frame === "none" ? "" : options.frame === "ticket"
+    ? `<path d="M8 ${padding}H${totalWidth - 8}V${totalHeight - padding}H8Z" fill="${options.light}" stroke="${options.dark}" stroke-width="3" stroke-dasharray="8 5"/>`
+    : `<rect x="4" y="4" width="${totalWidth - 8}" height="${totalHeight - 8}" rx="${options.frame === "soft" ? Math.round(padding * 1.1) : 10}" fill="${options.light}" stroke="${options.dark}" stroke-width="${options.frame === "soft" ? 0 : 3}"/>`;
+  const labelY = options.labelPosition === "top" ? padding + labelHeight * .68 : contentY + sourceHeight + labelHeight * .68;
+  const labelLayer = label ? `<text x="${totalWidth / 2}" y="${labelY}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${Math.max(13, Math.round(options.size * .055))}" font-weight="700" fill="${options.dark}">${svgEscapedText(label)}</text>` : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${totalHeight}" width="${totalWidth}" height="${totalHeight}">${border}${labelLayer}<g transform="translate(${padding} ${contentY})">${inner}</g></svg>`;
+}
+
 function checksum(value: string) {
   let total = 0;
   for (let i = value.length - 1; i >= 0; i--) total += Number(value[i]) * ((value.length - i) % 2 === 0 ? 1 : 3);
@@ -69,13 +108,14 @@ export function makeBarcodeSvg(format: BarcodeFormat, raw: string, width = 2, he
   return { value: checked.value, svg: new XMLSerializer().serializeToString(svg) };
 }
 
-export async function svgToPng(svg: string, width = 900) {
-  const image = new Image(); const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
-  try {
-    await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error("تعذر تحويل الرسم إلى PNG.")); image.src = url; });
-    const ratio = width / image.width; const canvas = document.createElement("canvas"); canvas.width = width; canvas.height = Math.ceil(image.height * ratio); const context = canvas.getContext("2d")!; context.fillStyle = "#ffffff"; context.fillRect(0, 0, canvas.width, canvas.height); context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    return await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("تعذر إنشاء PNG.")), "image/png"));
-  } finally { URL.revokeObjectURL(url); }
+export async function svgToPng(svg: string, width = 900, intrinsicScale = 1) {
+  const normalized = svg.replace(/^\s*<\?xml[^>]*>\s*/i, "").replace(/^\s*<svg(?![^>]*\sxmlns=)/i, '<svg xmlns="http://www.w3.org/2000/svg"');
+  const image = new Image(); const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(normalized)}`;
+  await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error("تعذر تحويل الرسم إلى PNG.")); image.src = dataUrl; });
+  const intrinsicWidth = image.naturalWidth || image.width; const intrinsicHeight = image.naturalHeight || image.height;
+  if (!intrinsicWidth || !intrinsicHeight) throw new Error("تعذر تحديد أبعاد الرسم.");
+  const targetWidth = width > 0 ? width : Math.round(intrinsicWidth * intrinsicScale); const ratio = targetWidth / intrinsicWidth; const canvas = document.createElement("canvas"); canvas.width = targetWidth; canvas.height = Math.ceil(intrinsicHeight * ratio); const context = canvas.getContext("2d")!; context.imageSmoothingEnabled = false; context.fillStyle = "#ffffff"; context.fillRect(0, 0, canvas.width, canvas.height); context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  return await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("تعذر إنشاء PNG.")), "image/png"));
 }
 
 export async function makeCodePdf(dataUrl: string, title?: string) {

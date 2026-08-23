@@ -235,3 +235,9 @@
 - [x] Audit source and browser behavior for broken links, empty pages, client errors, external paid-service calls, and obvious secret exposure.
 - [x] Fix all reproducible defects found during this final audit without adding tools or paid dependencies, then re-test affected flows.
 - [x] Run final automated checks, record page/tool/test counts and outcomes, and publish the requested Arabic final-audit report.
+- [x] Audit the existing QR generator, barcode route, tool icon definitions, and local/open-source PowerPoint conversion or compression capabilities.
+- [x] Upgrade QR generation with locally rendered frames, labels, visual point styles, export-size controls, and scan-safety validation without sending payloads to an external service.
+- [x] Remove the linear barcode generator from the public catalog, home, and direct tool access without affecting QR generation.
+- [x] Replace weak or duplicate tool icon definitions with a consistent, accessible Wasl visual-icon system across desktop and mobile catalogs.
+- [x] Implement only technically reliable local PowerPoint tools, list them in the catalog, and clearly defer any PPTX conversion that cannot meet a truthful quality threshold.
+- [x] Run TypeScript and automated tests, verify QR, catalog, icon, and PowerPoint paths at desktop/mobile breakpoints, and publish a concise Arabic completion report.

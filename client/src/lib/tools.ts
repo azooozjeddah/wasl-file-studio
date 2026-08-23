@@ -1,5 +1,4 @@
-import type { LucideIcon } from "lucide-react";
-import { AudioLines, Barcode, FileCheck2, FileImage, FileSpreadsheet, FileText, FileType2, PenLine, QrCode, ScanLine, ScanText, Video } from "lucide-react";
+import { ArrowDownUp, AudioLines, Combine, Crop, Eraser, Eye, EyeOff, FileCheck2, FileCode2, FileImage, FileOutput, FilePenLine, FileSpreadsheet, FileText, FileType2, Files, ImageDown, Images, Info, Layers, ListOrdered, LockKeyhole, LockOpen, Maximize2, Merge, Minimize2, PenLine, Presentation, QrCode, Rotate3D, RotateCw, ScanLine, ScanText, Scissors, Stamp, TableProperties, Trash2, Video, Wrench, type LucideIcon } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "document" | "spreadsheet" | "ocr" | "code" | "sign" | "utility" | "audio" | "video";
 export type ToolDefinition = {
@@ -10,6 +9,18 @@ export type ToolDefinition = {
 };
 
 const pdf = FileType2, image = FileImage, document = FileText, spreadsheet = FileSpreadsheet, ocr = ScanText, code = QrCode, sign = PenLine, utility = FileCheck2, audio = AudioLines, video = Video;
+
+/** A small semantic icon vocabulary keeps every tool distinct without bundling external visual assets. */
+const toolIconMap: Record<string, LucideIcon> = {
+  "merge-pdf": Combine, "split-pdf": Scissors, "extract-pdf-pages": FileOutput, "delete-pdf-pages": Trash2, "reorder-pdf-pages": ArrowDownUp, "rotate-pdf": RotateCw, "pdf-to-jpg": ImageDown, "pdf-to-png": ImageDown, "image-to-pdf": Images, "compress-pdf": Minimize2, "repair-pdf": Wrench, "compare-pdf": Files, "redact-pdf": Eraser, "watermark-pdf": Stamp, "page-numbers-pdf": ListOrdered, "protect-pdf": LockKeyhole, "unlock-pdf": LockOpen, "crop-pdf": Crop, "resize-pdf": Maximize2, "flatten-pdf": Layers, "pdf-metadata": Info, "preview-pdf": Eye,
+  "convert-image": Rotate3D, "compress-image": Minimize2, "resize-image": Maximize2, "crop-image": Crop, "rotate-image": RotateCw, "blur-image": EyeOff,
+  "txt-to-pdf": FileText, "txt-to-docx": FilePenLine, "html-to-pdf": FileCode2, "rtf-to-pdf": FilePenLine, "word-to-pdf": FileText, "pdf-to-word": FilePenLine, "pptx-to-pdf": Presentation,
+  "xlsx-to-pdf": FileSpreadsheet, "xlsx-to-csv": TableProperties, "csv-to-xlsx": TableProperties, "merge-excel": Merge,
+  "ocr": ScanText, "qr-generator": QrCode, "qr-reader": ScanLine, "sign-pdf": PenLine, "file-hash": FileCheck2,
+  "convert-audio": AudioLines, "trim-audio": Scissors, "merge-audio": Combine, "audio-metadata": Info,
+  "video-to-mp3": AudioLines, "mp4-to-webm": Video, "webm-to-mp4": Video, "compress-video": Minimize2, "trim-video": Scissors, "extract-frame": ImageDown, "video-metadata": Info,
+};
+export const toolIconFor = (slug: string, fallback: LucideIcon) => toolIconMap[slug] || fallback;
 export const toolDefinitions: ToolDefinition[] = [
   { slug: "merge-pdf", category: "pdf", icon: pdf, labelAr: "دمج PDF", labelEn: "Merge PDF", descriptionAr: "اجمع ملفات PDF بترتيبك داخل جهازك.", descriptionEn: "Combine PDF files in your preferred order, locally.", formats: ["PDF"], accepts: ["application/pdf"], settings: [], multi: true, local: true },
   { slug: "split-pdf", category: "pdf", icon: pdf, labelAr: "تقسيم PDF", labelEn: "Split PDF", descriptionAr: "قسّم الملف إلى صفحات أو نطاقات مستقلة.", descriptionEn: "Split a PDF into individual pages or ranges.", formats: ["PDF"], accepts: ["application/pdf"], settings: ["pages"], local: true },
@@ -44,6 +55,7 @@ export const toolDefinitions: ToolDefinition[] = [
   { slug: "html-to-pdf", category: "document", icon: document, labelAr: "HTML إلى PDF", labelEn: "HTML to PDF", descriptionAr: "استخرج المحتوى النصي من HTML إلى PDF.", descriptionEn: "Convert HTML content to a text-first PDF.", formats: ["HTML", "PDF"], accepts: ["text/html", ".html"], settings: [], local: true, experimental: true },
   { slug: "rtf-to-pdf", category: "document", icon: document, labelAr: "RTF إلى PDF", labelEn: "RTF to PDF", descriptionAr: "حوّل نص RTF إلى PDF بأفضل نتيجة محلية.", descriptionEn: "Convert RTF text into a best-effort local PDF.", formats: ["RTF", "PDF"], accepts: ["application/rtf", ".rtf"], settings: [], local: true, experimental: true },
   { slug: "word-to-pdf", category: "document", icon: document, labelAr: "Word إلى PDF", labelEn: "Word to PDF", descriptionAr: "تحويل DOCX إلى PDF سيصبح متاحًا بعد اعتماد محرك محلي موثوق؛ لا تظهر الأداة كمعالجة جاهزة حاليًا.", descriptionEn: "DOCX to PDF will return after a reliable local engine is verified; it is not presented as ready today.", formats: ["DOCX", "PDF"], accepts: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx"], settings: [], local: true, processingMode: "hybrid", experimental: true },
+  { slug: "pptx-to-pdf", category: "document", icon: document, labelAr: "PowerPoint إلى PDF", labelEn: "PowerPoint to PDF", descriptionAr: "اعرض شرائح PPTX محليًا ثم نزّل PDF بصريًا يحافظ على مظهرها.", descriptionEn: "Render PPTX slides locally and download a visual PDF that preserves their appearance.", formats: ["PPTX", "PDF"], accepts: [".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"], settings: [], local: true },
   { slug: "pdf-to-word", category: "document", icon: document, labelAr: "PDF إلى Word", labelEn: "PDF to Word", descriptionAr: "تحويل PDF إلى DOCX مؤجل حتى اعتماد مسار محلي موثوق؛ استخدم OCR للملفات المصورة حاليًا.", descriptionEn: "PDF to DOCX is deferred until a reliable local path is verified; use OCR for scanned files today.", formats: ["PDF", "DOCX"], accepts: ["application/pdf"], settings: [], local: true, processingMode: "hybrid", experimental: true },
   { slug: "xlsx-to-pdf", category: "spreadsheet", icon: spreadsheet, labelAr: "Excel إلى PDF", labelEn: "Excel to PDF", descriptionAr: "حوّل أوراق Excel المختارة إلى PDF جدولي محليًا.", descriptionEn: "Turn selected Excel sheets into a local table PDF.", formats: ["XLSX", "XLS", "PDF"], accepts: [".xlsx", ".xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"], settings: [], multi: true, local: true },
   { slug: "xlsx-to-csv", category: "spreadsheet", icon: spreadsheet, labelAr: "Excel إلى CSV", labelEn: "Excel to CSV", descriptionAr: "صدّر الأوراق المختارة من Excel كملفات CSV محلية.", descriptionEn: "Export selected Excel sheets as local CSV files.", formats: ["XLSX", "XLS", "CSV"], accepts: [".xlsx", ".xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"], settings: [], multi: true, local: true },
@@ -52,7 +64,6 @@ export const toolDefinitions: ToolDefinition[] = [
   { slug: "ocr", category: "ocr", icon: ocr, labelAr: "استخراج النص OCR", labelEn: "OCR text extraction", descriptionAr: "استخرج العربية والإنجليزية من الصور أو صفحات PDF المصورة.", descriptionEn: "Extract Arabic and English text from images or scanned PDFs.", formats: ["JPG", "PNG", "PDF", "TXT", "DOCX"], accepts: ["image/*", "application/pdf"], settings: ["language"], multi: true, local: true, processingMode: "hybrid", readiness: "improving" },
   { slug: "qr-generator", category: "code", icon: QrCode, labelAr: "إنشاء QR Code", labelEn: "QR Code generator", descriptionAr: "أنشئ QR للرابط والنص والاتصال وWi-Fi محليًا.", descriptionEn: "Create local QR codes for links, text, contact, and Wi-Fi.", formats: ["PNG", "SVG", "PDF"], accepts: [], settings: [], local: true },
   { slug: "qr-reader", category: "code", icon: ScanLine, labelAr: "قراءة QR Code", labelEn: "QR Code reader", descriptionAr: "اقرأ QR من صورة أو كاميرا داخل المتصفح.", descriptionEn: "Read QR from an image or camera in your browser.", formats: ["JPG", "PNG", "WebP", "TXT"], accepts: ["image/*"], settings: [], local: true },
-  { slug: "barcode-generator", category: "code", icon: Barcode, labelAr: "إنشاء Barcode", labelEn: "Barcode generator", descriptionAr: "أنشئ Barcode موثوقًا مع تحقق من الصيغة.", descriptionEn: "Create a validated, printable barcode locally.", formats: ["PNG", "SVG", "PDF"], accepts: [], settings: [], local: true },
   { slug: "sign-pdf", category: "sign", icon: sign, labelAr: "توقيع PDF", labelEn: "Sign PDF", descriptionAr: "أضف توقيعًا بصريًا محليًا إلى PDF. ليس توقيعًا رقميًا معتمدًا.", descriptionEn: "Add a local visual signature to PDF. Not a certified digital signature.", formats: ["PDF", "PNG"], accepts: ["application/pdf"], settings: [], local: true },
   { slug: "file-hash", category: "utility", icon: utility, labelAr: "فحص سلامة الملف", labelEn: "File integrity checker", descriptionAr: "احسب SHA-256 وSHA-512 محليًا وقارن بصمة الملف.", descriptionEn: "Calculate local SHA-256 and SHA-512 file hashes.", formats: ["TXT"], accepts: ["*/*"], settings: [], local: true },
   { slug: "convert-audio", category: "audio", icon: audio, labelAr: "تحويل الصوت", labelEn: "Convert audio", descriptionAr: "حوّل الصيغ الصوتية محليًا عند الطلب.", descriptionEn: "Convert audio formats locally when you need it.", formats: ["MP3", "WAV", "M4A", "AAC", "OGG"], accepts: ["audio/*", ".m4a", ".aac", ".ogg"], settings: ["bitrate"], multi: true, local: true, processingMode: "hybrid", experimental: true },
@@ -74,7 +85,7 @@ export const categories: Array<{ id: ToolCategory; labelAr: string; labelEn: str
   { id: "document", labelAr: "المستندات", labelEn: "Documents", icon: document, color: "blue" },
   { id: "spreadsheet", labelAr: "Excel والجداول", labelEn: "Excel & spreadsheets", icon: spreadsheet, color: "emerald" },
   { id: "ocr", labelAr: "استخراج النص", labelEn: "OCR", icon: ocr, color: "emerald" },
-  { id: "code", labelAr: "QR وBarcode", labelEn: "QR & Barcode", icon: code, color: "violet" },
+  { id: "code", labelAr: "رموز QR", labelEn: "QR codes", icon: code, color: "violet" },
   { id: "sign", labelAr: "توقيع PDF", labelEn: "Sign PDF", icon: sign, color: "rose" },
   { id: "utility", labelAr: "أدوات مساعدة", labelEn: "Utilities", icon: utility, color: "sky" },
   { id: "audio", labelAr: "الصوت", labelEn: "Audio", icon: audio, color: "rose" },

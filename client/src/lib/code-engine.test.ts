@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addQrLogoToSvg, qrLogoSafety, qrPayload, validateBarcode } from "./code-engine";
+import { addQrLogoToSvg, makeStyledQrSvg, qrLogoSafety, qrPayload, validateBarcode } from "./code-engine";
 
 describe("local code payloads", () => {
   it("builds safe QR payloads for common daily actions", () => {
@@ -25,5 +25,14 @@ describe("local code payloads", () => {
     expect(result).toContain('id="qr-logo-layer"');
     expect(result).toContain('href="data:image/png;base64,AA"');
     expect(result).not.toContain("Wasl QR code");
+  });
+
+  it("renders styled local QR cells with a frame and label without third-party assets", async () => {
+    const svg = await makeStyledQrSvg("https://wasl.example/qa", { size: 420, dark: "#161326", light: "#ffffff", correction: "H", dots: "extra-rounded", frame: "ticket", label: "Scan safely", labelPosition: "bottom" });
+    expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"');
+    expect(svg).toContain("Scan safely");
+    expect(svg).toContain("stroke-dasharray");
+    expect(svg).toContain("rx=");
+    expect(svg).not.toContain("Wasl QR code");
   });
 });
