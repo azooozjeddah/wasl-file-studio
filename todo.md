@@ -375,3 +375,7 @@
 - [x] Add the DXF-to-PDF tool to the appropriate catalog category with a semantic CAD icon, Arabic RTL copy, route, and mobile-compatible workspace matching existing tools.
 - [x] Create and run unit and acceptance tests for simple geometry, layers, blocks/inserts, text, hatch handling, unsupported entities, download validity, DWG guidance, desktop, and mobile.
 - [x] Run TypeScript, all tests, production build, save a checkpoint, and verify the public Production URL after publication: local build and tests passed, while Production returned its older 404 route twice after a propagation wait.
+- [x] Prepare multiple representative ASCII DXF acceptance files covering lines, circles, arcs, polylines, layers, text, blocks/inserts, hatches, and a larger drawing.
+- [x] Run each acceptance file through the DXF web workspace on desktop, download each generated PDF, and inspect the rendered PDF pages for non-empty and correctly scaled vector output.
+- [x] Test mobile conversion, large-file behavior, DWG guidance, unsupported-entity messaging, and network activity to confirm local-only processing.
+- [ ] Fix and retest any acceptance defect, then verify the Production DXF route and document the final acceptance findings.

@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { assertAsciiDxfText, parseAsciiDxf, renderParsedDxf } from "./dxf-engine";
+import { assertAsciiDxfText, dxfEntityTypeHints, dxfPdfLayout, parseAsciiDxf, renderParsedDxf } from "./dxf-engine";
 
 describe("DXF local rendering", () => {
   it("renders basic geometry, text, layers, blocks, and warns about unsupported hatch entities", () => {
@@ -36,5 +36,18 @@ describe("DXF local rendering", () => {
     expect(rendered.entityCount).toBeGreaterThanOrEqual(6);
     expect(rendered.layers).toEqual(expect.arrayContaining(["Walls", "Doors", "Notes", "Fixtures"]));
     expect(rendered.svg).toContain("WASL ROOM");
+    expect(rendered.svg).not.toContain("transform=\"scale(1,-1)\"");
+  });
+
+  it("uses an oriented PDF page that fills small wide drawings instead of shrinking them into a square", () => {
+    const layout = dxfPdfLayout(43.49, 23.65);
+    expect(layout.pageWidth).toBeGreaterThan(layout.pageHeight);
+    expect(layout.contentWidth / layout.pageWidth).toBeGreaterThan(.85);
+    expect(layout.orientation).toBe("landscape");
+  });
+
+  it("detects unsupported HATCH records from ASCII source even when a parser omits them", () => {
+    const source = "0\nSECTION\n2\nENTITIES\n0\nLINE\n0\nHATCH\n0\nENDSEC\n0\nEOF\n";
+    expect(dxfEntityTypeHints(source)).toEqual(["LINE", "HATCH"]);
   });
 });

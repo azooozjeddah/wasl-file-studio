@@ -3,7 +3,7 @@ import { outputName } from "./file-utils";
 
 type Point = { x: number; y: number };
 type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
-type ParsedDxf = { entities?: unknown[]; blocks?: Record<string, unknown> | unknown[]; tables?: { layer?: { layers?: Record<string, unknown> } } };
+type ParsedDxf = { entities?: unknown[]; blocks?: Record<string, unknown> | unknown[]; tables?: { layer?: { layers?: Record<string, unknown> } }; sourceEntityTypes?: string[] };
 
 export const DWG_TO_DXF_GUIDANCE = "للحصول على تحويل مجاني محلي، صدّر ملف DWG إلى ASCII DXF من برنامج CAD ثم ارفعه هنا.";
 export const DXF_LARGE_FILE_WARNING = "هذا الملف أكبر من 20 MB. ستتم معالجته داخل جهازك، وقد يحتاج وقتًا وذاكرة أكثر خصوصًا على الهاتف.";
@@ -20,6 +20,23 @@ export type DxfPreparedDrawing = {
 
 export type DxfPdfConversion = DxfPreparedDrawing & { result: LocalFileResult };
 
+export function dxfPdfLayout(width: number, height: number) {
+  const longest = Math.max(width, height, 1);
+  const scale = Math.min(720 / longest, 12);
+  const margin = 20;
+  const contentWidth = Math.max(32, width * scale);
+  const contentHeight = Math.max(32, height * scale);
+  return {
+    scale,
+    margin,
+    pageWidth: Math.max(160, contentWidth + margin * 2),
+    pageHeight: Math.max(160, contentHeight + margin * 2),
+    contentWidth,
+    contentHeight,
+    orientation: contentWidth >= contentHeight ? "landscape" as const : "portrait" as const,
+  };
+}
+
 const svgEscape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] || char);
 const number = (value: unknown, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const pointOf = (value: any): Point => ({ x: number(value?.x), y: number(value?.y) });
@@ -33,6 +50,18 @@ function validAsciiDxf(text: string) {
   const hasEntities = lines.some((line, index) => line.trim() === "2" && lines[index + 1]?.trim() === "ENTITIES");
   const hasEof = lines.some((line, index) => line.trim() === "0" && lines[index + 1]?.trim() === "EOF");
   return hasSection && hasEntities && hasEof;
+}
+
+export function dxfEntityTypeHints(text: string) {
+  const lines = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n").map(line => line.trim());
+  const sectionStart = lines.findIndex((line, index) => line === "2" && lines[index + 1] === "ENTITIES");
+  if (sectionStart < 0) return [];
+  const sectionEnd = lines.findIndex((line, index) => index > sectionStart && line === "0" && lines[index + 1] === "ENDSEC");
+  const entityTypes: string[] = [];
+  for (let index = sectionStart + 2; index < (sectionEnd < 0 ? lines.length - 1 : sectionEnd); index += 2) {
+    if (lines[index] === "0" && lines[index + 1]) entityTypes.push(lines[index + 1].toUpperCase());
+  }
+  return entityTypes;
 }
 
 export function assertAsciiDxfText(text: string, fileName = "drawing.dxf") {
@@ -51,7 +80,7 @@ export async function parseAsciiDxf(file: File): Promise<ParsedDxf> {
   try {
     const drawing = typeof parse === "function" ? parse(text) : new Parser().parseSync(text);
     if (!drawing || !Array.isArray((drawing as ParsedDxf).entities)) throw new Error("لم يتعرف المحلل على كائنات DXF قابلة للرسم.");
-    return drawing as ParsedDxf;
+    return { ...(drawing as ParsedDxf), sourceEntityTypes: dxfEntityTypeHints(text) };
   } catch (error) {
     throw new Error(`تعذر تحليل DXF ASCII: ${error instanceof Error ? error.message : "بنية الملف غير صالحة."}`);
   }
@@ -113,7 +142,7 @@ function renderEntity(
   if (type === "TEXT" || type === "MTEXT") {
     const value = textFrom(entity); const point = mapPoint(pointOf(entity.startPoint || entity.position || entity)); const height = Math.max(2, number(entity.textHeight ?? entity.height, 4));
     if (!value) { addUnsupported(); return; }
-    include(bounds, point); include(bounds, { x: point.x + Math.max(height, value.length * height * .58), y: point.y + height }); output.push(`<text x="${point.x}" y="${-point.y}" fill="#25185f" font-size="${height}" font-family="Arial, sans-serif" transform="scale(1,-1)">${svgEscape(value)}</text>`); return;
+    include(bounds, point); include(bounds, { x: point.x + Math.max(height, value.length * height * .58), y: point.y + height }); output.push(`<text x="${point.x}" y="${-point.y}" fill="#25185f" font-size="${height}" font-family="Arial, sans-serif">${svgEscape(value)}</text>`); return;
   }
   if (type === "INSERT") {
     const name = String(entity.name || ""); const block = findBlock(drawing, name);
@@ -130,6 +159,10 @@ export function renderParsedDxf(drawing: ParsedDxf): DxfPreparedDrawing {
   const output: string[] = []; const bounds = createBounds(); const layers = new Set<string>(); const unsupported = new Map<string, number>();
   const entities = Array.isArray(drawing.entities) ? drawing.entities : [];
   for (const entity of entities) renderEntity(entity, drawing, point => point, output, bounds, layers, unsupported, []);
+  const supported = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "POLYLINE", "POINT", "TEXT", "MTEXT", "INSERT"]);
+  for (const type of drawing.sourceEntityTypes || []) {
+    if (!supported.has(type) && !unsupported.has(type)) unsupported.set(type, (drawing.sourceEntityTypes || []).filter(candidate => candidate === type).length);
+  }
   if (!presentBounds(bounds) || !output.length) throw new Error("لم نجد كائنات DXF ثنائية الأبعاد مدعومة للرسم. يدعم المحول الخطوط والأقواس والدوائر وPolyline والنصوص والكتل الأساسية.");
   const padding = Math.max(10, Math.min(80, Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY) * .04)); const minX = bounds.minX - padding; const maxX = bounds.maxX + padding; const minY = bounds.minY - padding; const maxY = bounds.maxY + padding; const width = Math.max(1, maxX - minX); const height = Math.max(1, maxY - minY);
   const warnings = Array.from(unsupported.entries()).map(([type, count]) => `لم يُرسم ${count} عنصر من نوع ${type} لأنه خارج نطاق DXF ثنائي الأبعاد المدعوم.`);
@@ -144,8 +177,8 @@ export async function convertDxfToPdf(file: File, report?: (fraction: number) =>
   const prepared = await prepareDxfDrawing(file, report); await pause();
   if (typeof DOMParser === "undefined") throw new Error("يتطلب تصدير PDF متصفحًا حديثًا يدعم عرض SVG محليًا.");
   const [{ jsPDF }, { svg2pdf }] = await Promise.all([import("jspdf"), import("svg2pdf.js")]); report?.(.8);
-  const svg = new DOMParser().parseFromString(prepared.svg, "image/svg+xml").documentElement; const longest = Math.max(prepared.width, prepared.height); const ratio = Math.min(760 / longest, 1.6); const margin = 20; const pageWidth = Math.max(160, prepared.width * ratio + margin * 2); const pageHeight = Math.max(160, prepared.height * ratio + margin * 2);
-  const pdf = new jsPDF({ unit: "pt", format: [pageWidth, pageHeight], compress: true }); await svg2pdf(svg, pdf, { x: margin, y: margin, width: prepared.width * ratio, height: prepared.height * ratio, loadExternalStyleSheets: false }); report?.(.98);
+  const svg = new DOMParser().parseFromString(prepared.svg, "image/svg+xml").documentElement; const layout = dxfPdfLayout(prepared.width, prepared.height);
+  const pdf = new jsPDF({ unit: "pt", orientation: layout.orientation, format: [layout.pageWidth, layout.pageHeight], compress: true }); await svg2pdf(svg, pdf, { x: layout.margin, y: layout.margin, width: layout.contentWidth, height: layout.contentHeight, loadExternalStyleSheets: false }); report?.(.98);
   const result: LocalFileResult = { name: outputName(file.name, "converted", "pdf"), blob: pdf.output("blob") as Blob, mime: "application/pdf", label: "DXF vector PDF", details: { source: "local-dxf-svg-vector-pdf", entities: prepared.entityCount, layers: prepared.layerCount } };
   report?.(1); return { ...prepared, result };
 }
