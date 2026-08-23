@@ -84,22 +84,26 @@
   .qr-studio-header h1 { font-size: clamp(25px, 8vw, 31px); line-height: 1.17; }
   .qr-studio-header p { font-size: 13px; line-height: 1.7; }
   .qr-scan-note { padding: 13px 14px; border-radius: 16px; font-size: 12px; line-height: 1.8; }
-  .qr-style-library { padding: 15px; border-radius: 21px; }
-  .qr-style-library-head { gap: 13px; }
-  .qr-style-library h3 { font-size: 18px; line-height: 1.45; }
-  .qr-style-library p { font-size: 11px; }
+  .qr-style-library { padding: 14px; border-radius: 21px; }
+  .qr-style-library-head { gap: 10px; margin-bottom: 12px; }
+  .qr-style-library-head > div:first-child > span { font-size: 9px; }
+  .qr-style-library h3 { margin: 4px 0 2px; font-size: 17px; line-height: 1.35; }
+  .qr-style-library p { overflow: hidden; font-size: 10px; line-height: 1.55; white-space: nowrap; text-overflow: ellipsis; }
   .qr-library-mode { width: 100%; padding: 4px; }
-  .qr-library-mode button { flex: 1; min-height: 40px; font-size: 11px; }
-  .qr-style-tabs { margin-inline: -3px; padding: 2px 3px 10px; scroll-snap-type: x mandatory; }
-  .qr-style-tabs button { min-height: 40px; padding-inline: 13px; font-size: 11px; scroll-snap-align: start; }
-  .qr-style-card-grid { grid-template-columns: 1fr; gap: 9px; }
-  .qr-style-card { min-height: 70px; padding: 10px; }
+  .qr-library-mode button { flex: 1; min-height: 38px; font-size: 11px; }
+  .qr-style-layout { display: grid; gap: 10px; }
+  .qr-style-tabs { margin-inline: -4px; padding: 2px 4px 7px; scroll-snap-type: x mandatory; }
+  .qr-style-tabs button { min-height: 36px; padding-inline: 12px; font-size: 10px; scroll-snap-align: start; }
+  .qr-style-card-grid { display: grid; grid-auto-columns: minmax(132px, 42vw); grid-auto-flow: column; grid-template-columns: none; grid-template-rows: 76px; gap: 8px; overflow-x: auto; padding: 1px 2px 8px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  .qr-style-card { min-height: 76px; padding: 9px; scroll-snap-align: start; }
   .qr-style-card b { font-size: 12px; }
   .qr-style-card small { font-size: 10px; }
   .qr-mini { width: 40px; height: 40px; }
-  .qr-style-live-preview { grid-template-columns: 1fr 104px; gap: 10px; padding: 12px; }
-  .qr-style-live-canvas { min-height: 104px; }
-  .qr-style-live-canvas svg { max-width: 90px; max-height: 90px; }
+  .qr-style-live-preview { grid-template-columns: 1fr 88px; gap: 9px; min-height: 102px; padding: 11px; }
+  .qr-style-live-preview b { font-size: 12px; }
+  .qr-style-live-preview small, .qr-style-live-preview p { font-size: 9px; }
+  .qr-style-live-canvas { min-height: 80px; padding: 5px; }
+  .qr-style-live-canvas svg { max-width: 72px; max-height: 72px; }
   .qr-studio-workbench { gap: 16px; margin-top: 20px; }
   .qr-studio-controls, .qr-studio-preview { padding: 15px; border-radius: 21px; }
   .qr-kind-tabs { gap: 7px; }
@@ -120,7 +124,8 @@
   .brand-reference-logo { width: 88px; }
   .assistant-hero-copy h1 { font-size: 34px; }
   .assistant-scenario-strip > span { min-height: 48px; padding: 8px; }
-  .qr-style-live-preview { grid-template-columns: 1fr 94px; }
-  .qr-style-live-canvas svg { max-width: 80px; max-height: 80px; }
+  .qr-style-card-grid { grid-auto-columns: minmax(126px, 48vw); }
+  .qr-style-live-preview { grid-template-columns: 1fr 78px; }
+  .qr-style-live-canvas svg { max-width: 64px; max-height: 64px; }
   .qr-kind-tabs button { padding-inline: 10px; }
 }

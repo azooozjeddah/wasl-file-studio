@@ -350,3 +350,7 @@
 - [x] Improve mobile-only layout, spacing, typography, controls, overflow behavior, and navigation affordances without altering the current identity, routes, or file-processing functionality.
 - [x] Verify the mobile experience across Home, category pages, QR Generator, and representative file tools, then regression-check desktop and core routes.
 - [x] Run TypeScript, unit tests, production build, and Production verification after the mobile usability pass.
+- [x] Audit the Home QR spotlight and the QR style library at phone width using the supplied mobile references without modifying the reference images.
+- [x] Increase the Home QR spotlight text hierarchy while reducing and integrating the QR preview so the card remains compact and balanced.
+- [x] Replace the tall QR style-library phone layout with a compact, touch-friendly selection flow that preserves templates, frames, live preview, scan verification, and exports.
+- [x] Verify Home QR and QR Generator at phone and desktop sizes, selection interactions, TypeScript, tests, build, and Production publication.
