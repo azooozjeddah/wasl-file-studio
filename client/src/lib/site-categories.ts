@@ -1,7 +1,7 @@
 import { Braces, FileImage, FileSpreadsheet, FileText, FileType2, QrCode, SlidersHorizontal, Video, type LucideIcon } from "lucide-react";
 import { toolDefinitions, type ToolDefinition } from "./tools";
 
-export type SiteCategoryId = "pdf" | "documents" | "excel" | "images" | "media" | "qr" | "developer-data" | "other";
+export type SiteCategoryId = "pdf" | "word" | "documents" | "excel" | "images" | "media" | "qr" | "developer-data" | "other";
 
 export type SiteToolCategory = {
   id: SiteCategoryId;
@@ -16,6 +16,7 @@ export type SiteToolCategory = {
 
 export const siteToolCategories: SiteToolCategory[] = [
   { id: "pdf", slug: "pdf", labelAr: "PDF", labelEn: "PDF", descriptionAr: "تنظيم، ضغط، توقيع، وحماية ملفات PDF.", descriptionEn: "Organize, compress, sign, and protect PDFs.", icon: FileType2, tone: "violet" },
+  { id: "word", slug: "word", labelAr: "Word", labelEn: "Word", descriptionAr: "تحويل وتصدير مستندات Word محليًا.", descriptionEn: "Convert and export Word documents locally.", icon: FileText, tone: "blue" },
   { id: "documents", slug: "documents", labelAr: "المستندات", labelEn: "Documents", descriptionAr: "تحويل Word والنصوص واستخراج المحتوى.", descriptionEn: "Convert Word and text documents, or extract content.", icon: FileText, tone: "blue" },
   { id: "excel", slug: "excel", labelAr: "Excel والجداول", labelEn: "Excel & sheets", descriptionAr: "تحويل وتصدير ودمج أوراق العمل محليًا.", descriptionEn: "Convert, export, and merge sheets locally.", icon: FileSpreadsheet, tone: "emerald" },
   { id: "images", slug: "images", labelAr: "الصور", labelEn: "Images", descriptionAr: "تحويل، ضغط، تغيير حجم، وتحرير الصور.", descriptionEn: "Convert, compress, resize, and edit images.", icon: FileImage, tone: "amber" },
@@ -27,6 +28,7 @@ export const siteToolCategories: SiteToolCategory[] = [
 
 export function siteCategoryForTool(tool: ToolDefinition): SiteCategoryId {
   if (tool.category === "pdf" || tool.category === "sign") return "pdf";
+  if (["word-to-pdf", "pdf-to-word", "txt-to-docx"].includes(tool.slug)) return "word";
   if (tool.category === "document" || tool.category === "ocr") return "documents";
   if (tool.category === "spreadsheet") return "excel";
   if (tool.category === "image") return "images";

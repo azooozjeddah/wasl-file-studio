@@ -327,3 +327,9 @@
 - [x] Keep the tools index category-only and tighten category pages, FAQ, footer, Arabic/English text direction, and mobile spacing without changing routes or tool logic.
 - [x] Test Home, tools index, PDF category, QR category, QR generator, responsive layouts, icon rendering, and tool navigation.
 - [ ] Run TypeScript, tests, production build, publish, and independently verify the updated public UI.
+- [x] Audit the current catalog for the previously agreed PDF forms, Word index, AutoCAD, print minimizer, media-audio, speech-to-text, dummy-data, and future-summary entries without removing any tool.
+- [x] Ensure the Home page keeps only Assistant, primary categories, a standalone QR generator entry, FAQ, and footer with no full catalog duplication.
+- [x] Ensure QR generator is independently prominent on Home and remains reachable inside the QR category.
+- [x] Add a single-purpose Word category route and remove tool-count numerals from Home category cards without duplicating document tools.
+- [x] Ensure all categories route to complete category pages and preserve icons, tools, and responsive behavior without a visual rebrand.
+- [x] Test the reorganized Home, categories, QR generator, tool routes, desktop, and mobile; then build and verify the local Production bundle.
