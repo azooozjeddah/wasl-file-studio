@@ -402,4 +402,4 @@
 - [x] Verify the six improved cards on mobile and desktop, then run TypeScript, tests, build, and Production verification: local mobile/desktop checks and 108 tests/build passed; the public domain remained on the earlier plain-icon asset after cache-busting reloads and propagation waits.
 - [x] Audit the current Brand component and assistant hero-panel structure to restore the real «وصّل» text without changing the linked symbol.
 - [x] Keep «وصّل» visibly shaped with a shadda and add a compact QR creation card directly below the raised file-upload assistant card.
-- [ ] Verify the logo and stacked action cards on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Verify the logo and stacked action cards on mobile and desktop, then run TypeScript, tests, build, and Production verification: local mobile/desktop, TypeScript, 108 tests, and build passed; the public domain still served the preceding colored-card asset after cache-busting reloads and propagation waits.
