@@ -404,3 +404,5 @@
 - [x] Audit the current reference-image brand branch and its header/footer dimensions to replace the unreliable shadda overlay safely.
 - [x] Render the Wasl mark with the existing linked icon and visible Arabic text «وصّل» so the shadda appears as real text in header and footer.
 - [x] Verify the corrected brand on mobile and desktop, run TypeScript, tests, and build, then verify Production: local header/footer now render «وصّل» as real text; the public domain remained on the prior image-only asset after a cache-busting check and propagation wait.
+- [x] Restore the previous full linked Wasl symbol beside the real Arabic «وصّل» text in the header and footer, without reintroducing an image-only wordmark.
+- [ ] Verify the restored symbol and visible shadda on mobile and desktop, then run TypeScript, tests, build, and Production verification.
