@@ -58,7 +58,24 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath, { index: false, maxAge: "1y", immutable: true }));
+  app.use(express.static(distPath, {
+    index: false,
+    maxAge: "1y",
+    immutable: true,
+    setHeaders(res, filePath) {
+      const isHtml = filePath.endsWith(".html");
+      const isReleaseManifest = filePath.endsWith(`${path.sep}__manus__${path.sep}release.json`);
+      if (isHtml || isReleaseManifest) {
+        res.set({
+          "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+          "CDN-Cache-Control": "no-store",
+          "Surrogate-Control": "no-store",
+          Pragma: "no-cache",
+          Expires: "0",
+        });
+      }
+    },
+  }));
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
