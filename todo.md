@@ -403,4 +403,4 @@
 - [x] Verify Home layout, RTL, mobile/desktop responsiveness, and all six quick-access cards, then run TypeScript, tests, build, and Production verification.
 - [x] Audit the current reference-image brand branch and its header/footer dimensions to replace the unreliable shadda overlay safely.
 - [x] Render the Wasl mark with the existing linked icon and visible Arabic text «وصّل» so the shadda appears as real text in header and footer.
-- [ ] Verify the corrected brand on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Verify the corrected brand on mobile and desktop, run TypeScript, tests, and build, then verify Production: local header/footer now render «وصّل» as real text; the public domain remained on the prior image-only asset after a cache-busting check and propagation wait.
