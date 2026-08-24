@@ -4,7 +4,7 @@ import { siteToolCategories, toolsForSiteCategory } from "@/lib/site-categories"
 import { toolDefinitions } from "@/lib/tools";
 import { useLocale } from "@/contexts/LocaleContext";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Check, FileImage, FileText, FileUp, QrCode, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, FileImage, FileText, FileUp, QrCode, Sparkles, Video } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect } from "react";
@@ -38,7 +38,7 @@ export default function Home() {
         <div className="assistant-hero-layout">
           <div className="assistant-hero-copy">
             <div className="hero-kicker"><Sparkles size={15}/>{t("المساعد الذكي", "Smart Assistant")}</div>
-            <h1>{t("ارفع ملفك،", "Upload your file,")}<span>{t(" وصّل يعرف ماذا يحتاج.", " and Wasl knows what it needs.")}</span></h1>
+            <h1>{t("ارفع ملفك،", "Upload your file,")}<span>{t("وصّل يعرف ماذا يحتاج.", "Wasl knows what it needs.")}</span></h1>
             <p className="hero-copy">{t("حلّل ملفك محليًا، ثم انتقل مباشرةً إلى أداة جاهزة مناسبة له. لا نطلب منك البحث بين عشرات الخيارات أو رفع الملف مرتين.", "Analyze your file locally, then move directly into a ready tool that fits it. No searching through dozens of choices or uploading twice.")}</p>
             <div className="hero-trust"><span><Check size={15}/>{t("لا تسجيل مطلوب", "No sign-up")}</span><span><Check size={15}/>{t("تحليل محلي", "Local analysis")}</span><span><Check size={15}/>{t("اقتراحات واضحة", "Clear suggestions")}</span></div>
             {homeContent.data?.[0] && <p className="managed-home-notice">{homeContent.data[0].title}{homeContent.data[0].body ? ` — ${homeContent.data[0].body}` : ""}</p>}
@@ -47,6 +47,8 @@ export default function Home() {
               <span><FileText size={15}/><b>Word</b><small>{t("تحويل إلى PDF", "Export to PDF")}</small></span>
               <span><FileImage size={15}/><b>{t("الصور", "Images")}</b><small>{t("ضغط، قياس، تحويل", "Compress, resize, convert")}</small></span>
               <span><FileUp size={15}/><b>Excel</b><small>{t("أوراق وتحويل", "Sheets & export")}</small></span>
+              <span><QrCode size={15}/><b>{t("رموز QR", "QR codes")}</b><small>{t("إنشاء وقراءة", "Create & read")}</small></span>
+              <span><Video size={15}/><b>{t("الفيديو والصوت", "Video & audio")}</b><small>{t("تحويل واستخراج", "Convert & extract")}</small></span>
             </div>
           </div>
           <div className="assistant-hero-panel"><SmartFileAssistant tools={visibleTools}/></div>
