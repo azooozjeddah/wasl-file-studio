@@ -1,6 +1,15 @@
 .brand-link-image { align-items: center; }
-.brand-reference-logo { display: block; width: 132px; height: auto; }
+.brand-link-composed { direction:rtl; gap:7px; }
+.brand-reference-mark { display:block; width:44px; height:39px; flex:none; overflow:hidden; }
+.brand-reference-mark-image { display:block; width:132px; max-width:none; height:auto; transform:translateX(-24px); }
+.brand-copy { display:grid; gap:1px; min-width:0; text-align:start; }
+.brand-copy .brand-word { display:block; color:#5141c9; font-size:25px; font-weight:900; letter-spacing:-.07em; line-height:.86; }
+.brand-copy .brand-sub { display:block; color:#726b85; font-size:7px; font-weight:700; line-height:1.1; }
 
 @media (max-width: 560px) {
-  .brand-reference-logo { width: 103px; }
+  .brand-link-composed { gap:5px; }
+  .brand-reference-mark { width:39px; height:33px; }
+  .brand-reference-mark-image { width:111px; transform:translateX(-20px); }
+  .brand-copy .brand-word { font-size:21px; }
+  .brand-copy .brand-sub { font-size:6px; }
 }

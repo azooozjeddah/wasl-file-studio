@@ -51,7 +51,7 @@ export default function Home() {
               <span className="scenario-media"><span className="assistant-scenario-icon"><Video size={20}/></span><b>{t("الفيديو والصوت", "Video & audio")}</b><small>{t("تحويل واستخراج", "Convert & extract")}</small></span>
             </div>
           </div>
-          <div className="assistant-hero-panel"><SmartFileAssistant tools={visibleTools}/></div>
+          <div className="assistant-hero-panel"><SmartFileAssistant tools={visibleTools}/>{qrTool && <Link href={`/${qrTool.slug}`} className="assistant-qr-action-card"><span className="assistant-qr-action-icon"><QrCode size={28}/></span><span><small>{t("رموز QR", "QR CODES")}</small><b>{t("أنشئ رمز QR", "Create a QR code")}</b><p>{t("صمّم رمزك وعاينه قبل التنزيل.", "Style and preview it before download.")}</p></span><ArrowLeft size={18} className={isArabic ? "rotate-180" : ""}/></Link>}</div>
         </div>
         <div className="assistant-hero-foot"><a href="#tools">{t("تفضّل اختيار الأداة بنفسك؟", "Prefer choosing a tool yourself?")} <b>{t("استعرض المكتبة", "Browse the library")}</b><ArrowLeft size={15} className={isArabic ? "rotate-180" : ""}/></a><span>{t("المساعد لا يرفع ملفك ولا يختار إجراءً بالنيابة عنك.", "The assistant never uploads your file or chooses an action for you.")}</span></div>
       </div><div className="hero-stat-card"><span>{t("ملفك أولًا", "Your file first")}</span><b>{t("خطوة أوضح كل مرة", "A clearer next step")}</b><div className="stat-wave"/></div>
