@@ -428,3 +428,7 @@
 - [x] Re-test each Beta and Maintenance tool through UI input, processing, result, download, and invalid-file handling, then assign only Ready/Beta/Maintenance/Disabled based on evidence: passing tools were promoted, QR/OCR and media failures stayed in Maintenance, and all unproven Beta tools were conservatively Disabled.
 - [x] Verify that the admin lifecycle selector is the only source of public state, including direct-route blocking and Production cache behavior: Production catalog APIs return current Ready state and disabled/maintenance routes are guarded.
 - [x] Complete final checks/build/Production/GitHub and deliver the requested tool-by-tool readiness report: TypeScript, 42 test files/108 tests, build, Production catalog API, and GitHub main b21cadd verified.
+- [x] Diagnose all currently Disabled and Maintenance tools for engine, browser, worker, WASM, module-loading, file-size, format, memory, and alternative-implementation causes.
+- [ ] Repair and real-file re-accept every tool that can be made reliable without adding new product tools, preserving local processing where practical.
+- [ ] Record lifecycle reason, last test timestamp, and last test result in admin-managed catalog data for every tool.
+- [ ] Rebuild, re-test, re-check Production and GitHub, then deliver a detailed tool-by-tool final report without launching or changing the domain.
