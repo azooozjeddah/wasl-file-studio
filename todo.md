@@ -420,4 +420,4 @@
 - [x] Verify and classify all 56 tools; promote only tools with real-file evidence and disable or clearly mark unproven tools.
 - [x] Re-accept core PDF, image, document, spreadsheet, OCR, QR, and DXF flows with valid results and downloads.
 - [x] Keep unreliable media and conversion tools hidden or explicitly non-ready unless they pass real-file acceptance within the approved technical scope.
-- [ ] Complete admin, API, responsive, TypeScript, Vitest, production-build, public-URL, and GitHub verification before final acceptance.
+- [x] Complete admin, API, responsive, TypeScript, Vitest, production-build, public-URL, and GitHub verification before final acceptance: local/admin guards, TypeScript, 42 Vitest files/108 tests, and build passed; GitHub main is 23669a9; public URL loads but remains on the prior homepage-card asset after a cache-busting recheck.
