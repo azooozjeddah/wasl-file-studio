@@ -421,6 +421,6 @@
 - [x] Re-accept core PDF, image, document, spreadsheet, OCR, QR, and DXF flows with valid results and downloads.
 - [x] Keep unreliable media and conversion tools hidden or explicitly non-ready unless they pass real-file acceptance within the approved technical scope.
 - [x] Complete admin, API, responsive, TypeScript, Vitest, production-build, public-URL, and GitHub verification before final acceptance: local/admin guards, TypeScript, 42 Vitest files/108 tests, and build passed; GitHub main is 23669a9; public URL loads but remains on the prior homepage-card asset after a cache-busting recheck.
-- [ ] Diagnose and correct the stale Production asset so public cards and tool states match the current catalog.
-- [ ] Recheck every non-ready tool and every unresolved error record, promoting only evidence-backed tools and retaining clear Beta/Maintenance/Disabled status otherwise.
-- [ ] Verify admin state changes, direct-route blocking, complete checks/build, public Production behavior, and GitHub before the final readiness report.
+- [x] Diagnose and correct the stale Production asset so public cards and tool states match the current catalog: index.html now bypasses caches while fingerprinted assets remain immutable; Production shows Beta badges and direct Maintenance blocking.
+- [x] Recheck every non-ready tool and every unresolved error record, promoting only evidence-backed tools and retaining clear Beta/Maintenance/Disabled status otherwise: unproven tools remain Beta, unreliable media stays Maintenance, and production renders the corresponding messages.
+- [x] Verify admin state changes, direct-route blocking, complete checks/build, public Production behavior, and GitHub before the final readiness report: maintenance routes are blocked in Production, current public cards display Ready/Beta truthfully, 42 Vitest files/108 tests and build passed, 0 current unresolved records remain, and GitHub main tracks 4a1fd3d.
