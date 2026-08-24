@@ -403,3 +403,6 @@
 - [x] Audit the current Brand component and assistant hero-panel structure to restore the real «وصّل» text without changing the linked symbol.
 - [x] Keep «وصّل» visibly shaped with a shadda and add a compact QR creation card directly below the raised file-upload assistant card.
 - [x] Verify the logo and stacked action cards on mobile and desktop, then run TypeScript, tests, build, and Production verification: local mobile/desktop, TypeScript, 108 tests, and build passed; the public domain still served the preceding colored-card asset after cache-busting reloads and propagation waits.
+- [x] Audit the logo rendering, QR card placement, and actual image-compress/image-resize tool slugs before changing the Home page.
+- [x] Restore a complete unconfused Wasl logo, make the QR action card match the upload card dimensions, remove the lower QR spotlight, and add image compression and image resize to the six common-tool cards.
+- [ ] Verify the logo, action cards, and six common-tool links on mobile and desktop, then run TypeScript, tests, build, and Production verification.
