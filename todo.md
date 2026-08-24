@@ -397,14 +397,6 @@
 - [x] Audit responsive UI, RTL, icons, QR composition, performance, network behavior, local processing, file privacy, endpoints, and frontend secret exposure.
 - [x] Add or strengthen critical regression tests, rerun the full suite, build production, and verify the tested asset on the public Production URL: 42 files/108 tests and build passed; Production verification completed but the public homepage still served an older OCR readiness asset after a cache-busting retry.
 - [x] Deliver a structured final audit report with tool counts, fixes, admin capability, DXF status, mobile status, Production version, known limitations, and checkpoint identifier.
-- [x] Audit current header/footer brand text, Home hero copy, assistant preview card, and the four existing quick-access cards.
-- [x] Apply «وصّل» with shadda in visible brand text, update the hero copy to «ارفع ملفك، وصّل يعرف ماذا يحتاج»، and rebalance the assistant preview card without changing upload behavior.
-- [x] Expand Home quick access from four to six cards by adding QR codes and video/audio cards while retaining the existing PDF, Word, Excel, and images cards.
-- [x] Verify Home layout, RTL, mobile/desktop responsiveness, and all six quick-access cards, then run TypeScript, tests, build, and Production verification.
-- [x] Audit the current reference-image brand branch and its header/footer dimensions to replace the unreliable shadda overlay safely.
-- [x] Render the Wasl mark with the existing linked icon and visible Arabic text «وصّل» so the shadda appears as real text in header and footer.
-- [x] Verify the corrected brand on mobile and desktop, run TypeScript, tests, and build, then verify Production: local header/footer now render «وصّل» as real text; the public domain remained on the prior image-only asset after a cache-busting check and propagation wait.
-- [x] Restore the previous full linked Wasl symbol beside the real Arabic «وصّل» text in the header and footer, without reintroducing an image-only wordmark.
-- [x] Verify the restored symbol and visible shadda on mobile and desktop, then run TypeScript, tests, build, and Production verification: the public URL now shows the restored linked symbol and real «وصّل» text after the 0a743e11 release.
-- [x] Replace the clipped reference-logo crop with the complete previous linked Wasl symbol as an independent mark beside the real «وصّل» text.
-- [x] Verify the full symbol and visible shadda on mobile and desktop, then run TypeScript, tests, build, and Production verification: the public URL now shows the complete symbol after the 4e977462 release.
+- [x] Audit the six Home quick-access cards and their existing icon/color rendering.
+- [x] Give PDF, Word, Excel, images, QR, and media distinct clear colored icons and enlarge the six cards proportionately.
+- [ ] Verify the six improved cards on mobile and desktop, then run TypeScript, tests, build, and Production verification.
