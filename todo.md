@@ -407,4 +407,4 @@
 - [x] Restore the previous full linked Wasl symbol beside the real Arabic «وصّل» text in the header and footer, without reintroducing an image-only wordmark.
 - [x] Verify the restored symbol and visible shadda on mobile and desktop, then run TypeScript, tests, build, and Production verification: the public URL now shows the restored linked symbol and real «وصّل» text after the 0a743e11 release.
 - [x] Replace the clipped reference-logo crop with the complete previous linked Wasl symbol as an independent mark beside the real «وصّل» text.
-- [ ] Verify the full symbol and visible shadda on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Verify the full symbol and visible shadda on mobile and desktop, then run TypeScript, tests, build, and Production verification: the public URL now shows the complete symbol after the 4e977462 release.
