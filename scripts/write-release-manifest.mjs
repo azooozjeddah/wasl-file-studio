@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const projectRoot = resolve(import.meta.dirname, "..");
-const outputDir = resolve(projectRoot, "dist", "public", "__manus__");
+const outputDir = resolve(projectRoot, "dist", "public");
 
 function gitRevision() {
   try {
@@ -19,7 +19,7 @@ function gitRevision() {
 
 mkdirSync(outputDir, { recursive: true });
 writeFileSync(
-  resolve(outputDir, "release.json"),
+  resolve(outputDir, "wasl-release.json"),
   `${JSON.stringify({ revision: gitRevision(), builtAt: new Date().toISOString(), output: "dist/public" }, null, 2)}\n`,
   "utf8"
 );

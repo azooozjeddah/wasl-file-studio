@@ -64,7 +64,7 @@ export function serveStatic(app: Express) {
     immutable: true,
     setHeaders(res, filePath) {
       const isHtml = filePath.endsWith(".html");
-      const isReleaseManifest = filePath.endsWith(`${path.sep}__manus__${path.sep}release.json`);
+      const isReleaseManifest = filePath.endsWith(`${path.sep}wasl-release.json`);
       if (isHtml || isReleaseManifest) {
         res.set({
           "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
