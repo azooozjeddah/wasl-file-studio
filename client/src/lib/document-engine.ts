@@ -3,6 +3,7 @@ import { LocalFileResult, outputName } from "./file-utils";
 function normalizeText(value: string) { return value.replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").trim(); }
 function stripRtf(value: string) { return normalizeText(value.replace(/\\par[d]?/g, "\n").replace(/\\'[0-9a-fA-F]{2}/g, "").replace(/\\[a-zA-Z]+-?\d* ?/g, "").replace(/[{}]/g, "")); }
 function htmlText(value: string) { const parser = new DOMParser(); return normalizeText((parser.parseFromString(value, "text/html").body.innerText || "").trim()); }
+function isRtlText(value: string) { return /[\u0600-\u06ff]/.test(value); }
 
 export function ensureExtractedPdfTextIsReadable(value: string) {
   const visible = Array.from(value).filter(char => !/\s/.test(char));
@@ -41,8 +42,8 @@ export async function textToPdf(text: string, original: File, suffix = "converte
 }
 
 export async function textToDocx(text: string, original: File, suffix = "converted"): Promise<LocalFileResult> {
-  const { Document, Packer, Paragraph } = await import("docx");
-  const document = new Document({ sections: [{ children: normalizeText(text).split("\n").map(line => new Paragraph({ text: line || " " })) }] });
+  const { Document, Packer, Paragraph, TextRun } = await import("docx");
+  const document = new Document({ sections: [{ children: normalizeText(text).split("\n").map(line => { const value = line || " "; const rtl = isRtlText(value); return new Paragraph({ bidirectional: rtl, children: [new TextRun({ text: value, rightToLeft: rtl })] }); }) }] });
   return { name: outputName(original.name, suffix, "docx"), blob: await Packer.toBlob(document), mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
 }
 
@@ -50,7 +51,7 @@ async function pdfPagesToDocx(pages: string[], original: File): Promise<LocalFil
   const { Document, Packer, PageBreak, Paragraph, TextRun } = await import("docx");
   const children = pages.flatMap((page, pageIndex) => {
     const lines = page ? page.split("\n").flatMap(line => line.split(/(?<=[.!؟])\s+/).filter(Boolean)) : [" "];
-    const current = lines.map(line => new Paragraph({ children: [new TextRun({ text: line })] }));
+    const current = lines.map(line => { const rtl = isRtlText(line); return new Paragraph({ bidirectional: rtl, children: [new TextRun({ text: line, rightToLeft: rtl })] }); });
     if (pageIndex < pages.length - 1) current.push(new Paragraph({ children: [new PageBreak()] }));
     return current;
   });

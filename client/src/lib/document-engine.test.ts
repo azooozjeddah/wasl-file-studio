@@ -9,6 +9,15 @@ describe("document engine exports", () => {
     expect(result.mime).toContain("openxmlformats-officedocument");
     expect(result.blob.size).toBeGreaterThan(0);
   });
+  it("marks Arabic DOCX paragraphs as bidirectional RTL", async () => {
+    const source = { name: "عربي.txt" } as File;
+    const result = await textToDocx("عنوان عربي واضح", source, "converted");
+    const zip = await import("jszip");
+    const archive = await zip.default.loadAsync(await result.blob.arrayBuffer());
+    const xml = await archive.file("word/document.xml")?.async("string");
+    expect(xml).toContain("w:bidi");
+    expect(xml).toContain("w:rtl");
+  });
   it("normalizes text-document input before conversion", async () => { const source = new File(["عنوان\r\n\n\nمحتوى"], "notes.txt", { type: "text/plain" }); await expect(readDocumentText(source, "txt")).resolves.toBe("عنوان\n\nمحتوى"); });
   it("creates a named local PDF output for text-first conversions", async () => { const result = await textToPdf("A local PDF contract", { name: "contract.txt" } as File); const bytes = new Uint8Array(await result.blob.arrayBuffer()); expect(result.name).toBe("contract-converted.pdf"); expect(result.mime).toBe("application/pdf"); expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-"); });
   it("accepts Arabic and English Unicode but rejects visibly corrupted PDF text", () => {
