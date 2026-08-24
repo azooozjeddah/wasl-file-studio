@@ -399,4 +399,4 @@
 - [x] Deliver a structured final audit report with tool counts, fixes, admin capability, DXF status, mobile status, Production version, known limitations, and checkpoint identifier.
 - [x] Audit the six Home quick-access cards and their existing icon/color rendering.
 - [x] Give PDF, Word, Excel, images, QR, and media distinct clear colored icons and enlarge the six cards proportionately.
-- [ ] Verify the six improved cards on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Verify the six improved cards on mobile and desktop, then run TypeScript, tests, build, and Production verification: local mobile/desktop checks and 108 tests/build passed; the public domain remained on the earlier plain-icon asset after cache-busting reloads and propagation waits.
