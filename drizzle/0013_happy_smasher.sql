@@ -1,0 +1,1 @@
+ALTER TABLE `tool_catalog` ADD `lifecycleStatus` enum('ready','beta','maintenance','disabled') DEFAULT 'beta' NOT NULL;

@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 import { z } from "zod";
 import { adminRoles, adSlots, contentEntries, faqEntries, siteSettings, toolCatalog, userRoleAssignments, userToolPermissions } from "../../drizzle/schema";
 import { getDb } from "../db";
@@ -8,12 +8,12 @@ export const catalogRouter = router({
   list: publicProcedure.query(async () => {
     const db = await getDb();
     if (!db) return [];
-    return db.select().from(toolCatalog).where(eq(toolCatalog.isActive, true)).orderBy(asc(toolCatalog.sortOrder));
+    return db.select().from(toolCatalog).where(and(eq(toolCatalog.isActive, true), ne(toolCatalog.lifecycleStatus, "disabled"))).orderBy(asc(toolCatalog.sortOrder));
   }),
   availability: publicProcedure.input(z.object({ slug: z.string().min(2).max(80) })).query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) return null;
-    const [tool] = await db.select({ slug: toolCatalog.slug, isActive: toolCatalog.isActive, nameAr: toolCatalog.nameAr, nameEn: toolCatalog.nameEn }).from(toolCatalog).where(eq(toolCatalog.slug, input.slug)).limit(1);
+    const [tool] = await db.select({ slug: toolCatalog.slug, isActive: toolCatalog.isActive, lifecycleStatus: toolCatalog.lifecycleStatus, nameAr: toolCatalog.nameAr, nameEn: toolCatalog.nameEn }).from(toolCatalog).where(eq(toolCatalog.slug, input.slug)).limit(1);
     if (!tool) return null;
     const [override] = ctx.user ? await db.select({ isAllowed: userToolPermissions.isAllowed }).from(userToolPermissions).where(and(eq(userToolPermissions.userId, ctx.user.id), eq(userToolPermissions.toolSlug, input.slug))).limit(1) : [];
     if (override?.isAllowed === false) return { ...tool, isAllowed: false };
