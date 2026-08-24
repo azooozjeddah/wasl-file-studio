@@ -424,3 +424,7 @@
 - [x] Diagnose and correct the stale Production asset so public cards and tool states match the current catalog: index.html now bypasses caches while fingerprinted assets remain immutable; Production shows Beta badges and direct Maintenance blocking.
 - [x] Recheck every non-ready tool and every unresolved error record, promoting only evidence-backed tools and retaining clear Beta/Maintenance/Disabled status otherwise: unproven tools remain Beta, unreliable media stays Maintenance, and production renders the corresponding messages.
 - [x] Verify admin state changes, direct-route blocking, complete checks/build, public Production behavior, and GitHub before the final readiness report: maintenance routes are blocked in Production, current public cards display Ready/Beta truthfully, 42 Vitest files/108 tests and build passed, 0 current unresolved records remain, and GitHub main tracks 4a1fd3d.
+- [x] Build a real-file acceptance matrix for all 56 existing tools without adding any new tool.
+- [ ] Re-test each Beta and Maintenance tool through UI input, processing, result, download, and invalid-file handling, then assign only Ready/Beta/Maintenance/Disabled based on evidence.
+- [ ] Verify that the admin lifecycle selector is the only source of public state, including direct-route blocking and Production cache behavior.
+- [ ] Complete final checks/build/Production/GitHub and deliver the requested tool-by-tool readiness report.
