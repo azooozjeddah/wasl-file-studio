@@ -32,6 +32,17 @@ Before changing a shared engine, identify every affected tool in this document, 
 
 The canonical source history is `github/main`. Manus checkpoints provide deployable recovery points; record the production-tested checkpoint in the release tag before any shared-engine change. Never use force-push or destructive history rewriting.
 
+### Locked production baseline — 2026-08-24
+
+| Field | Locked reference |
+|---|---|
+| Production source digest | `737187feb8a1c206` |
+| Production checkpoint | `248ac82a` |
+| Source commit | `719cb07` |
+| GitHub rollback tag | `wasl-production-linked-2026-08-24` |
+
+Do not change the deployment pipeline, asset cache policy, or release manifest during single-tool acceptance. If a tool fix affects a previously accepted route, stop and return to this reference before isolating the fault.
+
 `pnpm test` is local regression only. The Resend credential probe is intentionally opt-in because it calls an external service: run `RUN_EXTERNAL_INTEGRATION_TESTS=1 pnpm vitest run server/auth/resend.secret.test.ts` when validating that integration.
 
 ## QR incident note
