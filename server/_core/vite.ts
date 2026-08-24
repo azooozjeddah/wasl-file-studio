@@ -50,8 +50,8 @@ export async function setupVite(app: Express, server: Server) {
 export function serveStatic(app: Express) {
   const distPath =
     process.env.NODE_ENV === "development"
-      ? path.resolve(import.meta.dirname, "../..", "dist", "public-v2")
-      : path.resolve(import.meta.dirname, "public-v2");
+      ? path.resolve(import.meta.dirname, "../..", "dist", "public")
+      : path.resolve(import.meta.dirname, "public");
   if (!fs.existsSync(distPath)) {
     console.error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`
@@ -66,6 +66,7 @@ export function serveStatic(app: Express) {
       "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
       "CDN-Cache-Control": "no-store",
       "Surrogate-Control": "no-store",
+      "X-Wasl-Static-Path": path.basename(distPath),
       Pragma: "no-cache",
       Expires: "0",
       Vary: "Accept-Encoding",
