@@ -405,4 +405,4 @@
 - [x] Verify the logo and stacked action cards on mobile and desktop, then run TypeScript, tests, build, and Production verification: local mobile/desktop, TypeScript, 108 tests, and build passed; the public domain still served the preceding colored-card asset after cache-busting reloads and propagation waits.
 - [x] Audit the logo rendering, QR card placement, and actual image-compress/image-resize tool slugs before changing the Home page.
 - [x] Restore a complete unconfused Wasl logo, make the QR action card match the upload card dimensions, remove the lower QR spotlight, and add image compression and image resize to the six common-tool cards.
-- [ ] Verify the logo, action cards, and six common-tool links on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Verify the logo, action cards, and six common-tool links on mobile and desktop, then run TypeScript, tests, build, and Production verification: local checks, 108 tests, and build passed; public verification still served the preceding four-card/small-QR asset after cache-busting reloads and waits.
