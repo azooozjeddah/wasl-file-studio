@@ -99,6 +99,13 @@
       "when": 1787573288355,
       "tag": "0013_happy_smasher",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1787582911888,
+      "tag": "0014_hard_demogoblin",
+      "breakpoints": true
     }
   ]
 }
