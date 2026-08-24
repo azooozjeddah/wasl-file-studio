@@ -36,6 +36,12 @@ describe("local code payloads", () => {
     expect(svg).not.toContain("Wasl QR code");
   });
 
+  it("keeps finder modules square even when decorative eye and dot styles are selected", async () => {
+    const svg = await makeStyledQrSvg("https://waslfile.manus.space", { size: 360, dark: "#171326", light: "#ffffff", correction: "M", dots: "rounded", eyeStyle: "rounded", frame: "soft", margin: 4, labelPosition: "bottom" });
+    expect(svg).toContain('<rect x="40" y="40" width="10.03" height="10.03" fill="#171326"/>');
+    expect(svg).not.toContain('<rect x="40" y="40" width="10.03" height="10.03" rx="2.8000000000000003"');
+  });
+
   it("renders a local QR template with gradient, eye style, larger quiet zone, and a scan frame", async () => {
     const svg = await makeStyledQrSvg("https://wasl.example/template", { size: 480, dark: "#171326", light: "#ffffff", correction: "H", dots: "rounded", eyeStyle: "rounded", margin: 7, gradientFrom: "#321b84", gradientTo: "#171326", frame: "scan", label: "امسح للوصول", labelPosition: "top" });
     expect(svg).toContain('id="qr-gradient"');
