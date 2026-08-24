@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
@@ -163,6 +164,25 @@ function currentRevision() {
   }
 }
 
+function sourceDigest() {
+  const hash = createHash("sha256");
+  const inputs = ["client/src", "server", "shared", "vite.config.ts", "package.json", "pnpm-lock.yaml"];
+
+  const addPath = (relativePath: string) => {
+    const absolutePath = path.resolve(PROJECT_ROOT, relativePath);
+    const stat = fs.statSync(absolutePath);
+    if (stat.isDirectory()) {
+      for (const entry of fs.readdirSync(absolutePath).sort()) addPath(path.join(relativePath, entry));
+      return;
+    }
+    hash.update(relativePath.replaceAll(path.sep, "/"));
+    hash.update(fs.readFileSync(absolutePath));
+  };
+
+  for (const input of inputs) addPath(input);
+  return hash.digest("hex").slice(0, 16);
+}
+
 /** Emit the manifest inside Vite's bundle so deployment packaging cannot omit it. */
 function vitePluginWaslReleaseManifest(): Plugin {
   return {
@@ -172,7 +192,7 @@ function vitePluginWaslReleaseManifest(): Plugin {
       this.emitFile({
         type: "asset",
         fileName: "wasl-release.json",
-        source: `${JSON.stringify({ revision: currentRevision(), builtAt: new Date().toISOString(), output: "dist/public" }, null, 2)}\n`,
+        source: `${JSON.stringify({ revision: currentRevision(), sourceDigest: sourceDigest(), builtAt: new Date().toISOString(), output: "dist/public" }, null, 2)}\n`,
       });
     },
   };

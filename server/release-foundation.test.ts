@@ -12,6 +12,7 @@ describe("release foundation", () => {
     expect(packageJson.scripts.build).toContain("vite build && sleep 2 && esbuild");
     expect(packageJson.scripts.build).not.toContain("write-release-manifest");
     expect(readFileSync(resolve(root, "vite.config.ts"), "utf8")).toContain("vitePluginWaslReleaseManifest");
+    expect(readFileSync(resolve(root, "vite.config.ts"), "utf8")).toContain("sourceDigest");
   });
 
   it("keeps HTML and the release manifest out of intermediary caches", () => {

@@ -24,7 +24,7 @@ Before changing a shared engine, identify every affected tool in this document, 
 1. Run `pnpm check`, `pnpm test`, then `pnpm build` from a clean `dist` and Vite cache.
 2. Confirm the build creates `dist/public`; the deployment runtime serves this exact directory.
 3. Inspect the public HTML and verify it uses the expected entry asset. HTML must be served with `no-store`; fingerprinted assets may be immutable.
-4. Read `/wasl-release.json` from Production and confirm its `revision` matches the candidate Git revision before starting browser acceptance.
+4. Read `/wasl-release.json` from Production and confirm its `sourceDigest` matches a clean local build before starting browser acceptance. `revision` is supplemental because managed build environments may not expose Git metadata.
 5. Verify affected public routes in a clean browser session, including console/network for chunk and dynamic-import failures.
 6. Record the tool lifecycle evidence only after the route, processing, and output are accepted in Production.
 
