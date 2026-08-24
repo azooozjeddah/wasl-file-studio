@@ -401,3 +401,6 @@
 - [x] Apply «وصّل» with shadda in visible brand text, update the hero copy to «ارفع ملفك، وصّل يعرف ماذا يحتاج»، and rebalance the assistant preview card without changing upload behavior.
 - [x] Expand Home quick access from four to six cards by adding QR codes and video/audio cards while retaining the existing PDF, Word, Excel, and images cards.
 - [x] Verify Home layout, RTL, mobile/desktop responsiveness, and all six quick-access cards, then run TypeScript, tests, build, and Production verification.
+- [x] Audit the current reference-image brand branch and its header/footer dimensions to replace the unreliable shadda overlay safely.
+- [x] Render the Wasl mark with the existing linked icon and visible Arabic text «وصّل» so the shadda appears as real text in header and footer.
+- [ ] Verify the corrected brand on mobile and desktop, then run TypeScript, tests, build, and Production verification.
