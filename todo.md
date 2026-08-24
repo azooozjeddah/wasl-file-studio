@@ -408,4 +408,4 @@
 - [x] Verify the logo, action cards, and six common-tool links on mobile and desktop, then run TypeScript, tests, build, and Production verification: local checks, 108 tests, and build passed; public verification still served the preceding four-card/small-QR asset after cache-busting reloads and waits.
 - [x] Audit the existing Home featured-grid and category-card arrow layout in RTL.
 - [x] Set the six common-tool cards to a balanced 3×2 desktop grid and reserve a non-overlapping fixed arrow area in category cards.
-- [ ] Verify the grid and category-card arrows on mobile and desktop, then run TypeScript, tests, build, and Production verification.
+- [x] Verify the grid and category-card arrows on mobile and desktop, then run TypeScript, tests, build, and Production verification: 108 tests and build passed; the public URL now renders six featured cards in three equal columns with static 34px arrow slots in category cards.
