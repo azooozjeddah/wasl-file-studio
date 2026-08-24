@@ -1,10 +1,10 @@
 /* Concise, type-specific category cards shared by Home and the library. */
 .home-category-cards .home-category-card {
   display: grid;
-  grid-template-columns: 46px minmax(0, 1fr) 22px;
+  grid-template-columns: 46px minmax(0, 1fr) 38px;
   grid-template-rows: auto auto;
   min-height: 94px;
-  gap: 3px 12px;
+  gap: 3px 14px;
   padding: 15px 16px;
   direction: rtl;
   text-align: start;
@@ -27,6 +27,16 @@
 .home-category-cards .home-category-card > svg {
   grid-column: 3;
   grid-row: 1 / span 2;
+  position: static !important;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  place-items: center;
+  padding: 8px;
+  border-radius: 11px;
+  background: #f6f3ff;
+  color: #7054dc;
   align-self: center;
   justify-self: end;
 }
@@ -123,8 +133,8 @@
 @media (max-width: 560px) {
   .home-category-cards .home-category-card {
     min-height: 84px;
-    grid-template-columns: 42px minmax(0, 1fr) 18px;
-    gap: 3px 9px;
+    grid-template-columns: 42px minmax(0, 1fr) 32px;
+    gap: 3px 10px;
     padding: 12px;
   }
 
@@ -132,6 +142,8 @@
     width: 38px;
     height: 38px;
   }
+
+  .home-category-cards .home-category-card > svg { width: 29px; height: 29px; min-width: 29px; padding: 7px; border-radius: 9px; }
 
   .home-category-card b { font-size: 11px; }
   .home-category-card small { font-size: 8px; }
