@@ -1,6 +1,6 @@
 .brand-link-composed { direction:ltr; gap:8px; }
-.brand-reference-mark { display:block; width:47px; height:39px; flex:none; overflow:hidden; }
-.brand-reference-mark-image { display:block; width:132px; max-width:none; height:auto; }
+.brand-reference-mark { display:block; width:44px; height:39px; flex:none; overflow:hidden; }
+.brand-reference-mark-image { display:block; width:132px; max-width:none; height:auto; transform:translateX(-24px); }
 .brand-copy { direction:rtl; display:grid; gap:3px; }
 .brand-copy .brand-word { display:block; color:#513fc9; font-family:"Alexandria",sans-serif; font-size:28px; font-weight:900; letter-spacing:-.085em; line-height:1.02; }
 .brand-copy .brand-sub { display:block; margin:0; color:#88839b; font-family:"Alexandria",sans-serif; font-size:7px; letter-spacing:.13em; line-height:1.1; }
@@ -8,7 +8,7 @@
 @media (max-width: 560px) {
   .brand-link-composed { gap:6px; }
   .brand-reference-mark { width:39px; height:33px; }
-  .brand-reference-mark-image { width:111px; }
+  .brand-reference-mark-image { width:111px; transform:translateX(-20px); }
   .brand-copy .brand-word { font-size:23px; }
   .brand-copy .brand-sub { font-size:6px; }
 }
