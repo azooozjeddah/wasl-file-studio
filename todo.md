@@ -432,9 +432,9 @@
 - [x] Repair and real-file re-accept every tool that can be made reliable without adding new product tools, preserving local processing where practical.
 - [x] Record lifecycle reason, last test timestamp, and last test result in admin-managed catalog data for every tool.
 - [x] Rebuild, re-test, re-check Production and GitHub, then deliver a detailed tool-by-tool final report without launching or changing the domain.
-- [ ] QR فقط: مقارنة كود الإنشاء والقراءة الحالي مع آخر نسخة عملت، وتحديد التغيير المسبب للعطل دون تعديل أي أداة أخرى.
-- [ ] QR فقط: إصلاح السبب المثبت وإجراء Build واختبارات إنشاء وقراءة ومعاينة وتنزيل بمحتويات متعددة محليًا وعلى Production والجوال.
-- [ ] QR فقط: نقل الحالة إلى Ready بعد إثبات القبول الفعلي أو إبقاؤها Maintenance مع سبب دقيق وتسليم التقرير المختصر.
-- [ ] QR Production فقط: تحديد سبب استمرار HTML العام في الإشارة إلى entry bundle قديم، بما يشمل service worker وmanifest ورؤوس cache وVite ومخرجات النشر.
-- [ ] QR Production فقط: تطبيق إصلاح محدود لمسار تحميل الأصول أو cache-busting، ثم بناء نظيف ونشر والتحقق من أن الرابط العام يطلب أصول الإصدار الجديد.
-- [ ] QR Production فقط: إعادة اختبار الإنشاء والقراءة والتنزيل بالعربية والإنجليزية وعلى مقاس جوال من الرابط العام، ثم إعادة QR إلى Ready عند الإثبات فقط.
+- [x] QR فقط: مقارنة كود الإنشاء والقراءة الحالي مع آخر نسخة عملت، وتحديد التغيير المسبب للعطل دون تعديل أي أداة أخرى.
+- [x] QR فقط: إصلاح السبب المثبت وإجراء Build واختبارات إنشاء وقراءة ومعاينة وتنزيل بمحتويات متعددة محليًا وعلى Production والجوال.
+- [x] QR فقط: نقل الحالة إلى Ready بعد إثبات القبول الفعلي أو إبقاؤها Maintenance مع سبب دقيق وتسليم التقرير المختصر.
+- [x] QR Production فقط: تحديد سبب استمرار HTML العام في الإشارة إلى entry bundle قديم، بما يشمل service worker وmanifest ورؤوس cache وVite ومخرجات النشر.
+- [x] QR Production فقط: تطبيق إصلاح محدود لمسار تحميل الأصول أو cache-busting، ثم بناء نظيف ونشر والتحقق من أن الرابط العام يطلب أصول الإصدار الجديد.
+- [x] QR Production فقط: إعادة اختبار الإنشاء والقراءة والتنزيل بالعربية والإنجليزية وعلى مقاس جوال من الرابط العام، ثم إعادة QR إلى Ready عند الإثبات فقط.
