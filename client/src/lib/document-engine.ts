@@ -4,6 +4,18 @@ function normalizeText(value: string) { return value.replace(/\r/g, "").replace(
 function stripRtf(value: string) { return normalizeText(value.replace(/\\par[d]?/g, "\n").replace(/\\'[0-9a-fA-F]{2}/g, "").replace(/\\[a-zA-Z]+-?\d* ?/g, "").replace(/[{}]/g, "")); }
 function htmlText(value: string) { const parser = new DOMParser(); return normalizeText((parser.parseFromString(value, "text/html").body.innerText || "").trim()); }
 
+export function ensureExtractedPdfTextIsReadable(value: string) {
+  const visible = Array.from(value).filter(char => !/\s/.test(char));
+  if (!visible.length) return;
+  const unsupported = visible.filter(char => {
+    const code = char.codePointAt(0) || 0;
+    return code < 32 || (code >= 0x80 && code <= 0x024f);
+  });
+  if (unsupported.length / visible.length > 0.15) {
+    throw new Error("تعذر قراءة ترميز النص داخل هذا PDF بشكل سليم. لا يمكن إنشاء DOCX موثوق؛ استخدم ملف PDF بنص Unicode قابل للتحديد أو OCR.");
+  }
+}
+
 async function pdfDocument(file: File) {
   const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
@@ -61,7 +73,7 @@ async function docxToRenderedPdf(file: File, report?: (fraction: number) => void
 export async function convertDocument(file: File, slug: string, report?: (fraction: number) => void): Promise<LocalFileResult[]> {
   const mode = slug === "txt-to-pdf" || slug === "txt-to-docx" ? "txt" : slug === "html-to-pdf" ? "html" : slug === "rtf-to-pdf" ? "rtf" : slug === "word-to-pdf" ? "docx" : "pdf";
   if (slug === "word-to-pdf") return [await docxToRenderedPdf(file, report)];
-  if (slug === "pdf-to-word") { const pages = await readPdfPages(file); if (!pages.some(Boolean)) throw new Error("هذا PDF لا يحتوي نصًا قابلًا للاستخراج. استخدم أداة OCR للملفات الممسوحة ضوئيًا أولًا."); report?.(.64); const docx = await pdfPagesToDocx(pages, file); report?.(1); return [docx, { name: outputName(file.name, "extracted", "txt"), blob: new Blob([pages.join("\n\n")], { type: "text/plain" }), mime: "text/plain", details: { pages: pages.length } }]; }
+  if (slug === "pdf-to-word") { const pages = await readPdfPages(file); if (!pages.some(Boolean)) throw new Error("هذا PDF لا يحتوي نصًا قابلًا للاستخراج. استخدم أداة OCR للملفات الممسوحة ضوئيًا أولًا."); ensureExtractedPdfTextIsReadable(pages.join("\n\n")); report?.(.64); const docx = await pdfPagesToDocx(pages, file); report?.(1); return [docx, { name: outputName(file.name, "extracted", "txt"), blob: new Blob([pages.join("\n\n")], { type: "text/plain" }), mime: "text/plain", details: { pages: pages.length } }]; }
   const text = await readDocumentText(file, mode); report?.(.64);
   if (slug === "txt-to-docx") { const docx = await textToDocx(text, file, "converted"); report?.(1); return [docx, { name: outputName(file.name, "extracted", "txt"), blob: new Blob([text], { type: "text/plain" }), mime: "text/plain" }]; }
   report?.(1); return [await textToPdf(text, file, "converted")];
