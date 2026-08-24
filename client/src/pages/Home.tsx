@@ -25,6 +25,8 @@ export default function Home() {
   useEffect(() => { if (!loading && user) navigate("/dashboard"); }, [loading, navigate, user]);
   if (user) return null;
 
+  const catalogEntries = catalog.data ?? [];
+  const lifecycleBySlug = new Map(catalogEntries.map((tool: { slug: string; lifecycleStatus?: "ready" | "beta" | "maintenance" | "disabled" }) => [tool.slug, tool.lifecycleStatus]));
   const activeSlugs = new Set((catalog.data ? catalog.data : toolDefinitions).map((tool: { slug: string }) => tool.slug));
   const visibleTools = toolDefinitions.filter(tool => activeSlugs.has(tool.slug));
   const visibleCategories = siteToolCategories.filter((category) => toolsForSiteCategory(category.id, visibleTools).length > 0);
@@ -59,7 +61,7 @@ export default function Home() {
     {topAds.data?.map(slot => <ManagedAdSlot key={slot.id} label={slot.label}/>)}
     <section className="container home-featured-section" aria-labelledby="featured-tools-title">
       <div className="section-heading home-featured-heading"><div><span className="section-eyebrow">{t("وصول سريع", "QUICK ACCESS")}</span><h2 id="featured-tools-title">{t("ابدأ بأدوات تحتاجها غالبًا", "Start with the tools you use most")}</h2></div><p>{t("اختر أداة شائعة مباشرة، أو ابدأ بالملف في المساعد ليقترح الخطوة الأنسب لك.", "Open a common tool directly, or start with your file and let the assistant recommend the right next step.")}</p></div>
-      <div className="home-featured-layout home-featured-layout-tools-only"><div className="home-featured-grid">{featuredTools.map((tool, index) => <ToolCard tool={tool} index={index} key={tool.slug}/>)}</div></div>
+      <div className="home-featured-layout home-featured-layout-tools-only"><div className="home-featured-grid">{featuredTools.map((tool, index) => <ToolCard tool={tool} lifecycleStatus={lifecycleBySlug.get(tool.slug)} index={index} key={tool.slug}/>)}</div></div>
     </section>
     <section id="tools" className="tools-section container"><div className="section-heading"><div><span className="section-eyebrow">{t("اختر تصنيفًا", "CHOOSE A CATEGORY")}</span><h2>{t("أدواتك مرتبة بوضوح", "Your tools, clearly organized")}</h2></div><p>{t("تظهر الصفحة الرئيسية التصنيفات فقط. افتح التصنيف للوصول إلى كل أدواته دون تكرار أو تمرير طويل.", "The homepage shows categories only. Open one to reach all of its tools without duplication or a long scroll.")}</p></div><div id="categories" className="home-category-cards home-category-cards-short">{visibleCategories.map(category => { const Icon = category.icon; return <Link href={`/tools/${category.slug}`} key={category.id} className={`home-category-card tone-${category.tone}`}><span><Icon size={22}/></span><div><b>{isArabic ? category.labelAr : category.labelEn}</b><small>{isArabic ? category.descriptionAr : category.descriptionEn}</small></div><ArrowLeft size={16} className={isArabic ? "rotate-180" : ""}/></Link>;})}</div><Link href="/tools" className="home-tools-directory-link">{t("استعرض كل التصنيفات", "Browse all categories")}<ArrowLeft size={16} className={isArabic ? "rotate-180" : ""}/></Link></section>
     <section id="faq" className="container faq-section faq-section-compact"><div><span className="section-eyebrow">FAQ</span><h2>{t("أسئلة واضحة، إجابات واضحة.", "Clear questions. Clear answers.")}</h2></div><div className="faq-list">{managedFaq.data?.length ? managedFaq.data.slice(0, 4).map((item, index) => <details key={item.id} open={index === 0}><summary>{item.question}</summary><p>{item.answer}</p></details>) : <DefaultFaq t={t}/>}</div></section>

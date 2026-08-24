@@ -414,10 +414,10 @@
 - [x] Push the current checkpointed project state and verify the private remote and default branch.
 - [x] Collect auditable evidence for the current project, Production, tools, tests, administration, data, security, GitHub, QR, DXF, performance, and known errors without modifying code.
 - [x] Produce a comprehensive Arabic final audit report with explicit verified/unverified distinctions and a single launch-readiness judgment.
-- [ ] Capture a stable baseline and classify all 27 unresolved error logs as current, historical, non-impacting, or repair-required.
-- [ ] Repair every current reproducible error, add regression coverage, and re-test the affected tool with a real file where applicable.
-- [ ] Add a single management-owned Ready/Beta/Maintenance/Disabled status for each tool and make it control public availability and messaging.
-- [ ] Verify and classify all 56 tools; promote only tools with real-file evidence and disable or clearly mark unproven tools.
-- [ ] Re-accept core PDF, image, document, spreadsheet, OCR, QR, and DXF flows with valid results and downloads.
-- [ ] Keep unreliable media and conversion tools hidden or explicitly non-ready unless they pass real-file acceptance within the approved technical scope.
+- [x] Capture a stable baseline and classify all 27 unresolved error logs as current, historical, non-impacting, or repair-required.
+- [x] Repair every current reproducible error, add regression coverage, and re-test the affected tool with a real file where applicable.
+- [x] Add a single management-owned Ready/Beta/Maintenance/Disabled status for each tool and make it control public availability and messaging.
+- [x] Verify and classify all 56 tools; promote only tools with real-file evidence and disable or clearly mark unproven tools.
+- [x] Re-accept core PDF, image, document, spreadsheet, OCR, QR, and DXF flows with valid results and downloads.
+- [x] Keep unreliable media and conversion tools hidden or explicitly non-ready unless they pass real-file acceptance within the approved technical scope.
 - [ ] Complete admin, API, responsive, TypeScript, Vitest, production-build, public-URL, and GitHub verification before final acceptance.
