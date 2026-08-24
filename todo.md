@@ -432,3 +432,6 @@
 - [x] Repair and real-file re-accept every tool that can be made reliable without adding new product tools, preserving local processing where practical.
 - [x] Record lifecycle reason, last test timestamp, and last test result in admin-managed catalog data for every tool.
 - [x] Rebuild, re-test, re-check Production and GitHub, then deliver a detailed tool-by-tool final report without launching or changing the domain.
+- [ ] QR فقط: مقارنة كود الإنشاء والقراءة الحالي مع آخر نسخة عملت، وتحديد التغيير المسبب للعطل دون تعديل أي أداة أخرى.
+- [ ] QR فقط: إصلاح السبب المثبت وإجراء Build واختبارات إنشاء وقراءة ومعاينة وتنزيل بمحتويات متعددة محليًا وعلى Production والجوال.
+- [ ] QR فقط: نقل الحالة إلى Ready بعد إثبات القبول الفعلي أو إبقاؤها Maintenance مع سبب دقيق وتسليم التقرير المختصر.

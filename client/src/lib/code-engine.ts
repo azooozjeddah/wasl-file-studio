@@ -67,8 +67,12 @@ export async function makeStyledQrSvg(payload: string, options: {
   let cells = `${definitions}<rect width="${qrSize}" height="${qrSize}" fill="${options.light}"/>`;
   for (let row = 0; row < count; row++) for (let col = 0; col < count; col++) if (matrix.modules.data[row * count + col]) {
     const x = (col + quiet) * unit; const y = (row + quiet) * unit; const finder = finderCell(row, col, count);
-    const dot = (options.dots === "dots" && !finder) || (finder && options.eyeStyle === "dots");
-    const cellRadius = finder ? options.eyeStyle === "rounded" ? unit * .28 : options.eyeStyle === "ring" ? unit * .16 : options.eyeStyle === "leaf" ? unit * .46 : 0 : radius;
+    // QR decoders depend on finder patterns being contiguous, square modules. Applying
+    // the decorative dot/eye styles to every finder cell creates white seams and makes
+    // otherwise valid exports unreadable. Keep the three detection patterns canonical;
+    // apply visual styling only to regular data modules.
+    const dot = options.dots === "dots" && !finder;
+    const cellRadius = finder ? 0 : radius;
     if (dot) cells += `<circle cx="${x + unit / 2}" cy="${y + unit / 2}" r="${unit * .43}" fill="${fill}"/>`;
     else if (!finder && options.dots === "diamond") cells += `<path d="M${x + unit / 2} ${y + unit * .06}L${x + unit * .94} ${y + unit / 2}L${x + unit / 2} ${y + unit * .94}L${x + unit * .06} ${y + unit / 2}Z" fill="${fill}"/>`;
     else if (!finder && options.dots === "vertical") cells += `<rect x="${x + unit * .17}" y="${y}" width="${unit * .66}" height="${unit + .03}" rx="${unit * .18}" fill="${fill}"/>`;
