@@ -508,3 +508,8 @@
 - [x] repair-pdf فقط: تنفيذ تصنيف Repaired/Re-saved/Unsupported/Unrepairable والتحقق المستقل من المخرج داخل pdf-engine.ts فقط.
 - [x] repair-pdf فقط: إضافة اختبارات للوحدة وحالات قبول فعلية للـPDF السليم والصوري والعربي والمشفر وغير الصالح وstartxref المكسور.
 - [x] repair-pdf فقط: توثيق نتائج المرحلة الأولى وعدم تغيير lifecycle أو Production قبل قرار مستقل.
+- [x] preview-pdf فقط: حفظ نقطة رجوع قبل تنفيذ مسار PDF.js القراءة فقط، مع إبقاء OCR وQR وPDF→Word وpdfToImages دون تغيير.
+- [x] preview-pdf فقط: إضافة محرك فحص مستقل وواجهة معاينة Object URL دون تعديل bytes أو Canvas أو pdfToImages.
+- [x] preview-pdf فقط: إضافة اختبارات وحدة وقبول للملفات السليمة والعربية والصورية والمحمية والمعطوبة وغير PDF، واختبارات منع انحدار مشتركة.
+- [x] preview-pdf فقط: تشغيل الفحوص والبناء وعرض الفرق وحفظ المرحلة مع بقاء Lifecycle Disabled ومن دون نشر Production.
+- [x] preview-pdf فقط: تنفيذ مرحلة تحقق read-only تشمل tests وWorker والواجهة والـbytes والعينات والانحدار، من دون تعديل أو commit أو نشر.
