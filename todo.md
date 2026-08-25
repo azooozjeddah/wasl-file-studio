@@ -504,3 +504,7 @@
 - [x] OCR فقط: تنفيذ تشخيص NOTE/FOOTNOTE معزول باستخدام Tesseract baseline وTSV نفسه من دون preprocessing أو تغيير إعدادات.
 - [x] OCR فقط: ربط tokens المفقودة بالمواقع وتصنيف أسباب الفقد المؤيدة مكانيًا، مع أمثلة واضحة وتوزيع Recall/F1/CER.
 - [x] OCR فقط: إصدار Root Cause Report لـNOTE/FOOTNOTE وتوصية بحثية واحدة فقط من دون تنفيذها أو تغيير Production.
+- [ ] repair-pdf فقط: حفظ نقطة رجوع قبل تعديل مسار التصنيف والتحقق، مع الحفاظ على OCR وQR وPDF→Word دون تغيير.
+- [ ] repair-pdf فقط: تنفيذ تصنيف Repaired/Re-saved/Unsupported/Unrepairable والتحقق المستقل من المخرج داخل pdf-engine.ts فقط.
+- [ ] repair-pdf فقط: إضافة اختبارات للوحدة وحالات قبول فعلية للـPDF السليم والصوري والعربي والمشفر وغير الصالح وstartxref المكسور.
+- [ ] repair-pdf فقط: توثيق نتائج المرحلة الأولى وعدم تغيير lifecycle أو Production قبل قرار مستقل.
