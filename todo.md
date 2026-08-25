@@ -495,6 +495,12 @@
 - [x] OCR فقط: تنفيذ تجربة واحدة معزولة لتصنيف مناطق صفحة الجدول إلى TEXT/TABLE/CHART/NOTE/MIXED وحفظ الإحداثيات والمراجع.
 - [x] OCR فقط: تشغيل Tesseract الحالي فقط على المناطق النصية الملائمة وتجميع RTL، مع استبعاد CHART من إدخاله كخلية نصية.
 - [x] OCR فقط: إصدار Benchmark حسب نوع المنطقة وإجمالي CER/F1/Precision/Recall/RTL والزمن، ثم التوقف بقرار واضح دون تعديل Production. فشل F1 الإجمالي؛ توقفت التجارب بلا اقتراح دمج.
-- [ ] OCR فقط: تثبيت Baseline OCR الحالي رسميًا وتوثيق فشل تجارب Row/Cell وRegion Classification دون تغيير Production.
-- [ ] OCR فقط: تحليل مصدر فقدان Recall في الصفحة الجدولية نفسها حسب TEXT وNOTE/FOOTNOTE وCHART وTABLE/ترتيب المحتوى.
-- [ ] OCR فقط: إصدار Root Cause Report بمسارين مقترحين فقط وتوصية واحدة مبنية على F1/Recall، من دون تنفيذ أي مسار.
+- [x] OCR فقط: تثبيت Baseline OCR الحالي رسميًا وتوثيق فشل تجارب Row/Cell وRegion Classification دون تغيير Production.
+- [x] OCR فقط: تحليل مصدر فقدان Recall في الصفحة الجدولية نفسها حسب TEXT وNOTE/FOOTNOTE وCHART وTABLE/ترتيب المحتوى.
+- [x] OCR فقط: إصدار Root Cause Report بمسارين مقترحين فقط وتوصية واحدة مبنية على F1/Recall، من دون تنفيذ أي مسار.
+- [x] OCR فقط: تنفيذ تجربة Path A معزولة لوسوم CHART فقط على صفحة الجدول والمرجع نفسيهما، من دون تعديل المشروع أو Production.
+- [x] OCR فقط: قياس Chart tokens وCER/F1/Precision/Recall والزمن، ثم حساب أثر الإضافة على F1 وRecall الإجماليين مقارنة بـBaseline.
+- [x] OCR فقط: إصدار قرار Path A الصريح والتوقف دون تنفيذ تجربة جديدة أو دمج مهما كانت النتيجة. فشل Path A إذ انخفض Chart F1 وF1 الإجمالي؛ لا تجربة جديدة أو دمج.
+- [x] OCR فقط: تنفيذ تشخيص NOTE/FOOTNOTE معزول باستخدام Tesseract baseline وTSV نفسه من دون preprocessing أو تغيير إعدادات.
+- [x] OCR فقط: ربط tokens المفقودة بالمواقع وتصنيف أسباب الفقد المؤيدة مكانيًا، مع أمثلة واضحة وتوزيع Recall/F1/CER.
+- [x] OCR فقط: إصدار Root Cause Report لـNOTE/FOOTNOTE وتوصية بحثية واحدة فقط من دون تنفيذها أو تغيير Production.
