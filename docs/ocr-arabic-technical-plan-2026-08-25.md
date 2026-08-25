@@ -31,6 +31,9 @@
 | PaddleJS الرسمي | متصفح محلي | يوثق الصينية/الإنجليزية/الأرقام، لا العربية | مستبعد قبل الدمج |
 | TrOCR/Transformers.js | محلي نظريًا | النموذج العربي المرصود للخط اليدوي و0.6B معامل | غير ملائم للنص المطبوع والهاتف |
 | Kraken | مفتوح المصدر ويدعم RTL/التخطيط | CLI وPython API، لا تشغيل browser client-side | خيار خادمي خارج النطاق الحالي [1] |
+| EasyOCR | محلي في Python/Torch | توقف مختبر CPU بـ`SIGTERM` أثناء تنزيل/تهيئة نموذج الكشف والتعرف، قبل ناتج قابل للقياس | خارج ميزانية الذاكرة ولا يصلح كمسار متصفح |
+| Arabic-GLM-OCR | نموذج بصري لغوي عربي | بطاقة النموذج تطلب Python/Transformers وتعلن حجم 1B FP16 وحالة اختبار مستمرة | ليس نموذج متصفح أو هاتف عمليًا [2] |
+| OpenITI/Kraken Arabic base | نموذج عربي مطبوع 16.3 MB | منشور أساسًا للضبط الدقيق، ولم يُتحقق أو يُحسن على نطاق واسع؛ يحتاج Kraken/Python | مادة تدريب/خادم، لا بديل متصفح مباشر [3] |
 
 ## أفضل خيار تجريبي وخطة التنفيذ
 
@@ -54,3 +57,7 @@
 ## المراجع
 
 [1] [Kraken Documentation — Features and interfaces](https://kraken.re/main/)
+
+[2] [Arabic-GLM-OCR-v1 model card](https://huggingface.co/sherif1313/Arabic-GLM-OCR-v1)
+
+[3] [Printed Arabic-Script Base Model Trained on the OpenITI Corpus](https://zenodo.org/records/7050270)
