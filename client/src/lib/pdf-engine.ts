@@ -18,6 +18,70 @@ export function parsePageList(value: string | undefined, count: number) {
   if (!pages.length) throw new Error("اختر صفحة واحدة على الأقل."); return pages;
 }
 
+type ExtractedPdfVerification = { pageCount: number; orderVerified: boolean; textVerifiedPages: number };
+
+function extractPagesFailureMessage(error: unknown) {
+  const message = String(error instanceof Error ? error.message : error);
+  if (/encrypt|password|security/i.test(message)) return "الملف محمي بكلمة مرور ولا يمكن استخراج صفحاته محليًا من دون فتحه.";
+  if (/root|catalog|page tree|xref|trailer|stream|parse|invalid/i.test(message)) return "الملف PDF معطوب أو بنيته غير قابلة للقراءة؛ لا يمكن استخراج الصفحات بأمان.";
+  return "تعذر فتح PDF لاستخراج الصفحات. تأكد أن الملف PDF صالح وغير محمي.";
+}
+
+async function verifyExtractedPdf(sourceBytes: Uint8Array, outputBytes: Uint8Array, selected: number[]): Promise<ExtractedPdfVerification> {
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
+  const source = await pdfjs.getDocument({ data: sourceBytes.slice() }).promise;
+  const output = await pdfjs.getDocument({ data: outputBytes.slice() }).promise;
+  try {
+    if (output.numPages !== selected.length) throw new Error("تعذر التحقق من عدد الصفحات المستخرجة.");
+    let orderVerified = true; let textVerifiedPages = 0;
+    for (let index = 0; index < selected.length; index += 1) {
+      const [sourcePage, outputPage] = await Promise.all([source.getPage(selected[index] + 1), output.getPage(index + 1)]);
+      const sourceViewport = sourcePage.getViewport({ scale: 1 }); const outputViewport = outputPage.getViewport({ scale: 1 });
+      if (Math.abs(sourceViewport.width - outputViewport.width) > .1 || Math.abs(sourceViewport.height - outputViewport.height) > .1) orderVerified = false;
+      const [sourceContent, outputContent] = await Promise.all([sourcePage.getTextContent(), outputPage.getTextContent()]);
+      const toText = (content: any) => content.items.map((item: any) => item.str || "").join(" ").replace(/\s+/g, " ").trim();
+      const sourceText = toText(sourceContent); const outputText = toText(outputContent);
+      if (sourceText || outputText) { if (sourceText !== outputText) orderVerified = false; else textVerifiedPages += 1; }
+    }
+    if (!orderVerified) throw new Error("تعذر التحقق من ترتيب الصفحات أو محتواها المستخرج.");
+    return { pageCount: output.numPages, orderVerified, textVerifiedPages };
+  } finally { await source.cleanup?.(); await output.cleanup?.(); }
+}
+
+/** Extracts selected pages into a new PDF and independently verifies page count and order. */
+export async function extractPdfPages(file: File, pages: string, report?: (fraction: number) => void): Promise<LocalFileResult> {
+  const sourceBytes = new Uint8Array(await file.arrayBuffer());
+  if (!new TextDecoder("latin1").decode(sourceBytes.slice(0, 5)).startsWith("%PDF-")) throw new Error("هذا الملف ليس PDF صالحًا؛ تحقق من المحتوى وليس الامتداد فقط.");
+  let source: PDFDocument;
+  try { source = await PDFDocument.load(sourceBytes.slice(), { ignoreEncryption: false, updateMetadata: false }); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  let pageCount: number;
+  try { pageCount = source.getPageCount(); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  const selected = parsePageList(pages, pageCount);
+  const extracted = await PDFDocument.create();
+  let copied: Awaited<ReturnType<PDFDocument["copyPages"]>>;
+  try { copied = await extracted.copyPages(source, selected); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  try { copied.forEach(page => extracted.addPage(page)); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  report?.(.7);
+  let outputBytes: Uint8Array;
+  try { outputBytes = new Uint8Array(await extracted.save({ useObjectStreams: true })).slice(); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  let verification: ExtractedPdfVerification;
+  try { verification = await verifyExtractedPdf(sourceBytes, outputBytes, selected); }
+  catch (error) { throw new Error(error instanceof Error && /تعذر التحقق/.test(error.message) ? error.message : extractPagesFailureMessage(error)); }
+  const downloadBytes = new Uint8Array(outputBytes).slice();
+  report?.(1);
+  return {
+    name: outputName(file.name, "extracted", "pdf"), blob: new Blob([downloadBytes], { type: "application/pdf" }), mime: "application/pdf",
+    label: `تم استخراج ${verification.pageCount} ${verification.pageCount === 1 ? "صفحة" : "صفحات"} والتحقق من ترتيبها محليًا`,
+    details: { selectedPages: selected.map(index => index + 1).join(","), pageCount: verification.pageCount, orderVerified: verification.orderVerified, textVerifiedPages: verification.textVerifiedPages, originalSize: file.size },
+  };
+}
+
 async function openPdf(file: File) { try { return await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: false, updateMetadata: false }); } catch (error: any) { if (/encrypt|password|security/i.test(String(error?.message || ""))) throw new Error("الملف محمي بكلمة مرور. استخدم أداة فك حماية PDF فقط إذا كنت تملك كلمة المرور الصحيحة."); throw error; } }
 async function result(document: PDFDocument, source: File, suffix: string, extension = "pdf") { const saved = new Uint8Array(await document.save({ useObjectStreams: true })).slice(); return { name: outputName(source.name, suffix, extension), blob: new Blob([saved], { type: "application/pdf" }), mime: "application/pdf" } satisfies LocalFileResult; }
 const hexChannels = (value: string) => ({ red: parseInt(value.slice(1, 3), 16) / 255, green: parseInt(value.slice(3, 5), 16) / 255, blue: parseInt(value.slice(5, 7), 16) / 255 });
