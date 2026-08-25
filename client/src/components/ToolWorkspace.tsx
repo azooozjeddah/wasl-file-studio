@@ -6,7 +6,7 @@ import { transformImages } from "@/lib/image-engine";
 import { extractOcr } from "@/lib/ocr-engine";
 import { inspectPdfPreview } from "@/lib/pdf-preview-engine";
 import { cancelMediaProcessing, mediaInfo, processMedia } from "@/lib/media-engine";
-import { alterPdf, comparePdfs, compressPdf, countPdfFormFields, extractPdfPages, imagesToPdf, mergePdfs, pdfToImages, redactPdf, repairPdf, securePdf } from "@/lib/pdf-engine";
+import { alterPdf, comparePdfs, compressPdf, countPdfFormFields, deletePdfPages, extractPdfPages, imagesToPdf, mergePdfs, pdfToImages, redactPdf, repairPdf, securePdf } from "@/lib/pdf-engine";
 import { trpc } from "@/lib/trpc";
 import type { ToolDefinition } from "@/lib/tools";
 import { chooseProcessingRoute, serverRouteAvailable } from "@/lib/processing-route";
@@ -56,6 +56,7 @@ export default function ToolWorkspace({ tool }: { tool: ToolDefinition }) {
     if (tool.slug === "merge-pdf") return [await mergePdfs(files, report)];
     if (tool.slug === "repair-pdf") return [await repairPdf(files[0], report)];
     if (tool.slug === "extract-pdf-pages") return [await extractPdfPages(files[0], options.pages, report)];
+    if (tool.slug === "delete-pdf-pages") return [await deletePdfPages(files[0], options.pages, report)];
     if (tool.slug === "compare-pdf") { if (files.length !== 2) throw new Error(t("اختر ملفي PDF بالضبط للمقارنة.", "Choose exactly two PDF files to compare.")); return [await comparePdfs(files[0], files[1], report)]; }
     if (tool.slug === "redact-pdf") return [await redactPdf(files[0], { x: options.cropX, y: options.cropY, width: options.cropWidth, height: options.cropHeight }, report)];
     if (tool.slug === "image-to-pdf") return [await imagesToPdf(files, report)];

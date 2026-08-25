@@ -82,6 +82,41 @@ export async function extractPdfPages(file: File, pages: string, report?: (fract
   };
 }
 
+/** Deletes selected pages into a new PDF and independently verifies every retained page. */
+export async function deletePdfPages(file: File, pages: string, report?: (fraction: number) => void): Promise<LocalFileResult> {
+  const sourceBytes = new Uint8Array(await file.arrayBuffer());
+  if (!new TextDecoder("latin1").decode(sourceBytes.slice(0, 5)).startsWith("%PDF-")) throw new Error("هذا الملف ليس PDF صالحًا؛ تحقق من المحتوى وليس الامتداد فقط.");
+  let source: PDFDocument;
+  try { source = await PDFDocument.load(sourceBytes.slice(), { ignoreEncryption: false, updateMetadata: false }); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  let pageCount: number;
+  try { pageCount = source.getPageCount(); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  const removed = parsePageList(pages, pageCount);
+  const remaining = source.getPageIndices().filter(index => !new Set(removed).has(index));
+  if (!remaining.length) throw new Error("لا يمكن حذف كل صفحات PDF؛ اترك صفحة واحدة على الأقل في الناتج.");
+  const output = await PDFDocument.create();
+  let copied: Awaited<ReturnType<PDFDocument["copyPages"]>>;
+  try { copied = await output.copyPages(source, remaining); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  try { copied.forEach(page => output.addPage(page)); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  report?.(.7);
+  let outputBytes: Uint8Array;
+  try { outputBytes = new Uint8Array(await output.save({ useObjectStreams: true })).slice(); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  let verification: ExtractedPdfVerification;
+  try { verification = await verifyExtractedPdf(sourceBytes, outputBytes, remaining); }
+  catch (error) { throw new Error(error instanceof Error && /تعذر التحقق/.test(error.message) ? error.message : extractPagesFailureMessage(error)); }
+  const downloadBytes = new Uint8Array(outputBytes).slice();
+  report?.(1);
+  return {
+    name: outputName(file.name, "pages-removed", "pdf"), blob: new Blob([downloadBytes], { type: "application/pdf" }), mime: "application/pdf",
+    label: `تم حذف ${removed.length} ${removed.length === 1 ? "صفحة" : "صفحات"} والتحقق من ${verification.pageCount} صفحات متبقية محليًا`,
+    details: { removedPages: removed.map(index => index + 1).join(","), remainingPages: remaining.map(index => index + 1).join(","), pageCount: verification.pageCount, orderVerified: verification.orderVerified, textVerifiedPages: verification.textVerifiedPages, originalSize: file.size },
+  };
+}
+
 async function openPdf(file: File) { try { return await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: false, updateMetadata: false }); } catch (error: any) { if (/encrypt|password|security/i.test(String(error?.message || ""))) throw new Error("الملف محمي بكلمة مرور. استخدم أداة فك حماية PDF فقط إذا كنت تملك كلمة المرور الصحيحة."); throw error; } }
 async function result(document: PDFDocument, source: File, suffix: string, extension = "pdf") { const saved = new Uint8Array(await document.save({ useObjectStreams: true })).slice(); return { name: outputName(source.name, suffix, extension), blob: new Blob([saved], { type: "application/pdf" }), mime: "application/pdf" } satisfies LocalFileResult; }
 const hexChannels = (value: string) => ({ red: parseInt(value.slice(1, 3), 16) / 255, green: parseInt(value.slice(3, 5), 16) / 255, blue: parseInt(value.slice(5, 7), 16) / 255 });
