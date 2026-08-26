@@ -17,7 +17,7 @@ export default function Home() {
   const { isArabic, t } = useLocale();
   const [, navigate] = useLocation();
   const { user, loading } = useAuth();
-  const catalog = trpc.catalog.list.useQuery();
+  const catalog = trpc.catalog.publicHomeTools.useQuery();
   const managedFaq = trpc.catalog.publicFaq.useQuery({ locale: isArabic ? "ar" : "en" });
   const homeContent = trpc.catalog.publicContent.useQuery({ contentKey: "home_notice", locale: isArabic ? "ar" : "en" });
   const topAds = trpc.catalog.publicAdSlots.useQuery({ placement: "home_top" });
