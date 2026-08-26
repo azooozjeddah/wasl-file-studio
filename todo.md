@@ -519,3 +519,63 @@
 - [ ] delete-pdf-pages فقط: تدقيق التنفيذ الحالي وتحديد العيب وخطة الإصلاح قبل أي تعديل.
 - [ ] delete-pdf-pages فقط: حفظ نقطة رجوع ثم تنفيذ إصلاح محصور واختباره على PDF متعدد الصفحات وعربي وصوري مع تحقق الصفحات المتبقية.
 - [ ] delete-pdf-pages فقط: فحص المخرجات والبناء والـdiff وحفظ المرحلة مع بقاء Lifecycle Disabled ومن دون نشر Production.
+- [ ] delete-pdf-pages فقط: إضافة اختبارات فعلية لـdeletePdfPages على fixtures سليمة وعربية وصورية وغير صالحة، بلا تعديل implementation أو Lifecycle.
+- [x] متطلبات مرفقة: تحليل الملف المرفق وتحديد نطاق التنفيذ قبل أي تغيير وظيفي.
+- [ ] delete-pdf-pages فقط: فحص fixtures وutilities الموجودة قبل تعديل اختبار coverage فقط، مع منع تغيير implementation أو configuration أو Lifecycle.
+- [ ] delete-pdf-pages فقط: إضافة اختبارات وظيفية تستدعي deletePdfPages مباشرةً لكل fixtures متاحة، ثم التوقف فور أي فشل.
+- [x] delete-pdf-pages فقط: تشخيص جذري read-only لفشل verifyExtractedPdf ومسار fixture المعطوب؛ النتيجة DIAGNOSIS BLOCKED لغياب الاستثناء الخام، دون تعديل implementation أو الاختبارات أو الإعدادات.
+- [ ] delete-pdf-pages فقط: تنفيذ تشخيص مؤقت خارج المستودع لالتقاط استثناء PDF.js الخام ثم حذفه، مع منع أي تعديل source/tests/configuration/Lifecycle.
+- [x] delete-pdf-pages فقط: محاولة إصلاح resolution الخاص بـPDF.js Worker عبر Vite URL import؛ لم تحل اختبارات القبول، فتراجعنا عنها بلا تعديل وظيفي أو build/checkpoint أو نشر.
+- [ ] delete-pdf-pages فقط: تحقيق معماري read-only لتصميم Worker مزدوج البيئة لـPDF.js، دون تعديل source/tests/configuration أو تنفيذ.
+- [ ] delete-pdf-pages فقط: إضافة test-only adapter محصور في pdf-delete-pages.test.ts لحل PDF.js Worker عبر package resolution ثم التحقق الوظيفي والانحدار بلا تعديل production.
+- [x] delete-pdf-pages فقط: تنفيذ test-only adapter داخل pdf-delete-pages.test.ts؛ نجحت كل حالات PDF السليمة والبناء وانحدار extract، وبقي خلل PDF المعطوب منفصلًا دون إصلاح.
+- [x] delete-pdf-pages فقط: استبدال fixtureRoot المطلق بمسار نسبي مستقل عن الجهاز داخل pdf-delete-pages.test.ts فقط؛ نجحت الحالات السليمة والبناء وانحدار extract، وبقي PDF المعطوب منفصلًا.
+- [x] delete-pdf-pages فقط: إنشاء checkpoint commit نظيف 7f4f074 يضم التنفيذ والواجهة والاختبار المعتمدة فقط مقابل Baseline 98e5fa2؛ استُبعد manifest وسجل التتبع غير الأساسي.
+- [x] تدقيق قراءة فقط: التحقيق التاريخي والوظيفي لأداتي حماية PDF وإزالة كلمة المرور؛ لا توجد اختبارات وظيفية قائمة أو أدلة فشل runtime موثقة، دون تغيير كود أو اختبار أو كتالوج أو Lifecycle.
+- [x] protect-pdf فقط: توثيق خط أساس HEAD 7f4f074 وحالة الكتالوج قبل أي تحقق وظيفي مستقل؛ الأداة بقيت Disabled دون تعديل أو اختبار أو Lifecycle.
+- [ ] protect-pdf فقط: تصميم وإضافة اختبار قبول وظيفي باستخدام fixture PDF قائم، والتحقق من password gate وفتح المخرج وثبات input دون تعديل implementation أو Lifecycle.
+- [x] protect-pdf فقط: إضافة اختبار قبول وظيفي في pdf-protect.test.ts؛ تحقق password gate وفتح output بكلمة صحيحة وثبات input، ونجح TypeScript دون تغيير implementation أو Lifecycle.
+- [ ] protect-pdf فقط: مراجعة نهائية للقراءة فقط لفرق pdf-protect.test.ts وسلامة Worker/Canvas adapters دون تعديل أو commit.
+- [x] protect-pdf فقط: مراجعة نهائية لفرق pdf-protect.test.ts؛ الملف test-only ومساراته مستقلة عن الجهاز ولا يغير production أو config أو catalog أو Lifecycle.
+- [x] protect-pdf فقط: إنشاء checkpoint commit نظيف d90842d يضم pdf-protect.test.ts المعتمد فقط مقابل Baseline 7f4f074، مع استبعاد manifest وسجل التتبع.
+- [x] unlock-pdf فقط: توثيق خط الأساس وتدقيق التنفيذ والاختبارات والسجل التاريخي للقراءة فقط؛ لا توجد اختبارات unlock مخصصة أو أدلة فشل runtime موثقة، دون تعديل أو اختبار جديد أو Lifecycle.
+- [x] unlock-pdf فقط: تدقيق توليد jsPDF وخيارات التشفير لمساري unlock/protect؛ unlock يمرر encryption غير معرف، دون اختبار أو تعديل.
+- [ ] unlock-pdf فقط: إضافة اختبار قبول وظيفي في pdf-unlock.test.ts باستخدام fixture محمي حقيقي، والتحقق من correct/wrong password وفتح output بلا كلمة وثبات input دون تعديل production.
+- [x] unlock-pdf فقط: إضافة اختبار قبول وظيفي في pdf-unlock.test.ts؛ نجح correct/wrong password وفتح output بلا كلمة وثبات input وانحدار protect وTypeScript دون تغيير production.
+- [ ] unlock-pdf فقط: مراجعة نهائية للقراءة فقط لفرق pdf-unlock.test.ts وسلامة Worker/Canvas adapters دون تعديل أو commit.
+- [x] unlock-pdf فقط: مراجعة نهائية لفرق pdf-unlock.test.ts؛ الملف test-only ومساراته مستقلة عن الجهاز ولا يغير production أو config أو catalog أو Lifecycle.
+- [x] unlock-pdf فقط: إنشاء checkpoint commit نظيف c7eb855 يضم pdf-unlock.test.ts المعتمد فقط مقابل Baseline d90842d، مع استبعاد manifest وسجل التتبع.
+- [ ] PDF inventory فقط: جرد وتصنيف الأدوات المتبقية المرتبطة بـPDF وترتيبها للخطوة التالية، دون تعديل أو اختبار أو Lifecycle.
+- [x] PDF inventory فقط: جرد وتصنيف أدوات PDF وPDF-adjacent المتبقية وترتيبها للخطوة التالية، دون تعديل أو اختبار أو Lifecycle.
+- [ ] reorder-pdf-pages فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل للقراءة فقط، دون تعديل أو اختبار جديد أو Lifecycle.
+- [x] reorder-pdf-pages فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل للقراءة فقط؛ لا توجد اختبارات قبول مخصصة أو أدلة فشل runtime موثقة، دون تعديل أو اختبار جديد أو Lifecycle.
+- [ ] reorder-pdf-pages فقط: إضافة اختبار قبول وظيفي في pdf-reorder.test.ts يثبت ترتيب output الحقيقي، والسلوكيات الحدودية وثبات input دون تعديل production.
+- [x] reorder-pdf-pages فقط: إضافة اختبار قبول وظيفي في pdf-reorder.test.ts؛ نجح ترتيب output والحالات الحدودية وثبات input وانحدار protect/unlock وTypeScript دون تغيير production.
+- [ ] reorder-pdf-pages فقط: مراجعة نهائية للقراءة فقط لفرق pdf-reorder.test.ts وسلامة ترتيب الصفحات والمخرجات دون تعديل أو commit.
+- [x] reorder-pdf-pages فقط: مراجعة نهائية لفرق pdf-reorder.test.ts؛ الملف test-only ومساراته مستقلة عن الجهاز ولا يغير production أو config أو catalog أو Lifecycle.
+- [x] reorder-pdf-pages فقط: إنشاء checkpoint commit نظيف 61b701f يضم pdf-reorder.test.ts المعتمد فقط مقابل Baseline c7eb855، مع استبعاد manifest وسجل التتبع.
+- [ ] split-pdf فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل للقراءة فقط، دون تعديل أو اختبار جديد أو Lifecycle.
+- [x] split-pdf فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل للقراءة فقط؛ لا توجد اختبارات قبول مخصصة أو أدلة فشل runtime موثقة، دون تعديل أو اختبار جديد أو Lifecycle.
+- [ ] inventory فقط: جرد جميع الأدوات ذات lifecycle غير ready وفصل الدليل الفعلي عن الحالة الإدارية وترتيب مرشحي الاستعادة، دون تعديل أو اختبار أو Lifecycle.
+- [x] inventory فقط: جرد جميع الأدوات ذات lifecycle غير ready وفصل الدليل الفعلي عن الحالة الإدارية وترتيب مرشحي الاستعادة، دون تعديل أو اختبار أو Lifecycle.
+- [ ] crop-pdf فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل وخطة قبول دنيا للقراءة فقط، دون تعديل أو اختبار جديد أو Lifecycle.
+- [x] crop-pdf فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل وخطة قبول دنيا للقراءة فقط؛ لا توجد اختبارات قبول مخصصة أو أدلة فشل runtime موثقة، دون تعديل أو اختبار جديد أو Lifecycle.
+- [ ] crop-pdf فقط: إضافة اختبار قبول وظيفي في pdf-crop.test.ts يثبت CropBox وMediaBox وثبات input والرفض الحالي لاختيار صفحات غير صالح دون تعديل production.
+- [x] crop-pdf فقط: إضافة اختبار قبول وظيفي في pdf-crop.test.ts؛ نجح CropBox وMediaBox وثبات input والرفض الحالي لاختيار صفحات غير صالح وفحص TypeScript دون تغيير production.
+- [ ] crop-pdf فقط: مراجعة نهائية للقراءة فقط لفرق pdf-crop.test.ts وسلامة CropBox/MediaBox دون تعديل أو commit.
+- [x] crop-pdf فقط: مراجعة نهائية لفرق pdf-crop.test.ts؛ الملف test-only ومساراته مستقلة عن الجهاز ولا يغير production أو config أو catalog أو Lifecycle.
+- [x] crop-pdf فقط: إنشاء checkpoint Git نظيف 1dfb4f2 يضم pdf-crop.test.ts المعتمد فقط مقابل HEAD 61b701f9، مع استبعاد manifest وسجل التتبع.
+- [ ] pdf-resize فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل وخطة قبول دنيا للقراءة فقط، دون تعديل أو اختبار جديد أو Lifecycle.
+- [x] pdf-resize فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل وخطة قبول دنيا للقراءة فقط؛ لا توجد اختبارات قبول مخصصة أو أدلة فشل runtime موثقة، دون تعديل أو اختبار جديد أو Lifecycle.
+- [ ] pdf-resize فقط: إضافة اختبار قبول وظيفي متوافق مع عقد alterPdf ثم تفعيل Lifecycle فقط إذا نجحت حالات resize المطلوبة وفحص TypeScript.
+- [x] pdf-resize فقط: إضافة اختبار قبول وظيفي متوافق مع عقد alterPdf؛ نجحت حالات resize المطلوبة وفحص TypeScript، وتم تفعيل Lifecycle إلى ready دون تعديل المحرك.
+- [ ] pdf-resize فقط: استعادة Lifecycle إلى Disabled بعد مخالفة ترتيب القبول، ثم تأكيد أن التغيير المتبقي هو pdf-resize.test.ts فقط قبل مراجعة الفرق.
+- [x] pdf-resize فقط: استعادة Lifecycle إلى Disabled بعد مخالفة ترتيب القبول؛ بقي pdf-resize.test.ts التغيير الوظيفي الوحيد قبل مراجعة الفرق.
+- [ ] pdf-resize فقط: مراجعة نهائية للقراءة فقط لفرق pdf-resize.test.ts ومطابقتها لعقد resize الفعلي دون تعديل أو تفعيل أو commit.
+- [x] pdf-resize فقط: مراجعة نهائية لفرق pdf-resize.test.ts؛ الملف test-only ومساراته مستقلة عن الجهاز ويطابق عقد resize الفعلي دون تغيير production أو Lifecycle.
+- [ ] pdf-resize فقط: إنشاء checkpoint Git نظيف يضم pdf-resize.test.ts المعتمد فقط مع الإبقاء على Lifecycle Disabled واستبعاد manifest وسجل التتبع.
+- [x] pdf-resize فقط: إنشاء checkpoint Git نظيف 452f3e0 يضم pdf-resize.test.ts المعتمد فقط مع الإبقاء على Lifecycle Disabled واستبعاد manifest وسجل التتبع.
+- [ ] compare-pdf فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل وخطة قبول دنيا للقراءة فقط، دون تعديل أو اختبار جديد أو Lifecycle.
+- [x] compare-pdf فقط: توثيق خط الأساس وتدقيق الواجهة والتنفيذ والاختبارات والسجل وخطة قبول دنيا للقراءة فقط؛ لا توجد اختبارات قبول مخصصة أو أدلة فشل runtime موثقة، دون تعديل أو اختبار جديد أو Lifecycle.
+- [ ] compare-pdf فقط: إضافة اختبار قبول وظيفي في pdf-compare.test.ts يثبت عقد المقارنة النصية والتقرير وثبات input دون تعديل production أو Lifecycle.
+- [ ] backup فقط: إنشاء والتحقق من checkpoint لمصدر المشروع وإعداداته غير الحساسة دون فحص أو تصدير بيانات المستخدمين أو الأسرار.
