@@ -10,7 +10,7 @@ import "./category-polish.css";
 
 export default function ToolsIndexPage() {
   const { isArabic, t } = useLocale();
-  const catalog = trpc.catalog.list.useQuery();
+  const catalog = trpc.catalog.publicHomeTools.useQuery();
   const activeSlugs = new Set((catalog.data ? catalog.data : toolDefinitions).map((tool: { slug: string }) => tool.slug));
   const categories = siteToolCategories.filter((category) => toolsForSiteCategory(category.id, toolDefinitions).some((tool) => activeSlugs.has(tool.slug)));
 

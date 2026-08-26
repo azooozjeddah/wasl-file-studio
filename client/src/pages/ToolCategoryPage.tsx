@@ -13,7 +13,7 @@ export default function ToolCategoryPage() {
   const { isArabic, t } = useLocale();
   const [, params] = useRoute("/tools/:categorySlug");
   const category = findSiteCategory(params?.categorySlug || "");
-  const catalog = trpc.catalog.list.useQuery();
+  const catalog = trpc.catalog.publicHomeTools.useQuery();
   if (!category) return <PublicLayout><main className="category-empty container"><h1>{t("هذا التصنيف غير متاح", "This category is unavailable")}</h1><Link href="/tools">{t("العودة إلى الأدوات", "Back to tools")}</Link></main></PublicLayout>;
   const activeSlugs = new Set((catalog.data ? catalog.data : toolDefinitions).map((tool: { slug: string }) => tool.slug));
   const tools = toolsForSiteCategory(category.id, toolDefinitions).filter((tool) => activeSlugs.has(tool.slug));

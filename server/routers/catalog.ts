@@ -10,6 +10,11 @@ export const catalogRouter = router({
     if (!db) return [];
     return db.select().from(toolCatalog).where(and(eq(toolCatalog.isActive, true), ne(toolCatalog.lifecycleStatus, "disabled"))).orderBy(asc(toolCatalog.sortOrder));
   }),
+  publicHomeTools: publicProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+    return db.select().from(toolCatalog).where(and(eq(toolCatalog.isActive, true), ne(toolCatalog.lifecycleStatus, "disabled"), eq(toolCatalog.showOnHome, true))).orderBy(asc(toolCatalog.sortOrder));
+  }),
   availability: publicProcedure.input(z.object({ slug: z.string().min(2).max(80) })).query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) return null;
