@@ -49,6 +49,16 @@ async function verifyExtractedPdf(sourceBytes: Uint8Array, outputBytes: Uint8Arr
   } finally { await source.cleanup?.(); await output.cleanup?.(); }
 }
 
+async function verifyPdfSourceReadable(sourceBytes: Uint8Array, expectedPageCount: number) {
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.mjs", import.meta.url).toString();
+  const source = await pdfjs.getDocument({ data: sourceBytes.slice() }).promise;
+  try {
+    if (source.numPages !== expectedPageCount) throw new Error("PDF page count mismatch");
+    for (let index = 1; index <= source.numPages; index += 1) await source.getPage(index);
+  } finally { await source.cleanup?.(); }
+}
+
 /** Extracts selected pages into a new PDF and independently verifies page count and order. */
 export async function extractPdfPages(file: File, pages: string, report?: (fraction: number) => void): Promise<LocalFileResult> {
   const sourceBytes = new Uint8Array(await file.arrayBuffer());
@@ -91,6 +101,8 @@ export async function deletePdfPages(file: File, pages: string, report?: (fracti
   catch (error) { throw new Error(extractPagesFailureMessage(error)); }
   let pageCount: number;
   try { pageCount = source.getPageCount(); }
+  catch (error) { throw new Error(extractPagesFailureMessage(error)); }
+  try { await verifyPdfSourceReadable(sourceBytes, pageCount); }
   catch (error) { throw new Error(extractPagesFailureMessage(error)); }
   const removed = parsePageList(pages, pageCount);
   const remaining = source.getPageIndices().filter(index => !new Set(removed).has(index));
