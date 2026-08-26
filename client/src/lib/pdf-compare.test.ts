@@ -1,21 +1,24 @@
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import { PDFDocument } from "pdf-lib";
-import { describe, expect, it, vi } from "vitest";
+import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const testRequire = createRequire(import.meta.url);
 const resolvedPdfjsWorkerUrl = pathToFileURL(testRequire.resolve("pdfjs-dist/legacy/build/pdf.worker.mjs")).toString();
+const workerSrcDescriptor = Object.getOwnPropertyDescriptor(pdfjs.GlobalWorkerOptions, "workerSrc");
 
-vi.mock("pdfjs-dist/legacy/build/pdf.mjs", async importOriginal => {
-  const actual = await importOriginal<typeof import("pdfjs-dist/legacy/build/pdf.mjs")>();
-  const realWorkerOptions = actual.GlobalWorkerOptions;
-  return {
-    ...actual,
-    GlobalWorkerOptions: {
-      get workerSrc() { return realWorkerOptions.workerSrc; },
-      set workerSrc(_assignedByProduction: string) { realWorkerOptions.workerSrc = resolvedPdfjsWorkerUrl; },
-    },
-  };
+beforeAll(() => {
+  if (!workerSrcDescriptor?.get || !workerSrcDescriptor.set) throw new Error("PDF.js workerSrc descriptor is unavailable in this test environment.");
+  Object.defineProperty(pdfjs.GlobalWorkerOptions, "workerSrc", {
+    configurable: true,
+    get: workerSrcDescriptor.get,
+    set(_assignedByProduction: string) { workerSrcDescriptor.set!.call(pdfjs.GlobalWorkerOptions, resolvedPdfjsWorkerUrl); },
+  });
+});
+
+afterAll(() => {
+  if (workerSrcDescriptor) Object.defineProperty(pdfjs.GlobalWorkerOptions, "workerSrc", workerSrcDescriptor);
 });
 
 import { comparePdfs } from "./pdf-engine";
