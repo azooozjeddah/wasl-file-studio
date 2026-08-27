@@ -1,9 +1,11 @@
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, inArray, like, or, sql } from "drizzle-orm";
+import { randomBytes } from "node:crypto";
 import { z } from "zod";
-import { adminAuditLogs, adminRoles, adSlots, analyticsEvents, contactMessages, contentEntries, errorLogs, faqEntries, passwordResetTokens, processingJobs, processingWorkers, siteSettings, subscriptionPlans, toolCatalog, userPlanAssignments, userRoleAssignments, userToolPermissions, users } from "../../drizzle/schema";
+import { adminAuditLogs, adminRoles, adSlots, analyticsEvents, contactMessages, contentEntries, errorLogs, faqEntries, passwordResetTokens, processingJobEvents, processingJobs, processingWorkers, siteSettings, subscriptionPlans, temporaryFileReferences, toolCatalog, usageCounters, userPlanAssignments, userRoleAssignments, userToolPermissions, users } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { adminProcedure, router } from "../_core/trpc";
+import { createPasswordResetToken, createWaslAccount, sendWaslAccountInviteEmail } from "../auth/waslAuth";
 import { releaseExpiredTemporaryFiles } from "../processing/cleanup";
 
 const toolInput = z.object({ id: z.number().optional(), slug: z.string().min(2).max(80), category: z.enum(["pdf", "image", "document", "spreadsheet", "ocr", "code", "sign", "utility", "audio", "video"]), nameAr: z.string().min(2).max(140), nameEn: z.string().min(2).max(140), descriptionAr: z.string().max(2000).optional(), descriptionEn: z.string().max(2000).optional(), icon: z.string().max(40).default("FileCog"), processingMode: z.enum(["local", "server", "hybrid", "server-ready"]), supportedFormats: z.array(z.string()).max(20), sizeLimitMb: z.number().int().min(1).max(2048), sortOrder: z.number().int().min(0), isActive: z.boolean(), lifecycleStatus: z.enum(["ready", "beta", "maintenance", "disabled"]).default("beta"), lifecycleReasonAr: z.string().max(2000).optional(), lastTestResult: z.string().max(500).optional(), lastTestedAt: z.coerce.date().nullable().optional(), isFeatured: z.boolean(), showOnHome: z.boolean(), seoTitleAr: z.string().max(180).optional(), seoTitleEn: z.string().max(180).optional(), seoDescriptionAr: z.string().max(500).optional(), seoDescriptionEn: z.string().max(500).optional() });
@@ -13,14 +15,45 @@ const planInput = z.object({ id: z.number().optional(), code: z.enum(["free", "b
 
 async function dbOrThrow() { const db = await getDb(); if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "قاعدة البيانات غير متاحة حاليًا" }); return db; }
 async function audit(db: any, actorUserId: number, action: string, entityType: string, entityId?: string | number, summary?: string) { await db.insert(adminAuditLogs).values({ actorUserId, action, entityType, entityId: entityId === undefined ? null : String(entityId), summary: summary?.slice(0, 500) ?? null }); }
+const managedUserInput = z.object({ name: z.string().trim().min(2).max(120), email: z.string().trim().email().max(320), role: z.enum(["user", "admin"]) });
+const userSearchInput = z.object({ page: z.number().int().min(1).default(1), pageSize: z.number().int().min(5).max(100).default(20), search: z.string().trim().max(120).default("") }).optional();
+
+async function activeAdminCount(db: any) {
+  const [row] = await db.select({ total: count() }).from(users).where(and(eq(users.waslAccount, true), eq(users.role, "admin"), eq(users.accountStatus, "active")));
+  return Number(row?.total || 0);
+}
+
+async function assertLastActiveAdminIsPreserved(db: any, target: { role: "admin" | "user"; accountStatus: "active" | "suspended" }, makesInactive: boolean) {
+  if (target.role === "admin" && target.accountStatus === "active" && makesInactive && await activeAdminCount(db) <= 1) {
+    throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكن تنفيذ الإجراء لأنه سيزيل آخر مدير نشط في المنصة." });
+  }
+}
 
 export const adminRouter = router({
   dashboard: adminProcedure.query(async () => {
-    const db = await dbOrThrow(); const [tools, events, errors, plans, roles] = await Promise.all([db.select().from(toolCatalog), db.select().from(analyticsEvents), db.select().from(errorLogs).orderBy(desc(errorLogs.updatedAt)).limit(50), db.select().from(subscriptionPlans), db.select().from(adminRoles)]);
-    const successful = events.filter(event => event.eventType === "process_success").length; const failed = events.filter(event => event.eventType === "process_error").length;
-    const usage = tools.map(tool => ({ slug: tool.slug, nameAr: tool.nameAr, count: events.filter(event => event.toolSlug === tool.slug && event.eventType === "process_success").length })).sort((a, b) => b.count - a.count);
-    const days = Array.from({ length: 7 }, (_, offset) => { const date = new Date(); date.setDate(date.getDate() - (6 - offset)); const key = date.toISOString().slice(0, 10); const dayEvents = events.filter(event => event.createdAt.toISOString().slice(0, 10) === key); return { key, label: key.slice(5), operations: dayEvents.filter(event => event.eventType === "process_success" || event.eventType === "process_error").length, visits: dayEvents.filter(event => event.eventType === "visit").length }; });
-    return { totalEvents: events.length, visits: events.filter(event => event.eventType === "visit").length, processedFiles: successful + failed, successful, failed, activeTools: tools.filter(tool => tool.isActive).length, configuredPlans: plans.length, configuredRoles: roles.length, usage, days, recentErrors: errors };
+    const db = await dbOrThrow();
+    const [userSummary, publicToolsSummary, eventSummary, unresolvedErrorSummary, settings, recentUsers] = await Promise.all([
+      db.select({ total: count(), active: sql<number>`sum(case when ${users.accountStatus} = 'active' then 1 else 0 end)`, admins: sql<number>`sum(case when ${users.role} = 'admin' and ${users.accountStatus} = 'active' then 1 else 0 end)` }).from(users).where(eq(users.waslAccount, true)),
+      db.select({ total: count() }).from(toolCatalog).where(and(eq(toolCatalog.isActive, true), eq(toolCatalog.showOnHome, true), eq(toolCatalog.lifecycleStatus, "ready"))),
+      db.select({ successful: sql<number>`sum(case when ${analyticsEvents.eventType} = 'process_success' then 1 else 0 end)`, failed: sql<number>`sum(case when ${analyticsEvents.eventType} = 'process_error' then 1 else 0 end)` }).from(analyticsEvents),
+      db.select({ total: count() }).from(errorLogs).where(eq(errorLogs.isResolved, false)),
+      db.select({ serverProcessingEnabled: siteSettings.serverProcessingEnabled, defaultProcessingMode: siteSettings.defaultProcessingMode }).from(siteSettings).limit(1),
+      db.select({ id: users.id, name: users.name, email: users.email, role: users.role, accountStatus: users.accountStatus, lastSignedIn: users.lastSignedIn }).from(users).where(eq(users.waslAccount, true)).orderBy(desc(users.lastSignedIn)).limit(5),
+    ]);
+    const summary = userSummary[0];
+    const events = eventSummary[0];
+    return {
+      totalUsers: Number(summary?.total || 0),
+      activeUsers: Number(summary?.active || 0),
+      adminUsers: Number(summary?.admins || 0),
+      publicTools: Number(publicToolsSummary[0]?.total || 0),
+      successful: Number(events?.successful || 0),
+      failed: Number(events?.failed || 0),
+      unresolvedErrors: Number(unresolvedErrorSummary[0]?.total || 0),
+      recentUsers,
+      serverProcessingEnabled: Boolean(settings[0]?.serverProcessingEnabled),
+      defaultProcessingMode: settings[0]?.defaultProcessingMode || "local",
+    };
   }),
   contactMessages: adminProcedure.query(async () => (await dbOrThrow()).select().from(contactMessages).orderBy(desc(contactMessages.createdAt)).limit(200)),
   setContactMessageStatus: adminProcedure.input(z.object({ id: z.number().int().positive(), status: z.enum(["new", "read"]) })).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); await db.update(contactMessages).set({ status: input.status, readAt: input.status === "read" ? new Date() : null }).where(eq(contactMessages.id, input.id)); await audit(db, ctx.user.id, `contact.${input.status}`, "contact_message", input.id); return { success: true }; }),
@@ -43,10 +76,39 @@ export const adminRouter = router({
   saveRole: adminProcedure.input(z.object({ id: z.number().optional(), code: z.string().regex(/^[a-z][a-z0-9_.-]{1,63}$/), nameAr: z.string().min(2).max(100), nameEn: z.string().min(2).max(100), description: z.string().max(1000).optional(), permissions: z.array(z.string()).min(1).max(100), isSystem: z.boolean() })).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); const { id, ...values } = input; if (id) await db.update(adminRoles).set(values).where(eq(adminRoles.id, id)); else await db.insert(adminRoles).values(values); await audit(db, ctx.user.id, "role.saved", "role", id, values.code); return { success: true }; }),
   assignments: adminProcedure.query(async () => (await dbOrThrow()).select().from(userRoleAssignments).orderBy(desc(userRoleAssignments.createdAt))),
   assignRole: adminProcedure.input(z.object({ userId: z.number().int().positive(), roleId: z.number().int().positive() })).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); await db.insert(userRoleAssignments).values({ ...input, assignedBy: ctx.user.id }); await audit(db, ctx.user.id, "role.assigned", "user_role", input.userId, String(input.roleId)); return { success: true }; }),
-  users: adminProcedure.query(async () => (await dbOrThrow()).select({ id: users.id, name: users.name, email: users.email, loginMethod: users.loginMethod, role: users.role, accountStatus: users.accountStatus, createdAt: users.createdAt, updatedAt: users.updatedAt, lastSignedIn: users.lastSignedIn }).from(users).where(eq(users.waslAccount, true)).orderBy(desc(users.lastSignedIn)).limit(200)),
-  setPlatformRole: adminProcedure.input(z.object({ userId: z.number().int().positive(), role: z.enum(["admin", "user"]) })).mutation(async ({ input, ctx }) => { if (input.userId === ctx.user.id && input.role !== "admin") throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكنك إزالة صلاحية مدير النظام من حسابك الحالي." }); const db = await dbOrThrow(); const target = await db.select({ id: users.id }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target[0]) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); await db.update(users).set({ role: input.role }).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, "user.platform_role.updated", "user", input.userId, input.role); return { success: true }; }),
-  setUserAccountStatus: adminProcedure.input(z.object({ userId: z.number().int().positive(), accountStatus: z.enum(["active", "suspended"]) })).mutation(async ({ input, ctx }) => { if (input.userId === ctx.user.id && input.accountStatus === "suspended") throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكنك تعطيل حساب المدير الحالي." }); const db = await dbOrThrow(); const target = await db.select({ id: users.id }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target[0]) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); await db.update(users).set({ accountStatus: input.accountStatus }).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, input.accountStatus === "suspended" ? "user.suspended" : "user.activated", "user", input.userId, input.accountStatus); return { success: true }; }),
-  deleteUserAccount: adminProcedure.input(z.object({ userId: z.number().int().positive() })).mutation(async ({ input, ctx }) => { if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكنك حذف حساب المدير الحالي من هذه الواجهة." }); const db = await dbOrThrow(); const target = await db.select({ id: users.id, email: users.email }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target[0]) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, input.userId)); await db.delete(userPlanAssignments).where(eq(userPlanAssignments.userId, input.userId)); await db.delete(userRoleAssignments).where(eq(userRoleAssignments.userId, input.userId)); await db.delete(users).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, "user.deleted", "user", input.userId, target[0].email || ""); return { success: true }; }),
+  users: adminProcedure.input(userSearchInput).query(async ({ input }) => {
+    const db = await dbOrThrow(); const page = input?.page ?? 1; const pageSize = input?.pageSize ?? 20; const search = input?.search.trim() ?? "";
+    const where = search ? and(eq(users.waslAccount, true), or(like(users.name, `%${search}%`), like(users.email, `%${search}%`))) : eq(users.waslAccount, true);
+    const [summary, items] = await Promise.all([
+      db.select({ total: count() }).from(users).where(where),
+      db.select({ id: users.id, name: users.name, email: users.email, loginMethod: users.loginMethod, role: users.role, accountStatus: users.accountStatus, createdAt: users.createdAt, updatedAt: users.updatedAt, lastSignedIn: users.lastSignedIn }).from(users).where(where).orderBy(desc(users.lastSignedIn)).limit(pageSize).offset((page - 1) * pageSize),
+    ]);
+    return { items, total: Number(summary[0]?.total || 0), page, pageSize };
+  }),
+  createUser: adminProcedure.input(managedUserInput).mutation(async ({ input, ctx }) => {
+    const temporaryPassword = randomBytes(48).toString("base64url");
+    const account = await createWaslAccount({ ...input, password: temporaryPassword });
+    const db = await dbOrThrow();
+    try {
+      const { rawToken } = await createPasswordResetToken(account);
+      const baseUrl = `${ctx.req.protocol}://${ctx.req.get("host")}`;
+      await sendWaslAccountInviteEmail({ to: account.email!, role: input.role, setPasswordUrl: `${baseUrl}/login?token=${encodeURIComponent(rawToken)}` });
+    } catch {
+      await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, account.id));
+      await db.delete(users).where(eq(users.id, account.id));
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "تعذر إرسال دعوة الحساب؛ لم يُنشأ الحساب." });
+    }
+    await audit(db, ctx.user.id, "user.invited", "user", account.id, input.role);
+    return { id: account.id, name: account.name, email: account.email, role: account.role };
+  }),
+  updateUser: adminProcedure.input(z.object({ userId: z.number().int().positive(), name: z.string().trim().min(2).max(120), email: z.string().trim().email().max(320) })).mutation(async ({ input, ctx }) => {
+    const db = await dbOrThrow(); const [target] = await db.select({ id: users.id }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." });
+    const email = input.email.toLowerCase(); const [sameEmail] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1); if (sameEmail && sameEmail.id !== input.userId) throw new TRPCError({ code: "CONFLICT", message: "يوجد حساب مسجل بهذا البريد الإلكتروني." });
+    await db.update(users).set({ name: input.name, email }).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, "user.profile.updated", "user", input.userId); return { success: true };
+  }),
+  setPlatformRole: adminProcedure.input(z.object({ userId: z.number().int().positive(), role: z.enum(["admin", "user"]) })).mutation(async ({ input, ctx }) => { if (input.userId === ctx.user.id && input.role !== "admin") throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكنك إزالة صلاحية مدير النظام من حسابك الحالي." }); const db = await dbOrThrow(); const [target] = await db.select({ id: users.id, role: users.role, accountStatus: users.accountStatus }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); await assertLastActiveAdminIsPreserved(db, target, input.role !== "admin"); await db.update(users).set({ role: input.role }).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, "user.platform_role.updated", "user", input.userId, input.role); return { success: true }; }),
+  setUserAccountStatus: adminProcedure.input(z.object({ userId: z.number().int().positive(), accountStatus: z.enum(["active", "suspended"]) })).mutation(async ({ input, ctx }) => { if (input.userId === ctx.user.id && input.accountStatus === "suspended") throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكنك تعطيل حساب المدير الحالي." }); const db = await dbOrThrow(); const [target] = await db.select({ id: users.id, role: users.role, accountStatus: users.accountStatus }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); await assertLastActiveAdminIsPreserved(db, target, input.accountStatus === "suspended"); await db.update(users).set({ accountStatus: input.accountStatus }).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, input.accountStatus === "suspended" ? "user.suspended" : "user.activated", "user", input.userId, input.accountStatus); return { success: true }; }),
+  deleteUserAccount: adminProcedure.input(z.object({ userId: z.number().int().positive() })).mutation(async ({ input, ctx }) => { if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "لا يمكنك حذف حساب المدير الحالي من هذه الواجهة." }); const db = await dbOrThrow(); const [target] = await db.select({ id: users.id, role: users.role, accountStatus: users.accountStatus }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); await assertLastActiveAdminIsPreserved(db, target, true); const jobs = await db.select({ id: processingJobs.id }).from(processingJobs).where(eq(processingJobs.ownerUserId, input.userId)); const jobIds = jobs.map(job => job.id); if (jobIds.length) { await db.delete(processingJobEvents).where(inArray(processingJobEvents.jobId, jobIds)); await db.delete(temporaryFileReferences).where(inArray(temporaryFileReferences.jobId, jobIds)); await db.delete(processingJobs).where(eq(processingJobs.ownerUserId, input.userId)); } await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, input.userId)); await db.delete(userPlanAssignments).where(eq(userPlanAssignments.userId, input.userId)); await db.delete(userRoleAssignments).where(eq(userRoleAssignments.userId, input.userId)); await db.delete(userToolPermissions).where(eq(userToolPermissions.userId, input.userId)); await db.delete(usageCounters).where(eq(usageCounters.userId, input.userId)); await db.delete(users).where(eq(users.id, input.userId)); await audit(db, ctx.user.id, "user.deleted", "user", input.userId); return { success: true }; }),
   userToolPermissions: adminProcedure.input(z.object({ userId: z.number().int().positive() })).query(async ({ input }) => (await dbOrThrow()).select().from(userToolPermissions).where(eq(userToolPermissions.userId, input.userId))),
   setUserToolPermission: adminProcedure.input(z.object({ userId: z.number().int().positive(), toolSlug: z.string().min(2).max(80), isAllowed: z.boolean() })).mutation(async ({ input, ctx }) => { const db = await dbOrThrow(); const [target] = await db.select({ id: users.id }).from(users).where(and(eq(users.id, input.userId), eq(users.waslAccount, true))).limit(1); if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "المستخدم غير موجود." }); const [existing] = await db.select({ id: userToolPermissions.id }).from(userToolPermissions).where(and(eq(userToolPermissions.userId, input.userId), eq(userToolPermissions.toolSlug, input.toolSlug))).limit(1); if (existing) await db.update(userToolPermissions).set({ isAllowed: input.isAllowed, assignedBy: ctx.user.id }).where(eq(userToolPermissions.id, existing.id)); else await db.insert(userToolPermissions).values({ ...input, assignedBy: ctx.user.id }); await audit(db, ctx.user.id, input.isAllowed ? "user.tool.allowed" : "user.tool.blocked", "user_tool", input.userId, input.toolSlug); return { success: true }; }),
   userPlans: adminProcedure.query(async () => (await dbOrThrow()).select().from(userPlanAssignments).orderBy(desc(userPlanAssignments.updatedAt)).limit(200)),
