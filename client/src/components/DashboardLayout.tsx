@@ -20,7 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/useMobile";
-import { FileLock2, LayoutDashboard, LogOut, PanelLeft, Settings, Users, Wrench } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Settings, Users, Wrench } from "lucide-react";
 import { CSSProperties } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -31,7 +31,6 @@ const menuItems = [
   { key: "dashboard", icon: LayoutDashboard, label: "نظرة عامة", path: "/admin" },
   { key: "users", icon: Users, label: "المستخدمون والأدوار", path: "/admin/users" },
   { key: "tools", icon: Wrench, label: "الأدوات", path: "/admin?tab=tools" },
-  { key: "office", icon: FileLock2, label: "Office الداخلي", path: "/admin/office" },
   { key: "operations", icon: LayoutDashboard, label: "العمليات والتنبيهات", path: "/admin?tab=operations" },
   { key: "settings", icon: Settings, label: "الإعدادات", path: "/admin?tab=business" },
 ];

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../_core/trpc";
+import { protectedProcedure, router } from "../_core/trpc";
 import { OFFICE_MAX_BASE64_LENGTH, officeOperations, processOfficeEncryption } from "../officeEncryption";
 
 const officeEncryptionInput = z.object({
@@ -11,5 +11,5 @@ const officeEncryptionInput = z.object({
 });
 
 export const officeEncryptionRouter = router({
-  process: adminProcedure.input(officeEncryptionInput).mutation(async ({ input }) => processOfficeEncryption(input)),
+  process: protectedProcedure.input(officeEncryptionInput).mutation(async ({ input }) => processOfficeEncryption(input)),
 });

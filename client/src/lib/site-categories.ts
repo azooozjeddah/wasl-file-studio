@@ -28,7 +28,7 @@ export const siteToolCategories: SiteToolCategory[] = [
 
 export function siteCategoryForTool(tool: ToolDefinition): SiteCategoryId {
   if (tool.category === "pdf" || tool.category === "sign") return "pdf";
-  if (["word-to-pdf", "pdf-to-word", "txt-to-docx"].includes(tool.slug)) return "word";
+  if (["word-to-pdf", "pdf-to-word", "txt-to-docx", "protect-word", "unlock-word"].includes(tool.slug)) return "word";
   if (tool.category === "document" || tool.category === "ocr") return "documents";
   if (tool.category === "spreadsheet") return "excel";
   if (tool.category === "image") return "images";
