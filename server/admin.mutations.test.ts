@@ -27,8 +27,8 @@ describe("admin mutations", () => {
     const caller = appRouter.createCaller(adminContext);
     dbMock.select.mockImplementationOnce(() => ({ from: () => ({ where: () => ({ limit: async () => [{ id: 41 }] }) }) }));
     await expect(caller.admin.setUserAccountStatus({ userId: 41, accountStatus: "suspended" })).resolves.toEqual({ success: true });
-    dbMock.select.mockImplementationOnce(() => ({ from: () => ({ where: () => ({ limit: async () => [{ id: 41, email: "member@example.com" }] }) }) }));
+    dbMock.select.mockImplementationOnce(() => ({ from: () => ({ where: () => ({ limit: async () => [{ id: 41, role: "user", accountStatus: "active" }] }) }) })).mockImplementationOnce(() => ({ from: () => ({ where: async () => [] }) }));
     await expect(caller.admin.deleteUserAccount({ userId: 41 })).resolves.toEqual({ success: true });
-    expect(dbMock.update).toHaveBeenCalled(); expect(dbMock.delete).toHaveBeenCalledTimes(4);
+    expect(dbMock.update).toHaveBeenCalled(); expect(dbMock.delete).toHaveBeenCalledTimes(6);
   });
 });

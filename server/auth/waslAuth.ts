@@ -138,3 +138,10 @@ export async function sendPasswordResetEmail(input: { to: string; resetUrl: stri
   const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${ENV.resendApiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Wasl <onboarding@resend.dev>", to: [input.to], subject: "إعادة تعيين كلمة مرور وَصل", html: `<main dir="rtl" style="font-family:Arial,sans-serif;line-height:1.7"><h2>إعادة تعيين كلمة المرور</h2><p>طلبت إعادة تعيين كلمة مرور حسابك في وَصل. الرابط صالح لمدة 30 دقيقة ويستخدم مرة واحدة فقط.</p><p><a href="${input.resetUrl}" style="display:inline-block;background:#7157F8;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none">تعيين كلمة مرور جديدة</a></p><p>إذا لم تطلب ذلك، يمكنك تجاهل هذه الرسالة.</p></main>` }) });
   if (!response.ok) throw new Error("تعذر إرسال رسالة إعادة التعيين.");
 }
+
+export async function sendWaslAccountInviteEmail(input: { to: string; setPasswordUrl: string; role: "user" | "admin" }) {
+  if (!ENV.resendApiKey) throw new Error("خدمة البريد غير مهيأة.");
+  const roleLabel = input.role === "admin" ? "مدير" : "مستخدم";
+  const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${ENV.resendApiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Wasl <onboarding@resend.dev>", to: [input.to], subject: "دعوة إلى حساب وَصل", html: `<main dir="rtl" style="font-family:Arial,sans-serif;line-height:1.7"><h2>مرحبًا بك في وَصل</h2><p>أنشأ مدير المنصة حسابًا لك بصلاحية ${roleLabel}. اختر كلمة مرورك عبر الرابط التالي؛ الرابط صالح لمدة 30 دقيقة ويُستخدم مرة واحدة فقط.</p><p><a href="${input.setPasswordUrl}" style="display:inline-block;background:#7157F8;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none">تعيين كلمة المرور</a></p><p>إذا لم تكن تتوقع هذه الدعوة، يمكنك تجاهل الرسالة.</p></main>` }) });
+  if (!response.ok) throw new Error("تعذر إرسال دعوة الحساب.");
+}

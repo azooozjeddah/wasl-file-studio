@@ -5,9 +5,7 @@ import { toolDefinitions } from "@/lib/tools";
 import { useLocale } from "@/contexts/LocaleContext";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, Check, FileImage, FileText, FileUp, QrCode, Sparkles, Video } from "lucide-react";
-import { Link, useLocation } from "wouter";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { useEffect } from "react";
+import { Link } from "wouter";
 import ToolCard from "@/components/ToolCard";
 import "./assistant-home.css";
 import "./qr-compact.css";
@@ -15,15 +13,10 @@ import "./category-polish.css";
 
 export default function Home() {
   const { isArabic, t } = useLocale();
-  const [, navigate] = useLocation();
-  const { user, loading } = useAuth();
   const catalog = trpc.catalog.publicHomeTools.useQuery();
   const managedFaq = trpc.catalog.publicFaq.useQuery({ locale: isArabic ? "ar" : "en" });
   const homeContent = trpc.catalog.publicContent.useQuery({ contentKey: "home_notice", locale: isArabic ? "ar" : "en" });
   const topAds = trpc.catalog.publicAdSlots.useQuery({ placement: "home_top" });
-
-  useEffect(() => { if (!loading && user) navigate("/dashboard"); }, [loading, navigate, user]);
-  if (user) return null;
 
   const catalogEntries = catalog.data ?? [];
   const lifecycleBySlug = new Map(catalogEntries.map((tool: { slug: string; lifecycleStatus?: "ready" | "beta" | "maintenance" | "disabled" }) => [tool.slug, tool.lifecycleStatus]));
