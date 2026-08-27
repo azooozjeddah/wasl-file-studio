@@ -83,6 +83,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         {mobileOpen && <div className="mobile-nav"><div className="container">
           <Link href="/" onClick={closeMobile}>{t("الرئيسية", "Home")}</Link>
           <Link href="/tools" onClick={closeMobile}>{t("الأدوات", "Tools")}</Link>
+          {user?.role === "admin" && <Link href="/admin" onClick={closeMobile}>{t("لوحة الإدارة", "Admin panel")}</Link>}
           <a href="/#faq" onClick={closeMobile}>{t("مركز المساعدة", "Help center")}</a>
         </div></div>}
       </header>
