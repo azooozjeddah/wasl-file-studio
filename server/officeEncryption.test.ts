@@ -66,7 +66,7 @@ function context(role: "admin" | "user" | null): TrpcContext {
   };
 }
 
-describe("Office Encryption internal service", () => {
+describe("Office Encryption service", () => {
   for (const [kind, descriptor] of Object.entries(descriptors) as Array<[OfficeKind, (typeof descriptors)[OfficeKind]]>) {
     it(`round-trips native ${kind.toUpperCase()} fixtures with a Password-to-Open container`, async () => {
       const original = await nativeFixture(kind);
@@ -108,11 +108,11 @@ describe("Office Encryption internal service", () => {
     await expect(processOfficeEncryption({ operation: "protect-word", fileName: "above-limit.docx", contentType: descriptors.word.mime, inputBase64: Buffer.alloc(OFFICE_MAX_BYTES + 1, 1).toString("base64"), password })).rejects.toThrow("10 MB");
   }, 15_000);
 
-  it("rejects Guest and User and allows only Admin at the tRPC procedure", async () => {
+  it("rejects Guest and allows both User and Admin at the tRPC procedure", async () => {
     const source = await nativeFixture("word");
     const input = { operation: "protect-word" as const, fileName: "sample.docx", contentType: descriptors.word.mime, inputBase64: source.toString("base64"), password };
-    await expect(appRouter.createCaller(context(null)).officeEncryption.process(input)).rejects.toMatchObject({ code: "FORBIDDEN" });
-    await expect(appRouter.createCaller(context("user")).officeEncryption.process(input)).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(appRouter.createCaller(context(null)).officeEncryption.process(input)).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(appRouter.createCaller(context("user")).officeEncryption.process(input)).resolves.toMatchObject({ encrypted: true, fileName: "sample-protected.docx" });
     await expect(appRouter.createCaller(context("admin")).officeEncryption.process(input)).resolves.toMatchObject({ encrypted: true, fileName: "sample-protected.docx" });
   });
 });

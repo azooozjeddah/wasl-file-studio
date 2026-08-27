@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle2, Download, FileLock2, Loader2, LockKeyhole, ShieldCheck, UploadCloud } from "lucide-react";
 import { type ChangeEvent, type DragEvent, useRef, useState } from "react";
 import { toast } from "sonner";
-import { type InternalOfficeToolDefinition, type OfficeOperation } from "@/lib/internal-office-tools";
+import { type OfficeToolSlug, type ToolDefinition } from "@/lib/tools";
 import { downloadBlob, formatBytes } from "@/lib/file-utils";
 import { trpc } from "@/lib/trpc";
 
@@ -28,7 +28,7 @@ function bytesFromBase64(value: string) {
   return bytes;
 }
 
-export default function OfficeEncryptionWorkspace({ tool }: { tool: InternalOfficeToolDefinition }) {
+export default function OfficeEncryptionWorkspace({ tool }: { tool: ToolDefinition }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File>();
   const [password, setPassword] = useState("");
@@ -73,7 +73,7 @@ export default function OfficeEncryptionWorkspace({ tool }: { tool: InternalOffi
     setCompleted(undefined);
     try {
       const result = await mutation.mutateAsync({
-        operation: tool.slug as OfficeOperation,
+        operation: tool.slug as OfficeToolSlug,
         fileName: file.name,
         contentType: file.type || mimeFor(family),
         inputBase64: await base64Of(file),
@@ -91,12 +91,11 @@ export default function OfficeEncryptionWorkspace({ tool }: { tool: InternalOffi
     }
   };
 
-  if (auth.isLoading) return <section className="tool-workspace" aria-label={tool.labelAr}><div className="workspace-error"><Loader2 className="animate-spin" size={17}/><span>جارٍ التحقق من جلسة المدير قبل فتح خدمة Office.</span></div></section>;
-  if (!auth.data) return <section className="tool-workspace" aria-label={tool.labelAr}><div className="workspace-error"><LockKeyhole size={17}/><span>سجّل الدخول بحساب مدير لاستخدام خدمة Office الداخلية.</span><a className="button" href="/login">تسجيل الدخول</a></div></section>;
-  if (auth.data.role !== "admin") return <section className="tool-workspace" aria-label={tool.labelAr}><div className="workspace-error"><LockKeyhole size={17}/><span>هذه خدمة داخلية متاحة للمدير فقط ولا تُعرض للمستخدمين العامين.</span></div></section>;
+  if (auth.isLoading) return <section className="tool-workspace" aria-label={tool.labelAr}><div className="workspace-error"><Loader2 className="animate-spin" size={17}/><span>جارٍ التحقق من جلسة الاستخدام قبل فتح خدمة Office.</span></div></section>;
+  if (!auth.data) return <section className="tool-workspace" aria-label={tool.labelAr}><div className="workspace-error"><LockKeyhole size={17}/><span>سجّل الدخول لاستخدام معالجة Office الخادمية.</span><a className="button" href="/login">تسجيل الدخول</a></div></section>;
 
   return <section className="tool-workspace" aria-label={tool.labelAr}>
-    <div className="tool-workspace-head"><div><span className="local-pill"><FileLock2 size={12}/>معالجة خادمية داخلية</span><h2>{tool.labelAr}</h2><p>{tool.descriptionAr}</p></div><div className="format-chips"><span>{extension.toUpperCase()}</span><span>10 MB</span></div></div>
+    <div className="tool-workspace-head"><div><span className="local-pill"><FileLock2 size={12}/>معالجة خادمية آمنة</span><h2>{tool.labelAr}</h2><p>{tool.descriptionAr}</p></div><div className="format-chips"><span>{extension.toUpperCase()}</span><span>10 MB</span></div></div>
     <div className="privacy-inline"><ShieldCheck size={17}/><span>يُعالج الملف وكلمة المرور في ذاكرة الخادم أثناء الطلب فقط. لا نخزن الملف أو كلمة المرور أو محتوى المستند في قاعدة البيانات أو السجلات أو التخزين الدائم.</span></div>
     <div className="workspace-grid"><div className="workspace-main"><div onDrop={onDrop} onDragOver={event => event.preventDefault()} className={`drop-zone ${file ? "has-files" : ""}`}>{file ? <div className="file-queue"><div className="queued-file"><span className="file-type-icon"><FileLock2 size={18}/></span><div className="min-w-0"><b>{file.name}</b><small>{formatBytes(file.size)}</small></div><button onClick={() => { setFile(undefined); setCompleted(undefined); }} aria-label="إزالة الملف">×</button></div><button className="add-more" onClick={() => inputRef.current?.click()}><UploadCloud size={16}/>استبدال الملف</button><input ref={inputRef} onChange={onInput} type="file" accept={accept}/></div> : <label className="drop-zone-empty"><input ref={inputRef} onChange={onInput} type="file" accept={accept}/><span className="drop-icon"><UploadCloud size={29}/></span><strong>اسحب ملف {extension.toUpperCase()} هنا</strong><span>أو اختره من جهازك</span><em>ملف واحد حتى 10 MB</em></label>}</div></div>
       <aside className="workspace-side"><div className="workspace-settings"><div className="settings-header"><span>كلمة المرور</span><small>{protect ? "كلمة مرور فتح جديدة" : "كلمة مرور الملف الحالية"}</small></div><label className="setting-field"><span>{protect ? "كلمة المرور الجديدة" : "كلمة مرور الفتح"}</span><input type="password" autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} placeholder="8 أحرف على الأقل"/></label>{protect && <label className="setting-field"><span>تأكيد كلمة المرور</span><input type="password" autoComplete="new-password" value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} placeholder="أعد كتابة كلمة المرور"/></label>}<small>لا تستخدم هذه الأداة إلا للملفات التي تملك حق حمايتها أو فك حمايتها.</small></div><button className="process-button" disabled={!file || mutation.isPending} onClick={() => void process()}>{mutation.isPending ? <><Loader2 className="animate-spin" size={17}/>نعالج الملف…</> : <><LockKeyhole size={17}/>{protect ? "حماية الملف" : "فك حماية الملف"}</>}</button>{error && <div className="workspace-error"><AlertCircle size={17}/><span>{error}</span></div>}</aside></div>

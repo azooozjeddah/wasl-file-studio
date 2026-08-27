@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toolDefinitions } from "./tools";
+import { officeToolSlugs, toolDefinitions } from "./tools";
 import { siteCategoryForTool, siteToolCategories, toolsForSiteCategory } from "./site-categories";
 
 describe("site information architecture", () => {
@@ -20,6 +20,23 @@ describe("site information architecture", () => {
       for (const tool of toolsForSiteCategory(category.id)) {
         expect(siteCategoryForTool(tool)).toBe(category.id);
       }
+    }
+  });
+
+  it("places every Office tool in exactly one expected public category", () => {
+    const expected = {
+      "protect-word": "word",
+      "unlock-word": "word",
+      "protect-excel": "excel",
+      "unlock-excel": "excel",
+      "protect-powerpoint": "documents",
+      "unlock-powerpoint": "documents",
+    } as const;
+    for (const slug of officeToolSlugs) {
+      const tool = toolDefinitions.find((candidate) => candidate.slug === slug);
+      expect(tool).toBeDefined();
+      expect(siteCategoryForTool(tool!)).toBe(expected[slug]);
+      expect(siteToolCategories.filter((category) => toolsForSiteCategory(category.id).some((candidate) => candidate.slug === slug))).toHaveLength(1);
     }
   });
 });
