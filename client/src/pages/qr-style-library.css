@@ -5,3 +5,42 @@
 .qr-style-live-preview{display:grid;align-content:start;gap:12px;padding:14px;border:1px solid color-mix(in srgb,#7157f8 18%,var(--border));border-radius:18px;background:linear-gradient(160deg,#151132,#272056);color:#fff}.qr-style-live-preview>div:first-child{display:grid;gap:3px}.qr-style-live-preview>div:first-child span{display:flex;align-items:center;gap:5px;color:#cbc4ff;font-size:9px;font-weight:800}.qr-style-live-preview b{font-size:13px}.qr-style-live-preview small{color:#c9c7db;font-size:9px}.qr-style-live-canvas{display:grid;min-height:166px;place-items:center;border-radius:13px;background:#fff;padding:10px}.qr-style-live-canvas>div{display:grid;place-items:center;max-width:100%;max-height:150px}.qr-style-live-canvas svg{display:block;max-width:150px;max-height:150px}.qr-style-live-preview p{display:flex;align-items:flex-start;gap:5px;color:#d9d7e7;font-size:9px;line-height:1.5}.qr-style-live-preview p svg{flex:none;color:#abf3d0}
 @media(max-width:780px){.qr-style-library{padding:14px;border-radius:21px}.qr-style-library-head{display:grid;gap:12px}.qr-style-layout{grid-template-columns:1fr}.qr-style-live-preview{grid-template-columns:1fr 110px;align-items:center}.qr-style-live-preview>div:first-child{grid-column:1}.qr-style-live-canvas{grid-row:1/3;grid-column:2;min-height:106px;padding:6px}.qr-style-live-canvas svg{max-width:94px;max-height:94px}.qr-style-live-preview p{grid-column:1}.qr-style-card-grid{grid-template-columns:1fr 1fr}.qr-style-card{min-height:62px;padding:8px}.qr-mini{width:36px;height:36px;padding:5px}.qr-style-tabs{margin-inline:-2px}}
 @media(max-width:390px){.qr-style-card-grid{grid-template-columns:1fr}.qr-style-live-preview{grid-template-columns:1fr 94px}.qr-style-live-canvas svg{max-width:82px;max-height:82px}}
+
+/* Mobile-first workspace controls: preserve desktop composition while making the generator comfortable to use by touch. */
+@media (max-width: 767px) {
+  .qr-studio-page { padding-block: 1.5rem; }
+  .qr-studio-header { margin-bottom: 1.25rem; gap: .75rem; }
+  .qr-studio-header > span { width: 2.75rem; height: 2.75rem; border-radius: 1rem; }
+  .qr-studio-header h1 { font-size: 1.7rem; line-height: 1.2; }
+  .qr-studio-header p { font-size: .9rem; line-height: 1.65; }
+  .qr-scan-note { margin-bottom: 1rem; padding: .875rem; line-height: 1.65; }
+
+  .qr-studio-workbench { gap: 1rem; margin-top: 1rem; }
+  .qr-studio-controls,
+  .qr-studio-preview { border-radius: 1.25rem; padding: 1rem; }
+
+  .qr-style-layout > div { min-width: 0; }
+  .qr-style-tabs { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; max-width: 100%; gap: .5rem; overflow: visible !important; margin-inline: 0 !important; padding: 0 !important; scroll-snap-type: none !important; }
+  .qr-style-tabs button { min-height: 44px !important; padding: .5rem !important; line-height: 1.25; white-space: normal; }
+  .qr-style-card-grid { display: grid !important; grid-auto-columns: auto !important; grid-auto-flow: row !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-template-rows: none !important; width: 100%; min-width: 0; overflow: visible !important; padding: 1px 0 !important; scroll-snap-type: none !important; }
+
+  .qr-kind-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+  .qr-kind-tabs button { min-height: 44px !important; padding-inline: .625rem; font-size: .875rem; white-space: nowrap; }
+  .qr-settings-grid { gap: 1rem; margin-top: 1.25rem; padding-top: 1.25rem; }
+  .qr-settings-grid select,
+  .qr-settings-grid input:not([type="range"]),
+  .qr-studio-controls > div > div input:not([type="range"]) { min-height: 44px; font-size: 1rem; }
+  .qr-settings-grid input[type="range"] { min-height: 2rem; }
+  .qr-settings-grid .flex.items-center.gap-2 { min-height: 44px; }
+  .qr-settings-grid .flex.items-center.gap-2 input[type="color"] { width: 3.25rem; min-width: 3.25rem; padding: .2rem; }
+
+  .qr-studio-preview { order: -1; }
+  .qr-studio-preview > div:first-child { min-height: 0; overflow: hidden; padding: .875rem; }
+  .qr-studio-preview > div:first-child svg { display: block; width: min(100%, 17rem); height: auto; max-width: 100%; margin-inline: auto; }
+  .qr-studio-preview > .grid.grid-cols-2 { gap: .625rem; margin-top: 1rem; }
+  .qr-studio-preview > .grid.grid-cols-2 > button { min-height: 44px; padding-inline: .5rem; font-size: .875rem; }
+}
+
+@media (max-width: 420px) {
+  .qr-style-card-grid { grid-template-columns: 1fr !important; }
+}

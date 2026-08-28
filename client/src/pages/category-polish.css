@@ -155,3 +155,10 @@
   .home-category-card small { font-size: 8px; }
   .category-index-page .category-directory-card { min-height: 6.7rem !important; }
 }
+
+/* Match Home featured and category cards to the approved shared card frame. */
+.home-featured-layout-tools-only .home-featured-grid .tool-card,
+.home-category-cards .home-category-card {
+  border: 2px solid color-mix(in srgb, var(--wasl-ink) 58%, var(--wasl-violet) 42%);
+  border-radius: 18px;
+}
