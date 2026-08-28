@@ -8,6 +8,12 @@
   padding: 15px 16px;
   direction: rtl;
   text-align: start;
+  height: 100%;
+}
+
+.home-category-cards {
+  grid-auto-rows: 1fr;
+  align-items: stretch;
 }
 
 .home-category-cards .home-category-card > span {

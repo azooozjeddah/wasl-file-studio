@@ -41,6 +41,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   }, [mobileOpen]);
 
   const brandProps = { logoText: settings.data?.logoText, siteName: settings.data?.siteName, logoUrl: settings.data?.logoUrl };
+  const approvedOutline = "2px solid color-mix(in srgb, var(--wasl-ink) 58%, var(--wasl-violet) 42%)";
   const closeMobile = () => setMobileOpen(false);
   const signOut = async () => {
     await logout();
@@ -50,7 +51,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="min-h-screen wasl-app" style={{ "--wasl-accent": settings.data?.accentColor || "#6746E8" } as React.CSSProperties}>
-      <header className="site-header">
+      <header className="site-header" style={{ borderBottom: approvedOutline }}>
         <div className="container header-inner">
           <Brand {...brandProps} />
           <nav className="desktop-nav" aria-label={t("التنقل الرئيسي", "Main navigation")}>
@@ -88,7 +89,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         </div></div>}
       </header>
       {children}
-      <footer className="site-footer">
+      <footer className="site-footer" style={{ borderTop: approvedOutline }}>
         <div className="container footer-grid">
           <div className="footer-brand"><Brand {...brandProps} /><p>{t("أدوات ملفات احترافية تعالج ملفاتك محليًا كلما كان ذلك ممكنًا، وتوضح لك الخطوة المناسبة بوضوح.", "Professional file tools that process locally whenever possible and make the next step clear.")}</p><div className="footer-socials" aria-label={t("روابط التواصل", "Social links")}><span>◉</span><span>◌</span><span>◍</span><span>◎</span></div></div>
           <div><p className="footer-title">{t("المنتجات", "Products")}</p><div className="footer-links"><Link href="/tools/pdf">{t("معالجة PDF", "PDF tools")}</Link><Link href="/tools/documents">{t("المستندات", "Documents")}</Link><Link href="/tools/images">{t("أدوات الصور", "Image tools")}</Link><Link href="/tools/qr">{t("أدوات QR", "QR tools")}</Link></div></div>

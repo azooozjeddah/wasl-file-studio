@@ -37,6 +37,7 @@
 
 /* Ink-and-violet outline layer: visual framing only, with no behavioral impact. */
 .quick-drop,.hero-stat-card,.tool-card,.home-category-cards a,.metric-card,.admin-panel,.admin-tabs,.order-list>div,.tool-admin-row,.tool-workspace,.queued-file,.result-file,.preview-panel,.workspace-settings,.results-panel,.tool-explainer>div,.first-admin-card,.user-admin-row,.processing-list>div{border:2px solid color-mix(in srgb,var(--wasl-ink) 58%,var(--wasl-violet) 42%)}
+
 .tool-card:hover,.home-category-cards a:hover,.quick-drop:hover,.tool-workspace:hover,.workspace-settings:hover{border-color:var(--wasl-violet)}
 .drop-zone,.add-more{border:2px dashed color-mix(in srgb,var(--wasl-violet) 72%,#fff 28%)}
 
