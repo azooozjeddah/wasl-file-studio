@@ -1,3 +1,10 @@
 User-agent: *
 Allow: /
-Sitemap: https://waslfile-b7bks7br.manus.space/sitemap.xml
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /account/
+Disallow: /first-admin
+Disallow: /api/
+Sitemap: https://waselfile.com/sitemap.xml

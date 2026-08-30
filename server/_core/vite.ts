@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
+import { isKnownAppRoute } from "../seoRoutes";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -23,6 +24,7 @@ export async function setupVite(app: Express, server: Server) {
   app.use(vite.middlewares);
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
+    const pathname = new URL(url, "http://localhost").pathname;
 
     try {
       const clientTemplate = path.resolve(
@@ -39,7 +41,7 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx?v=${nanoid()}"`
       );
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      res.status(isKnownAppRoute(pathname) ? 200 : 404).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -78,7 +80,7 @@ export function serveStatic(app: Express) {
   }));
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
+  app.use("*", (req, res) => {
     res.set({
       "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
       "CDN-Cache-Control": "no-store",
@@ -88,6 +90,6 @@ export function serveStatic(app: Express) {
       Expires: "0",
       Vary: "Accept-Encoding",
     });
-    res.sendFile(path.resolve(distPath, "index.html"));
+    res.status(isKnownAppRoute(req.path) ? 200 : 404).sendFile(path.resolve(distPath, "index.html"));
   });
 }
