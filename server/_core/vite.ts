@@ -90,6 +90,7 @@ export function serveStatic(app: Express) {
       Expires: "0",
       Vary: "Accept-Encoding",
     });
-    res.status(isKnownAppRoute(req.path) ? 200 : 404).sendFile(path.resolve(distPath, "index.html"));
+    const pathname = new URL(req.originalUrl, "http://localhost").pathname;
+    res.status(isKnownAppRoute(pathname) ? 200 : 404).sendFile(path.resolve(distPath, "index.html"));
   });
 }
