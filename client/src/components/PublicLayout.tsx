@@ -20,8 +20,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     if (location !== "/") return;
-    const title = settings.data?.metaTitle || settings.data?.siteName;
-    const description = settings.data?.metaDescription;
+    const title = "وصل للملفات - تحويل وضغط الملفات أونلاين";
+    const description = "حوّل واضغط ملفات PDF والصور والمستندات أونلاين، مع أدوات محلية تعمل داخل متصفحك وتحترم خصوصيتك.";
     if (title) document.title = title;
     let meta = document.querySelector('meta[name="description"]');
     if (description) {
